@@ -2,47 +2,62 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $primaryKey = 'users_id'; // Egyedi kulcs
+
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'postal_code',
+        'city',
+        'street_name',
+        'street_number',
         'password',
+        'password_hint',
+        'role',
+        'active',
+        'must_change_password',
+        'last_login_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $casts = [
+        'active' => 'boolean',
+        'must_change_password' => 'boolean',
+        'last_login_at' => 'datetime',
+    ];
+
+    // Kapcsolatok (ha már vannak más modellek)
+    public function orders()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Order::class, 'users_id');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'users_id');
+    }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class, 'users_id');
+    }
+
+    public function deliveries()
+    {
+        return $this->hasMany(Order::class, 'courier_id');
     }
 }
