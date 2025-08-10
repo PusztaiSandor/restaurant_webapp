@@ -23,7 +23,7 @@
     <header class="container-fluid bg-dark sticky-top">
         <nav class="navbar navbar-expand-md navbar-dark container">
             {{-- 🔗 Logó és kezdőlap hivatkozás --}}
-            <a class="navbar-brand d-flex align-items-center" href="javascript:void(0)">
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
                 <img src="{{ asset('assets/images/components/logo.png') }}" alt="Esszencia logó" height="40" class="me-2">
                 <span>Esszencia Étterem</span>
             </a>
@@ -34,25 +34,73 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarLinks">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i class="fa-solid fa-utensils me-1"></i> Étlap</a></li>
-                    <li class="nav-item"><a class="nav-link" href="javascript:void(0)"><i class="fa-solid fa-phone me-1"></i> Kapcsolat</a></li>
-                </ul>
+    <ul class="navbar-nav me-auto">
+        {{-- 🍽️ Étlap link --}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('home') }}">
+                <i class="fa-solid fa-utensils me-1"></i> Étlap
+            </a>
+        </li>
 
-                {{-- 🎨 Téma választó --}}
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fa-solid fa-brush me-1"></i> Témák
+        {{-- 📞 Kapcsolat link --}}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('home') }}">
+                <i class="fa-solid fa-phone me-1"></i> Kapcsolat
+            </a>
+        </li>
+    </ul>
+
+    {{-- 🎨 Téma választó + Felhasználói menü --}}
+    <ul class="navbar-nav ms-auto align-items-center">
+        {{-- 🎨 Téma választó --}}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fa-solid fa-brush me-1"></i> Témák
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+                @foreach(['basis','brite','darkly','vapor','solar','minty','flatly','morph','united','zephyr'] as $theme)
+                    <li>
+                        <a class="dropdown-item theme-option" href="javascript:void(0)" data-theme="{{ $theme }}">
+                            {{ ucfirst($theme) }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            @foreach(['basis','brite','darkly','vapor','solar','minty','flatly','morph','united','zephyr'] as $theme)
-                                <li><a class="dropdown-item theme-option" href="javascript:void(0)" data-theme="{{ $theme }}">{{ ucfirst($theme) }}</a></li>
-                            @endforeach
-                        </ul>
                     </li>
-                </ul>
-            </div>
+                @endforeach
+            </ul>
+        </li>
+
+        {{-- 🔐 Vendég felhasználók számára: Belépés és Regisztráció --}}
+        @guest
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('login') }}">
+                    <i class="fa-solid fa-right-to-bracket me-1"></i> Bejelentkezés
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('register') }}">
+                    <i class="fa-solid fa-user-plus me-1"></i> Regisztráció
+                </a>
+            </li>
+        @endguest
+
+        {{-- ✅ Bejelentkezett felhasználók számára: Üdvözlés + Kilépés --}}
+        @auth
+            {{-- 👋 Üdvözlés névvel --}}
+            <li class="nav-item nav-link text-white d-flex align-items-center">
+                <i class="fa-solid fa-user me-2"></i> Üdv, {{ Auth::user()->name }}!
+            </li>
+
+            {{-- 🔓 Kilépés gomb (POST metódus) --}}
+            <li class="nav-item d-flex align-items-center">
+                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-link nav-link px-0 text-white d-flex align-items-center">
+                        <i class="fa-solid fa-right-from-bracket me-1"></i> Kilépés
+                    </button>
+                </form>
+            </li>
+        @endauth
+    </ul>
+</div>
         </nav>
     </header>
      <div class="opening-hours">

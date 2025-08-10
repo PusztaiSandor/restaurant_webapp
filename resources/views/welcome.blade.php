@@ -9,8 +9,7 @@
     {{-- 🖼️ Étterem logó megjelenítése --}}
     <img src="{{ asset('assets/images/components/logo.png') }}" alt="Esszencia Étterem logó" class="img-fluid my-4" style="max-height: 150px;">
 
-    {{-- 🔐 Bejelentkezés és regisztráció hivatkozások – ideiglenesen kikapcsolva, amíg nincs route --}}
-    {{--
+    {{-- 🔐 Dinamikus üzenet a felhasználó állapota szerint --}}
     @guest
         <p class="fs-5">
             A rendeléshez kérlek <a href="{{ route('login') }}" class="text-decoration-underline">jelentkezz be</a>
@@ -19,16 +18,10 @@
     @else
         <p class="fs-5">Örülünk, hogy újra itt vagy, <strong>{{ Auth::user()->name }}</strong>!</p>
     @endguest
-    --}}
 
-    {{-- 🔧 Ideiglenes szöveg, amíg nincs Auth rendszer --}}
-    <p class="fs-5">
-        A rendeléshez bejelentkezés szükséges. A funkció hamarosan elérhető.
-    </p>
-
-    {{-- 🍽️ Étlap gomb – ideiglenesen "#" hivatkozással, amíg nincs route --}}
+    {{-- 🍽️ Étlap gomb – jelenleg a kezdőlapra mutat --}}
     <div class="mt-4">
-        <a href="#" class="btn btn-primary btn-lg">
+        <a href="{{ route('home') }}" class="btn btn-primary btn-lg">
             <i class="fa-solid fa-utensils me-2"></i> Nézd meg az étlapot
         </a>
     </div>
