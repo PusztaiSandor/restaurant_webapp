@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController; // 🧭 Felhasználói controller importálása
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -35,3 +36,20 @@ Route::post('/logout', function () {
     Auth::logout(); // Felhasználó kijelentkeztetése
     return redirect()->route('login')->with('success', 'Sikeresen kiléptél.');
 })->name('logout');
+
+// 🔸 Profil főoldal – teljes szerkesztés és jelszómódosítás
+Route::get('/mypage', [UserController::class, 'show'])->name('mypage');
+
+// 🛠️ Csak e-mail és jelszó frissítése
+Route::get('/mypage/edit', [UserController::class, 'edit'])->name('mypage.edit');
+
+// 💾 Profiladatok frissítése
+Route::post('/mypage/update', [UserController::class, 'update'])->name('mypage.update');
+
+// 🔐 Jelszómódosítás
+Route::post('/mypage/password', [UserController::class, 'updatePassword'])->name('mypage.password');
+
+// 📦 Saját rendelések megtekintése
+Route::get('/mypage/orders', [UserController::class, 'orders'])->name('mypage.orders');
+
+

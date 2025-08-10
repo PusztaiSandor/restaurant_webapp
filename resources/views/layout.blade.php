@@ -89,6 +89,25 @@
                 <i class="fa-solid fa-user me-2"></i> Üdv, {{ Auth::user()->name }}!
             </li>
 
+
+            {{-- 👤 "Profilom" minden szerepkör számára --}}
+@if(in_array(Auth::user()->role, ['admin', 'user', 'courier']))
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('mypage') }}">
+            <i class="fa-solid fa-id-card me-1"></i> Profilom
+        </a>
+    </li>
+@endif
+
+{{-- 🧾 "Rendeléseim" csak "user" szerepkörre --}}
+@if(Auth::user()->role === 'user')
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('mypage.orders') }}">
+            <i class="fa-solid fa-receipt me-1"></i> Rendeléseim
+        </a>
+    </li>
+@endif
+
             {{-- 🔓 Kilépés gomb (POST metódus) --}}
             <li class="nav-item d-flex align-items-center">
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
