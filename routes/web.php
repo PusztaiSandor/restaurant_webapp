@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController; // 🧭 Felhasználói controller importálása
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\DishController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -75,5 +76,43 @@ Route::patch('/admin/users/{user}/toggle', [AdminUserController::class, 'toggleS
 
 // 🔁 Ideiglenes jelszó és email újragenerálása
 Route::post('/admin/users/{user}/regenerate-password', [AdminUserController::class, 'regeneratePassword'])->name('admin.users.regeneratePassword');
+
+// 🍽️ Publikus étlap megtekintése
+Route::get('/menu', [DishController::class, 'menu'])->name('menu');
+
+// 📄 PDF generálása az étlapból
+Route::get('/menu/pdf', [DishController::class, 'generateMenuPdf'])->name('menu.pdf');
+
+// 🔍 Egy adott étel részletes nézete
+Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show');
+
+// 🛡️ Admin ételkezelés – csak admin jogosultsággal
+
+// 📋 Ételek listázása (aktív + archivált)
+Route::get('/admin/dishes', [DishController::class, 'index'])->name('admin.dishes.index');
+
+// ➕ Új étel létrehozása – űrlap megjelenítése
+Route::get('/admin/dishes/create', [DishController::class, 'create'])->name('admin.dishes.create');
+
+// 💾 Új étel mentése
+Route::post('/admin/dishes', [DishController::class, 'store'])->name('admin.dishes.store');
+
+// ✏️ Étel szerkesztése – űrlap megjelenítése
+Route::get('/admin/dishes/{dish}/edit', [DishController::class, 'edit'])->name('admin.dishes.edit');
+
+// 💾 Étel frissítése
+Route::put('/admin/dishes/{dish}', [DishController::class, 'update'])->name('admin.dishes.update');
+
+// 🔄 Étel aktiválása
+Route::patch('/admin/dishes/{dish}/activate', [DishController::class, 'activate'])->name('admin.dishes.activate');
+
+// 🗃️ Étel archiválása
+Route::patch('/admin/dishes/{dish}/deactivate', [DishController::class, 'deactivate'])->name('admin.dishes.deactivate');
+
+// 📦 Készlet szerkesztése – űrlap megjelenítése
+Route::get('/admin/dishes/{dish}/stock', [DishController::class, 'editStock'])->name('admin.dishes.editStock');
+
+// 💾 Készlet frissítése
+Route::patch('/admin/dishes/{dish}/stock', [DishController::class, 'updateStock'])->name('admin.dishes.updateStock');
 
 

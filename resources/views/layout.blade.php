@@ -123,6 +123,20 @@
             <i class="fa-solid fa-user-plus me-1"></i> Admin: Új felhasználó
         </a>
     </li>
+
+{{-- 🍽️ Admin: Ételkezelés --}}
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('admin.dishes.index') }}">
+        <i class="fa-solid fa-bowl-food me-1"></i> Admin: Ételek
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('admin.dishes.create') }}">
+        <i class="fa-solid fa-plus me-1"></i> Admin: Új étel
+    </a>
+</li>
+
 @endif
 
             {{-- 🔓 Kilépés gomb (POST metódus) --}}
