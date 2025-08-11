@@ -53,10 +53,13 @@ class AuthController extends Controller
             'city' => $validated['city'],
             'street_name' => $validated['street_name'],
             'street_number' => $validated['street_number'],
+            'active' => 1, // ✅ Legyen aktív
         ]);
 
         // 🔑 Automatikus bejelentkeztetés
         Auth::login($user);
+        $user->last_login_at = now();
+        $user->save();
 
         // 🧭 Irányítás szerepkör szerint
         return $this->redirectBasedOnRole($user)->with('success', 'Sikeres regisztráció!');
@@ -104,6 +107,10 @@ class AuthController extends Controller
     // ✅ Sikeres bejelentkezés
     if ($successful) {
         $user = Auth::user();
+
+        // 🕒 Bejelentkezési idő mentése
+        $user->last_login_at = now();
+        $user->save();
 
         // ⚠️ Kötelező jelszó/email módosítás ellenőrzése
         if ($user->must_change_password) {
