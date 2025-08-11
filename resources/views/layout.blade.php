@@ -108,6 +108,23 @@
     </li>
 @endif
 
+{{-- 🛡️ Admin funkciók – csak admin szerepkör esetén jelenik meg --}}
+@if(Auth::user()->role === 'admin')
+    {{-- 👥 Felhasználók kezelése --}}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('admin.users.index') }}">
+            <i class="fa-solid fa-users-gear me-1"></i> Admin: Felhasználók
+        </a>
+    </li>
+
+    {{-- ➕ Új felhasználó létrehozása --}}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('admin.users.create') }}">
+            <i class="fa-solid fa-user-plus me-1"></i> Admin: Új felhasználó
+        </a>
+    </li>
+@endif
+
             {{-- 🔓 Kilépés gomb (POST metódus) --}}
             <li class="nav-item d-flex align-items-center">
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">

@@ -79,35 +79,45 @@ class AuthController extends Controller
      * a szerepkörének megfelelő oldalra.
      */
     public function login(Request $request)
-    {
-        // 📋 Validáció
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+{
+    // 📋 Beviteli adatok validálása
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
 
-        // 🔑 Hitelesítési próbálkozás
-        $successful = Auth::attempt(
-            ['email' => $request->email, 'password' => $request->password],
-            $request->filled('remember') // „Emlékezz rám” opció
-        );
+    // 👤 Felhasználó lekérése az e-mail alapján
+    $user = User::where('email', $request->email)->first();
 
-        if ($successful) {
-            $user = Auth::user();
+    // ❌ Ha nincs ilyen felhasználó vagy nem aktív
+    if (!$user || !$user->active) {
+        return back()->with('error', 'A fiókod jelenleg nem aktív. Kérjük, vedd fel a kapcsolatot az Adminnal.')
+                     ->withInput(); // 🔁 Visszatöltés a formba
+    }
 
-            // ⚠️ Kötelező jelszó/email módosítás ellenőrzése
-            if ($user->must_change_password) {
-                return redirect()->route('profile.edit')
-                    ->with('info', 'Kérlek, módosítsd a jelszavad és email címed!');
-            }
+    // 🔑 Hitelesítési próbálkozás (csak ha aktív)
+    $successful = Auth::attempt(
+        ['email' => $request->email, 'password' => $request->password],
+        $request->filled('remember') // „Emlékezzen rám” opció
+    );
 
-            // 🧭 Irányítás szerepkör szerint
-            return $this->redirectBasedOnRole($user);
+    // ✅ Sikeres bejelentkezés
+    if ($successful) {
+        $user = Auth::user();
+
+        // ⚠️ Kötelező jelszó/email módosítás ellenőrzése
+        if ($user->must_change_password) {
+            return redirect()->route('profile.edit')
+                ->with('info', 'Kérlek, módosítsd a jelszavad és email címed!');
         }
 
-        // ❌ Sikertelen bejelentkezés
-        return back()->with('error', 'Hibás e-mail vagy jelszó!')->withInput();
+        // 🧭 Irányítás szerepkör szerint
+        return $this->redirectBasedOnRole($user);
     }
+
+    // ❌ Hibás jelszó
+    return back()->with('error', 'Hibás e-mail vagy jelszó!')->withInput();
+}
 
     /**
      * 🧭 Irányítás szerepkör szerint
@@ -127,21 +137,34 @@ class AuthController extends Controller
     }
 
     /**
-     * 📧 Jelszóemlékeztető szimuláció
-     *
-     * Ellenőrzi, hogy létezik-e a megadott e-mail, majd megjelenít egy szimulált e-mail nézetet.
-     */
-    public function simulateReset(Request $request)
-    {
-        $request->validate(['email' => 'required|email']);
+ * 📧 Jelszóemlékeztető szimuláció
+ *
+ * Ellenőrzi, hogy létezik-e a megadott e-mail, és hogy a fiók aktív-e.
+ * Ha aktív, megjeleníti a szimulált e-mail nézetet.
+ * Ha nem aktív, visszairányítja a bejelentkezési felületre hibaüzenettel.
+ */
+public function simulateReset(Request $request)
+{
+    // 📋 E-mail mező validálása
+    $request->validate(['email' => 'required|email']);
 
-        $user = User::where('email', $request->email)->first();
-        if (!$user) {
-            return back()->withErrors(['email' => 'Nincs ilyen e-mail cím regisztrálva.'])->withInput();
-        }
+    // 👤 Felhasználó lekérése az e-mail alapján
+    $user = User::where('email', $request->email)->first();
 
-        return view('auth.simulated_email', ['email' => $request->email]);
+    // ❌ Ha nincs ilyen felhasználó
+    if (!$user) {
+        return back()->withErrors(['email' => 'Nincs ilyen e-mail cím regisztrálva.'])->withInput();
     }
+
+    // ❌ Ha a felhasználó nem aktív
+    if (!$user->active) {
+        return redirect()->route('login')
+            ->with('error', 'A fiókod jelenleg nem aktív. Kérjük, vedd fel a kapcsolatot az Adminnal.');
+    }
+
+    // ✅ Aktív fiók esetén megjelenítjük a szimulált e-mail nézetet
+    return view('auth.simulated_email', ['email' => $request->email]);
+}
 
     /**
      * 🔁 Jelszóemlékeztető űrlap megjelenítése

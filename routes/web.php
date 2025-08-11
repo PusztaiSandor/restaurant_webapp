@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController; // 🧭 Felhasználói controller importálása
+use App\Http\Controllers\AdminUserController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -51,5 +52,28 @@ Route::post('/mypage/password', [UserController::class, 'updatePassword'])->name
 
 // 📦 Saját rendelések megtekintése
 Route::get('/mypage/orders', [UserController::class, 'orders'])->name('mypage.orders');
+
+// 🛡️ Admin felhasználókezelés – csak admin jogosultsággal elérhető
+
+// 📋 Felhasználók listázása
+Route::get('/admin/users', [AdminUserController::class, 'index'])->name('admin.users.index');
+
+// ➕ Új felhasználó létrehozása – űrlap megjelenítése
+Route::get('/admin/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
+
+// 💾 Új felhasználó mentése
+Route::post('/admin/users', [AdminUserController::class, 'store'])->name('admin.users.store');
+
+// ✏️ Felhasználó szerkesztése – űrlap megjelenítése
+Route::get('/admin/users/{user}/edit', [AdminUserController::class, 'edit'])->name('admin.users.edit');
+
+// 💾 Felhasználó adatainak frissítése
+Route::put('/admin/users/{user}', [AdminUserController::class, 'update'])->name('admin.users.update');
+
+// 🔄 Felhasználó aktiválása/inaktiválása
+Route::patch('/admin/users/{user}/toggle', [AdminUserController::class, 'toggleStatus'])->name('admin.users.toggle');
+
+// 🔁 Ideiglenes jelszó és email újragenerálása
+Route::post('/admin/users/{user}/regenerate-password', [AdminUserController::class, 'regeneratePassword'])->name('admin.users.regeneratePassword');
 
 
