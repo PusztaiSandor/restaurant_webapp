@@ -104,15 +104,15 @@ Route::get('/admin/dishes/{dish}/edit', [DishController::class, 'edit'])->name('
 Route::put('/admin/dishes/{dish}', [DishController::class, 'update'])->name('admin.dishes.update');
 
 // 🔄 Étel aktiválása
-Route::patch('/admin/dishes/{dish}/activate', [DishController::class, 'activate'])->name('admin.dishes.activate');
+Route::put('/admin/dishes/{dish}/activate', [DishController::class, 'activate'])->name('admin.dishes.activate');
 
 // 🗃️ Étel archiválása
-Route::patch('/admin/dishes/{dish}/deactivate', [DishController::class, 'deactivate'])->name('admin.dishes.deactivate');
+Route::put('/admin/dishes/{dish}/deactivate', [DishController::class, 'deactivate'])->name('admin.dishes.deactivate');
 
 // 📦 Készlet szerkesztése – űrlap megjelenítése
 Route::get('/admin/dishes/{dish}/stock', [DishController::class, 'editStock'])->name('admin.dishes.editStock');
 
 // 💾 Készlet frissítése
-Route::patch('/admin/dishes/{dish}/stock', [DishController::class, 'updateStock'])->name('admin.dishes.updateStock');
+Route::put('/admin/dishes/{dish}/stock', [DishController::class, 'updateStock'])->name('admin.dishes.stock.update'); // ✅
 
 

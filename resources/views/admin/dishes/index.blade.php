@@ -53,7 +53,7 @@
                             </a>
 
                             {{-- 📦 Készlet módosítása --}}
-                            <a href="{{ route('admin.dishes.stock.edit', $dish->dishes_id) }}"
+                            <a href="{{ route('admin.dishes.editStock', $dish->dishes_id) }}"
                                class="btn btn-sm btn-outline-primary">
                                 📦 Készlet módosítása
                             </a>

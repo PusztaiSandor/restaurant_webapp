@@ -38,6 +38,9 @@ class Dish extends Model
         'active' => 'boolean',
         'size_options' => 'array',
         'ingredient_modifiers' => 'array',
+        'base_ingredients' => 'array',
+        'extra_ingredients' => 'array',
+        'allergens' => 'array',
         'gross_price' => 'float',
         'tax_percent' => 'float',
         'discount_percent' => 'float',
@@ -50,4 +53,30 @@ class Dish extends Model
     {
         return $this->hasMany(Order::class, 'dishes_id');
     }
+
+     /**
+     * 💰 Végső ár kiszámítása méret és extrák alapján
+     */
+    public function getFinalPrice(string $sizeLabel = 'Normál', array $extras = []): float
+{
+    $basePrice = $this->gross_price;
+
+    // Méret szorzó
+    $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
+
+    // Extra hozzávalók ármódosítói
+    $extraCost = 0;
+    foreach ($extras as $extra) {
+        $extraCost += $this->ingredient_modifiers[$extra] ?? 0;
+    }
+
+    // Akciós ár
+    $discountFactor = $this->on_sale ? (1 - ($this->discount_percent / 100)) : 1;
+
+    // Végső ár kiszámítása
+    $finalPrice = ($basePrice * $multiplier + $extraCost) * $discountFactor;
+
+    return round($finalPrice, 0);
+}
+
 }

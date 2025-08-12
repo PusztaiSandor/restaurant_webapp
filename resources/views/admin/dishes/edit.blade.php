@@ -46,7 +46,7 @@
             <div class="col-md-6">
                 <label for="category" class="form-label">Kategória:</label>
                 @php
-                    $categories = ['Étel', 'Ital', 'Desszert', 'Csomag', 'Fitness', 'Vegetáriánus', 'Vegan', 'Gluten_free', 'Laktoze_free', 'Nemzetközi'];
+                    $categories = ['Étel', 'Ital', 'Desszert', 'Csomag', 'Fitness', 'Vegetáriánus', 'Nemzetközi'];
                 @endphp
                 <select name="category" id="category" class="form-select" required>
                     <option value="">– Válassz kategóriát –</option>
@@ -60,7 +60,7 @@
             <div class="col-md-6">
                 <label for="type" class="form-label">Típus:</label>
                 @php
-                    $types = ['Leves', 'Egy_tál_étel', 'Húsétel', 'Hamburger', 'Pizza', 'Zöldség', 'Saláta', 'Savanyúság', 'Gyümölcs', 'Köret', 'Előétel', 'Street_food', 'Üdítő', 'Kávé', 'Tea', 'Bor', 'Koktél', 'Gyerekital', 'Sütemény', 'Fagylalt', 'Pohár_krém'];
+                    $types = ['Leves', 'Egytálétel', 'Húsétel', 'Hamburger', 'Pizza', 'Zöldség', 'Saláta', 'Savanyúság', 'Gyümölcs', 'Köret', 'Előétel', 'Street_food', 'Üdítő', 'Kávé', 'Tea', 'Bor', 'Sör', 'Ásványvíz', 'Koktél', 'Gyerekital', 'Sütemény', 'Fagylalt'];
                 @endphp
                 <select name="type" id="type" class="form-select" required>
                     <option value="">– Válassz típust –</option>
@@ -76,20 +76,16 @@
         {{-- ➤ Ár és akció --}}
         <div class="row mb-3">
             <div class="col-md-4">
-                <label for="base_price" class="form-label">Alapár (Ft):</label>
-                <input type="number" name="base_price" id="base_price" class="form-control" required min="0" step="1"
-                    value="{{ old('base_price', $dish->base_price) }}">
+                <label for="gross_price" class="form-label">Bruttó alapár (Ft):</label>
+                <input type="number" name="gross_price" id="gross_price" class="form-control" required min="0" step="1"
+                    value="{{ old('gross_price', $dish->gross_price) }}">
             </div>
             <div class="col-md-4">
                 <label for="tax_percent" class="form-label">ÁFA (%):</label>
                 <input type="number" name="tax_percent" id="tax_percent" class="form-control" min="0" max="100" step="0.01"
                     value="{{ old('tax_percent', $dish->tax_percent) }}">
             </div>
-            <div class="col-md-4">
-                <label for="dynamic_multiplier" class="form-label">Dinamikus szorzó:</label>
-                <input type="number" name="dynamic_multiplier" id="dynamic_multiplier" class="form-control" step="0.01"
-                    value="{{ old('dynamic_multiplier', $dish->dynamic_multiplier) }}">
-            </div>
+
         </div>
 
         <div class="row mb-3">
@@ -124,7 +120,6 @@
                     <th>Mértékegység</th>
                     <th>Mennyiség</th>
                     <th>Szorzó</th>
-                    <th>Ármódosító (Ft)</th>
                 </tr>
             </thead>
             <tbody>
@@ -141,7 +136,6 @@
                         <td><input type="text" name="size_units[]" class="form-control text-center" value="{{ old('size_units.' . $i, $value['unit'] ?? '') }}" placeholder="pl. cm, dl"></td>
                         <td><input type="number" name="size_amounts[]" class="form-control text-center" min="0" step="0.01" value="{{ old('size_amounts.' . $i, $value['amount'] ?? '') }}"></td>
                         <td><input type="number" name="size_multipliers[]" class="form-control text-center" step="0.01" value="{{ old('size_multipliers.' . $i, $value['multiplier'] ?? 1.0) }}"></td>
-                        <td><input type="number" name="size_modifiers[]" class="form-control text-center" step="1" value="{{ old('size_modifiers.' . $i, $value['price_modifier'] ?? 0) }}"></td>
                     </tr>
                 @endfor
             </tbody>

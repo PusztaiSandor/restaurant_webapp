@@ -37,19 +37,19 @@ class DishController extends Controller
         }
 
         // ➤ Ár szerinti rendezés (bruttó, kedvezményes ár alapján)
-        if ($request->sort === 'price_asc') {
-            $query->orderByRaw('
-                (base_price * COALESCE(dynamic_multiplier, 1) * (1 + COALESCE(tax_percent, 27) / 100))
-                * (1 - IF(on_sale, COALESCE(discount_percent, 0) / 100, 0)) ASC
-            ');
-        } elseif ($request->sort === 'price_desc') {
-            $query->orderByRaw('
-                (base_price * COALESCE(dynamic_multiplier, 1) * (1 + COALESCE(tax_percent, 27) / 100))
-                * (1 - IF(on_sale, COALESCE(discount_percent, 0) / 100, 0)) DESC
-            ');
-        }
+
 
         $dishes = $query->get();
+
+        if ($request->sort === 'price_asc') {
+        $dishes = $dishes->sortBy(function ($dish) {
+        return $dish->getFinalPrice();
+        })->values();
+        } elseif ($request->sort === 'price_desc') {
+        $dishes = $dishes->sortByDesc(function ($dish) {
+        return $dish->getFinalPrice();
+        })->values();
+        }
 
         // ➤ Szűrőhöz szükséges értékek
         $categories = Dish::select('category')->distinct()->pluck('category');
@@ -61,41 +61,41 @@ class DishController extends Controller
     /**
      * PDF generálása az étlapból
      */
-    public function generateMenuPdf()
-    {
-        $dishes = Dish::where('active', true)->get();
+    // public function generateMenuPdf()
+    // {
+    //     $dishes = Dish::where('active', true)->get();
 
-        foreach ($dishes as $dish) {
-            $taxRate = ($dish->tax_percent ?? 27) / 100;
+    //     foreach ($dishes as $dish) {
+    //         $taxRate = ($dish->tax_percent ?? 27) / 100;
 
-            $sizeOptions = $dish->size_options ?? [];
-            $defaultSize = isset($sizeOptions['Normál']) ? 'Normál' : array_key_first($sizeOptions);
-            $defaultSizeData = $sizeOptions[$defaultSize] ?? ['multiplier' => 1.0, 'price_modifier' => 0];
+    //         $sizeOptions = $dish->size_options ?? [];
+    //         $defaultSize = isset($sizeOptions['Normál']) ? 'Normál' : array_key_first($sizeOptions);
+    //         $defaultSizeData = $sizeOptions[$defaultSize] ?? ['multiplier' => 1.0, 'price_modifier' => 0];
 
-            $baseNet = $dish->base_price ?? 0;
-            $sizeMultiplier = $defaultSizeData['multiplier'] ?? 1.0;
-            $sizeModifier = $defaultSizeData['price_modifier'] ?? 0;
-            $dynamicMultiplier = $dish->dynamic_multiplier ?? 1;
+    //         $baseNet = $dish->base_price ?? 0;
+    //         $sizeMultiplier = $defaultSizeData['multiplier'] ?? 1.0;
+    //         $sizeModifier = $defaultSizeData['price_modifier'] ?? 0;
+    //         $dynamicMultiplier = $dish->dynamic_multiplier ?? 1;
 
-            $grossBase = ($baseNet * $dynamicMultiplier * $sizeMultiplier + $sizeModifier) * (1 + $taxRate);
-            $discountPercent = $dish->on_sale ? ($dish->discount_percent ?? 0) : 0;
-            $finalGross = $grossBase * (1 - $discountPercent / 100);
+    //         $grossBase = ($baseNet * $dynamicMultiplier * $sizeMultiplier + $sizeModifier) * (1 + $taxRate);
+    //         $discountPercent = $dish->on_sale ? ($dish->discount_percent ?? 0) : 0;
+    //         $finalGross = $grossBase * (1 - $discountPercent / 100);
 
-            // ➤ Árak hozzáadása a modellhez
-            $dish->price_gross = round($finalGross);
-            $dish->price_original = round($grossBase);
-            $dish->price_discount_percent = $discountPercent;
-            $dish->price_size_label = $defaultSize;
-        }
+    //         // ➤ Árak hozzáadása a modellhez
+    //         $dish->price_gross = round($finalGross);
+    //         $dish->price_original = round($grossBase);
+    //         $dish->price_discount_percent = $discountPercent;
+    //         $dish->price_size_label = $defaultSize;
+    //     }
 
-        $categorized = $dishes->filter(fn($dish) => !empty($dish->category) && !empty($dish->type));
-        $uncategorized = $dishes->filter(fn($dish) => empty($dish->category) || empty($dish->type));
+    //     $categorized = $dishes->filter(fn($dish) => !empty($dish->category) && !empty($dish->type));
+    //     $uncategorized = $dishes->filter(fn($dish) => empty($dish->category) || empty($dish->type));
 
-        return Pdf::loadView('pdf.menu', [
-            'categorized' => $categorized,
-            'uncategorized' => $uncategorized,
-        ])->download('etlap.pdf');
-    }
+    //     return Pdf::loadView('pdf.menu', [
+    //         'categorized' => $categorized,
+    //         'uncategorized' => $uncategorized,
+    //     ])->download('etlap.pdf');
+    // }
     /**
      * Új étel létrehozásának űrlapja (csak admin)
      */
@@ -124,9 +124,8 @@ class DishController extends Controller
             'image' => 'nullable|string|max:255',
             'category' => 'nullable|string|max:50',
             'type' => 'nullable|string|max:50',
-            'base_price' => 'required|numeric|min:0',
+            'gross_price' => 'required|numeric|min:0',
             'tax_percent' => 'nullable|numeric|min:0|max:100',
-            'dynamic_multiplier' => 'nullable|numeric|min:0',
             'on_sale' => 'required|boolean',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'stock' => 'required|integer|min:0',
@@ -154,7 +153,6 @@ class DishController extends Controller
                     'unit' => $units[$index] ?? '',
                     'amount' => floatval($amounts[$index] ?? 0),
                     'multiplier' => floatval($multipliers[$index] ?? 1.0),
-                    'price_modifier' => intval($modifiers[$index] ?? 0),
                 ];
             }
         }
@@ -221,9 +219,8 @@ class DishController extends Controller
             'image' => 'nullable|string|max:255',
             'category' => 'nullable|string|max:50',
             'type' => 'nullable|string|max:50',
-            'base_price' => 'required|numeric|min:0',
+            'gross_price' => 'required|numeric|min:0',
             'tax_percent' => 'nullable|numeric|min:0|max:100',
-            'dynamic_multiplier' => 'nullable|numeric|min:0',
             'on_sale' => 'required|boolean',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
             'stock' => 'required|integer|min:0',
@@ -251,7 +248,6 @@ class DishController extends Controller
                     'unit' => $units[$index] ?? '',
                     'amount' => floatval($amounts[$index] ?? 0),
                     'multiplier' => floatval($multipliers[$index] ?? 1.0),
-                    'price_modifier' => intval($modifiers[$index] ?? 0),
                 ];
             }
         }
@@ -325,44 +321,44 @@ class DishController extends Controller
     /**
      * Publikus nézet egy adott ételhez
      */
-    public function show(Dish $dish)
-    {
-        $selectedSize = null;
-        $price = $dish->base_price;
+    // public function show(Dish $dish)
+    // {
+    //     $selectedSize = null;
+    //     $price = $dish->base_price;
 
-        // ➤ Méretprofil alapján árképzés
-        if (!empty($dish->size_options)) {
-            $sizeKeys = array_keys($dish->size_options);
-            $selectedSize = $sizeKeys[0];
-            $data = $dish->size_options[$selectedSize] ?? null;
+    //     // ➤ Méretprofil alapján árképzés
+    //     if (!empty($dish->size_options)) {
+    //         $sizeKeys = array_keys($dish->size_options);
+    //         $selectedSize = $sizeKeys[0];
+    //         $data = $dish->size_options[$selectedSize] ?? null;
 
-            if ($data) {
-                $multiplier = $data['multiplier'] ?? 1.0;
-                $modifier = $data['price_modifier'] ?? 0;
-                $price = ($dish->base_price * $multiplier) + $modifier;
-            }
-        }
+    //         if ($data) {
+    //             $multiplier = $data['multiplier'] ?? 1.0;
+    //             $modifier = $data['price_modifier'] ?? 0;
+    //             $price = ($dish->base_price * $multiplier) + $modifier;
+    //         }
+    //     }
 
-        $tax = $price * ($dish->tax_percent ?? 0) / 100;
-        $priceWithTax = round($price + $tax, 2);
+    //     $tax = $price * ($dish->tax_percent ?? 0) / 100;
+    //     $priceWithTax = round($price + $tax, 2);
 
-        // ➤ JSON→tömb konverziók a nézethez
-        $dish->ingredient_modifiers = is_string($dish->ingredient_modifiers)
-            ? json_decode($dish->ingredient_modifiers, true)
-            : $dish->ingredient_modifiers;
+    //     // ➤ JSON→tömb konverziók a nézethez
+    //     $dish->ingredient_modifiers = is_string($dish->ingredient_modifiers)
+    //         ? json_decode($dish->ingredient_modifiers, true)
+    //         : $dish->ingredient_modifiers;
 
-        $dish->extra_ingredients = is_string($dish->extra_ingredients)
-            ? array_map('trim', explode(',', $dish->extra_ingredients))
-            : $dish->extra_ingredients;
+    //     $dish->extra_ingredients = is_string($dish->extra_ingredients)
+    //         ? array_map('trim', explode(',', $dish->extra_ingredients))
+    //         : $dish->extra_ingredients;
 
-        $dish->base_ingredients = is_string($dish->base_ingredients)
-            ? array_map('trim', explode(',', $dish->base_ingredients))
-            : $dish->base_ingredients;
+    //     $dish->base_ingredients = is_string($dish->base_ingredients)
+    //         ? array_map('trim', explode(',', $dish->base_ingredients))
+    //         : $dish->base_ingredients;
 
-        $dish->allergens = is_string($dish->allergens)
-            ? array_map('trim', explode(',', $dish->allergens))
-            : $dish->allergens;
+    //     $dish->allergens = is_string($dish->allergens)
+    //         ? array_map('trim', explode(',', $dish->allergens))
+    //         : $dish->allergens;
 
-        return view('dishes.show', compact('dish', 'priceWithTax', 'selectedSize'));
-    }
+    //     return view('dishes.show', compact('dish', 'priceWithTax', 'selectedSize'));
+    // }
 }

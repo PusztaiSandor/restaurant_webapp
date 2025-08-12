@@ -40,7 +40,7 @@
             <div class="col-md-6">
                 <label for="category" class="form-label">Kategória:</label>
                 @php
-                    $categories = ['Étel', 'Ital', 'Desszert', 'Csomag', 'Fitness', 'Vegetáriánus', 'Vegan', 'Gluten_free', 'Laktoze_free', 'Nemzetközi'];
+                    $categories = ['Étel', 'Ital', 'Desszert', 'Csomag', 'Fitness', 'Vegetáriánus', 'Nemzetközi'];
                 @endphp
                 <select name="category" id="category" class="form-select" required>
                     <option value="">– Válassz kategóriát –</option>
@@ -52,7 +52,7 @@
             <div class="col-md-6">
                 <label for="type" class="form-label">Típus:</label>
                 @php
-                    $types = ['Leves', 'Egy_tál_étel', 'Húsétel', 'Hamburger', 'Pizza', 'Zöldség', 'Saláta', 'Savanyúság', 'Gyümölcs', 'Köret', 'Előétel', 'Street_food', 'Üdítő', 'Kávé', 'Tea', 'Bor', 'Koktél', 'Gyerekital', 'Sütemény', 'Fagylalt', 'Pohár_krém'];
+                    $types = ['Leves', 'Egytálétel', 'Húsétel', 'Hamburger', 'Pizza', 'Zöldség', 'Saláta', 'Savanyúság', 'Gyümölcs', 'Köret', 'Előétel', 'Street_food', 'Üdítő', 'Kávé', 'Tea', 'Bor', 'Sör', 'Ásványvíz', 'Koktél', 'Gyerekital', 'Sütemény', 'Fagylalt'];
                 @endphp
                 <select name="type" id="type" class="form-select" required>
                     <option value="">– Válassz típust –</option>
@@ -66,7 +66,7 @@
         {{-- ➤ Ár és akció --}}
         <div class="row mb-3">
             <div class="col-md-4">
-                <label for="gross_price" class="form-label">Bruttó ár (Ft):</label>
+                <label for="gross_price" class="form-label">Bruttó alapár (Ft):</label>
                 <input type="number" name="gross_price" id="gross_price" class="form-control" required min="0" step="0.01" value="{{ old('gross_price') }}">
             </div>
             <div class="col-md-4">
@@ -103,7 +103,6 @@
                     <th>Mértékegység</th>
                     <th>Mennyiség</th>
                     <th>Szorzó</th>
-                    <th>Ármódosító (Ft)</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,12 +112,11 @@
                     <td><input type="text" name="size_units[]" class="form-control text-center" placeholder="pl. cm, dl" value="{{ old('size_units.' . $index) }}"></td>
                     <td><input type="number" name="size_amounts[]" class="form-control text-center" min="0" step="0.01" value="{{ old('size_amounts.' . $index) }}"></td>
                     <td><input type="number" name="size_multipliers[]" class="form-control text-center" step="0.01" value="{{ old('size_multipliers.' . $index, 1.00) }}"></td>
-                    <td><input type="number" name="size_modifiers[]" class="form-control text-center" step="1" value="{{ old('size_modifiers.' . $index, 0) }}"></td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        <small class="text-muted">Add meg a méretvariációkat mértékegységgel, szorzóval és ármódosítással.</small>
+        <small class="text-muted">Add meg a méretvariációkat mértékegységgel és szorzóval.</small>
 
         {{-- ➤ Összetevők --}}
         <div class="mb-3 mt-4">
