@@ -5,21 +5,13 @@
     {{-- 🧑‍💼 Oldalcím --}}
     <h2>Profil szerkesztése</h2>
 
-    {{-- ⚠️ Figyelmeztetés ideiglenes jelszóra --}}
-    @if($user->must_change_password)
-        <div class="alert alert-warning">
-            <i class="fa-solid fa-key me-1"></i>
-            A jelszavad ideiglenes. Kérjük, mielőbb állíts be saját jelszót a biztonság érdekében!
-        </div>
-    @endif
-
     {{-- ✅ Sikeres frissítés visszajelzése --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     {{-- 📝 Profiladatok frissítése --}}
-    <form method="POST" action="{{ route('mypage.update') }}">
+    <form method="POST" action="{{ route('profile.update') }}">
         @csrf {{-- 🔐 CSRF token --}}
 
         {{-- 🔤 Név mező --}}
@@ -107,7 +99,7 @@
     @endif
 
     {{-- 🔒 Jelszó frissítő űrlap --}}
-    <form method="POST" action="{{ route('mypage.password') }}">
+    <form method="POST" action="{{ route('profile.password') }}">
         @csrf
 
         {{-- 🔐 Új jelszó --}}

@@ -54,34 +54,46 @@ class UserController extends Controller
     $user->update($validated);
 
     // 🔔 Sikeres frissítés után visszairányítás
-    return redirect()->route('mypage')->with('success', 'Profilod frissítve!');
+    return redirect()->route('profile')->with('success', 'Profilod frissítve!');
 }
 
     /**
-     * 🔐 Jelszó módosítása biztonságosan.
-     * Ellenőrzi a jelszót és annak megerősítését.
-     * A jelszót titkosítva menti.
+     * Jelszómódosítás feldolgozása – titkosítással
      */
     public function updatePassword(Request $request)
-    {
-        // ✅ Validáció: jelszó és megerősítés
-        $request->validate([
-            'password' => 'required|string|min:8|confirmed'
-        ]);
+{
+    $request->validate([
+        'password' => 'required|string|min:8|confirmed'
+    ]);
 
-        $user = Auth::user();
-        $user->password = Hash::make($request->password); // 🔒 Titkosítás
+    $user = Auth::user();
+    $user->password = Hash::make($request->password);
 
-        // 🧹 Ideiglenes jelszó jelzés törlése, ha van
-        if ($user->must_change_password) {
-            $user->must_change_password = false;
-        }
-
-        $user->save();
-
-        // 🔔 Visszajelzés a nézetben
-        return back()->with('success_password', 'Jelszavad sikeresen frissítve!');
+    // 🔓 Ha korábban ideiglenes jelszóval lépett be, megszüntetjük a jelzést
+    if ($user->must_change_password) {
+        $user->must_change_password = false;
     }
+
+    $user->save();
+
+    return back()->with('success_password', 'Jelszavad sikeresen frissítve!');
+}
+
+public function updateCredentials(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email|unique:users,email,' . Auth::user()->users_id . ',users_id',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = Auth::user();
+    $user->email = $request->email;
+    $user->password = Hash::make($request->password);
+    $user->must_change_password = false;
+    $user->save();
+
+    return redirect()->route('home');
+}
 
     /**
      * 📦 Rendelések megjelenítése a felhasználó számára.
@@ -102,6 +114,6 @@ class UserController extends Controller
             ->orderByDesc('created_at') // 🕒 Legfrissebb elöl
             ->get();
 
-        return view('profile.orders', compact('orders'));
+        return view('mypage.orders', compact('orders'));
     }
 }

@@ -57,7 +57,7 @@
 
     {{-- ⚙️ Profil szerkesztése gomb --}}
     <div class="mt-4">
-        <a href="{{ route('mypage.edit') }}" class="btn btn-sm btn-secondary">
+        <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-secondary">
             <i class="fa-solid fa-user-pen me-1"></i> Profil szerkesztése
         </a>
     </div>

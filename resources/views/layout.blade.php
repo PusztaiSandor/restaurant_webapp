@@ -93,7 +93,7 @@
             {{-- 👤 "Profilom" minden szerepkör számára --}}
 @if(in_array(Auth::user()->role, ['admin', 'user', 'courier']))
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('mypage') }}">
+        <a class="nav-link" href="{{ route('profile') }}">
             <i class="fa-solid fa-id-card me-1"></i> Profilom
         </a>
     </li>

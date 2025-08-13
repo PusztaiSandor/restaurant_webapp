@@ -40,16 +40,20 @@ Route::post('/logout', function () {
 })->name('logout');
 
 // 🔸 Profil főoldal – teljes szerkesztés és jelszómódosítás
-Route::get('/mypage', [UserController::class, 'show'])->name('mypage');
+Route::get('/profile', [UserController::class, 'show'])->name('profile');
 
 // 🛠️ Csak e-mail és jelszó frissítése
-Route::get('/mypage/edit', [UserController::class, 'edit'])->name('mypage.edit');
+Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');
+Route::post('/profile/credentials', [UserController::class, 'updateCredentials'])->name('profile.credentials');
 
 // 💾 Profiladatok frissítése
-Route::post('/mypage/update', [UserController::class, 'update'])->name('mypage.update');
+Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
+
+
 
 // 🔐 Jelszómódosítás
-Route::post('/mypage/password', [UserController::class, 'updatePassword'])->name('mypage.password');
+Route::post('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
+
 
 // 📦 Saját rendelések megtekintése
 Route::get('/mypage/orders', [UserController::class, 'orders'])->name('mypage.orders');
