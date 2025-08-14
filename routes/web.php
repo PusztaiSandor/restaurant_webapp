@@ -117,6 +117,18 @@ Route::put('/admin/dishes/{dish}/deactivate', [DishController::class, 'deactivat
 Route::get('/admin/dishes/{dish}/stock', [DishController::class, 'editStock'])->name('admin.dishes.editStock');
 
 // 💾 Készlet frissítése
-Route::put('/admin/dishes/{dish}/stock', [DishController::class, 'updateStock'])->name('admin.dishes.stock.update'); // ✅
+Route::put('/admin/dishes/{dish}/stock', [DishController::class, 'updateStock'])->name('admin.dishes.stock.update');
+
+// 🏠 Étlap
+Route::get('/menu', [DishController::class, 'menu'])->name('menu');
+
+// 📄 Étlap PDF export
+Route::get('/menu/pdf', [DishController::class, 'exportPdf'])->name('menu.pdf');
+
+// 🍽️ Egy adott étel részletei
+Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show');
+
+// 🛒 Gyors kosárba helyezés
+Route::post('/cart/quick-add/{id}', [App\Http\Controllers\CartController::class, 'quickAdd'])->name('cart.quickAdd');
 
 

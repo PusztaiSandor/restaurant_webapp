@@ -64,10 +64,12 @@ class Dish extends Model
     // Méret szorzó
     $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
 
-    // Extra hozzávalók ármódosítói
+    // Extra hozzávalók ármódosítói (csak ha nem üres a tömb)
     $extraCost = 0;
-    foreach ($extras as $extra) {
-        $extraCost += $this->ingredient_modifiers[$extra] ?? 0;
+    if (!empty($extras)) {
+        foreach ($extras as $extra) {
+            $extraCost += $this->ingredient_modifiers[$extra] ?? 0;
+        }
     }
 
     // Akciós ár
@@ -79,4 +81,22 @@ class Dish extends Model
     return round($finalPrice, 0);
 }
 
+
+/**
+ * 💰 Eredeti ár kiszámítása méret alapján (extrák nélkül, kedvezmény nélkül)
+ */
+public function getOriginalPrice(string $sizeLabel = 'Normál'): float
+{
+    $basePrice = $this->gross_price;
+
+    // Méret szorzó
+    $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
+
+    // Eredeti ár (kedvezmény nélkül, extrák nélkül)
+    $originalPrice = $basePrice * $multiplier;
+
+    return round($originalPrice, 0);
 }
+
+}
+

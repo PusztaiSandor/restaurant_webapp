@@ -37,7 +37,7 @@
     <ul class="navbar-nav me-auto">
         {{-- 🍽️ Étlap link --}}
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('home') }}">
+            <a class="nav-link" href="{{ route('menu') }}">
                 <i class="fa-solid fa-utensils me-1"></i> Étlap
             </a>
         </li>
