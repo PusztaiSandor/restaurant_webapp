@@ -81,6 +81,35 @@ class Dish extends Model
     return round($finalPrice, 0);
 }
 
+/**
+ * 💰 Méretarányos ár kiszámítása extrák nélkül, kedvezménnyel
+ *
+ * @param string $sizeLabel - Méret neve (pl. "Normál", "Nagy")
+ * @return float - Kedvezményes ár az adott méretre
+ */
+
+public function getDiscountedSizePrice(string $sizeLabel = 'Normál'): float
+{
+    // Alap bruttó ár az adatbázisból
+    $basePrice = $this->gross_price;
+
+    // Alapértelmezett szorzó
+    $multiplier = 1.0;
+
+    // Ha van size_options tömb és benne a keresett méret, akkor használjuk annak szorzóját
+    if (is_array($this->size_options) && isset($this->size_options[$sizeLabel]['multiplier'])) {
+        $multiplier = $this->size_options[$sizeLabel]['multiplier'];
+    }
+
+    // Kedvezmény faktor kiszámítása (pl. 10% → 0.9)
+    $discountFactor = $this->on_sale ? (1 - ($this->discount_percent / 100)) : 1;
+
+    // Végső ár = (alapár × szorzó) × kedvezmény
+    $discountedSizePrice = ($basePrice * $multiplier) * $discountFactor;
+
+    return round($discountedSizePrice, 0); // Kerekítés egész Ft-ra
+}
+
 
 /**
  * 💰 Eredeti ár kiszámítása méret alapján (extrák nélkül, kedvezmény nélkül)

@@ -137,6 +137,19 @@
     </a>
 </li>
 
+{{-- 💰 Admin: Globális díjak --}}
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('global-charges.index') }}">
+        <i class="fa-solid fa-coins me-1"></i> Admin: Globális díjak
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('global-charges.create') }}">
+        <i class="fa-solid fa-plus me-1"></i> Admin: Új díj
+    </a>
+</li>
+
 @endif
 
             {{-- 🔓 Kilépés gomb (POST metódus) --}}

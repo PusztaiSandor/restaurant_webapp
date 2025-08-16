@@ -65,18 +65,27 @@
     $defaultSize = isset($sizeOptions['Normál']) ? 'Normál' : array_key_first($sizeOptions);
 
     // Végső ár (extrák nélkül, kedvezménnyel)
-    $finalPrice = $dish->getFinalPrice($defaultSize);
+    $finalPrice = $dish->getDiscountedSizePrice($defaultSize);
 
     // 🔧 Méretarányos árak előkészítése JS-hez (extrák nélkül)
     $priceMap = [];
     foreach ($sizeOptions as $label => $option) {
-        $priceMap[$label] = $dish->getFinalPrice($label);
+        $priceMap[$label] = $dish->getDiscountedSizePrice($label);
     }
 @endphp
 
 {{-- 💾 Méretarányos árak JS-hez --}}
 <script>
     window.priceMap_{{ $dish->dishes_id }} = @json($priceMap);
+    window.sizeOptions_{{ $dish->dishes_id }} = @json($dish->size_options);
+</script>
+
+<script>
+window.dishData_{{ $dish->dishes_id }} = {
+    basePrice: {{ $dish->gross_price }},
+    discountPercent: {{ $dish->on_sale ? $dish->discount_percent : 0 }},
+    sizeOptions: @json($dish->size_options)
+};
 </script>
 
             <div class="col-md-4 mb-4">
@@ -92,27 +101,32 @@
                         {{-- 💰 Ár megjelenítése --}}
 <div class="mb-3">
     @php
-        $originalPrice = $dish->getOriginalPrice($defaultSize);
-        $finalPrice = $dish->getFinalPrice($defaultSize);
-    @endphp
+    // A lenyílóban használt alapértelmezett méret
+    $defaultSize = isset($dish->size_options['Normál']) ? 'Normál' : array_key_first($dish->size_options);
+    $finalPrice = $dish->getDiscountedSizePrice($defaultSize);
+    $originalPrice = $dish->getOriginalPrice($defaultSize);
+@endphp
 
     <strong>Ár:</strong><br>
-    <span class="fw-bold text-dark">{{ number_format($finalPrice, 0, ',', ' ') }} Ft</span><br>
 
+<span id="price_{{ $dish->dishes_id }}" class="fw-bold text-dark">
+    {{ number_format($finalPrice, 0, ',', ' ') }} Ft
+</span><br>
+
+    {{-- 🎯 Kedvezményes ár megjelenítése, ha van akció --}}
     @if ($dish->on_sale && $dish->discount_percent > 0)
-        <small class="text-muted d-block mt-1">
-            Eredeti ár: <del>{{ number_format($originalPrice, 0, ',', ' ') }} Ft</del>
-            • Kedvezmény: –{{ $dish->discount_percent }}%
-        </small>
-    @endif
+    <small id="discount_{{ $dish->dishes_id }}" class="text-muted d-block mt-1">
+        Eredeti ár: <del id="original_{{ $dish->dishes_id }}">
+            {{ number_format($originalPrice, 0, ',', ' ') }} Ft
+        </del> • Kedvezmény: –{{ $dish->discount_percent }}%
+    </small>
+@endif
 </div>
 
                         <p class="card-text"><strong>Elérhető:</strong> {{ $dish->stock }} db</p>
                         <div class="mt-auto">
                             @if ($dish->stock > 0)
-                                <a href="{{ route('dishes.show', $dish) }}" class="btn btn-sm btn-success w-100 mb-2">
-                                    Részletek és rendelés
-                                </a>
+                                <a href="{{ route('dishes.show', ['dish' => $dish->dishes_id]) }}" class="btn btn-sm btn-success w-100 mb-2">Részletek és rendelés</a>
 
                                 <form method="POST" action="{{ route('cart.quickAdd', $dish->dishes_id) }}">
                                     @csrf
@@ -121,15 +135,15 @@
                                         <div class="mb-2">
                                             <label for="size_{{ $dish->dishes_id }}" class="form-label small">Méret:</label>
                                             <select name="size" id="size_{{ $dish->dishes_id }}" class="form-select form-select-sm">
-                                                @foreach ($sizeOptions as $label => $option)
-                                                    @php
-                                                        $price = $dish->getFinalPrice($label);
-                                                    @endphp
-                                                    <option value="{{ $label }}" {{ $label === $defaultSize ? 'selected' : '' }}>
-                                                        {{ $label }} ({{ number_format($price, 0, ',', ' ') }} Ft)
-                                                    </option>
-                                                @endforeach
-                                            </select>
+    @foreach ($sizeOptions as $label => $option)
+        @php
+            $price = $dish->getDiscountedSizePrice($label);
+        @endphp
+        <option value="{{ $label }}" {{ $label === $defaultSize ? 'selected' : '' }}>
+            {{ $label }} ({{ number_format($price, 0, ',', ' ') }} Ft)
+        </option>
+    @endforeach
+</select>
                                         </div>
                                     @endif
 
@@ -157,24 +171,50 @@
 {{-- ⚙️ JavaScript: dinamikus árfrissítés méretváltáskor --}}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    @foreach($dishes as $dish)
-        @if (!empty($dish->size_options))
-            const select = document.getElementById('size_{{ $dish->dishes_id }}');
-            const priceDisplay = document.querySelector('#dish_{{ $dish->dishes_id }} .fw-bold');
+    const formatPrice = val => Math.round(val).toLocaleString('hu-HU') + ' Ft';
 
-            if (select && priceDisplay) {
-                select.addEventListener('change', () => {
-                    const selected = select.value;
-                    const prices = window['priceMap_{{ $dish->dishes_id }}'];
-                    const newPrice = prices[selected] ?? prices['Normál'];
-                    priceDisplay.textContent = newPrice.toLocaleString('hu-HU') + ' Ft';
-                }
-                );
+    @foreach($dishes as $dish)
+        const dishId = {{ $dish->dishes_id }};
+        const select = document.getElementById(`size_${dishId}`);
+        const priceDisplay = document.getElementById(`price_${dishId}`);
+        const originalDisplay = document.getElementById(`original_${dishId}`);
+        const discountDisplay = document.getElementById(`discount_${dishId}`);
+        const data = window[`dishData_${dishId}`];
+
+        const calculatePrice = () => {
+            const selectedSize = select?.value || 'Normál';
+            const sizeData = data.sizeOptions[selectedSize] || { multiplier: 1.0 };
+
+            const multiplier = parseFloat(sizeData.multiplier || 1.0);
+
+            const basePrice = parseFloat(data.basePrice);
+            const discountPercent = parseFloat(data.discountPercent);
+
+            // 💰 Alapár + szorzó + módosító
+            let gross = basePrice * multiplier;
+
+            // 🎯 Kedvezmény levonása
+            let discount = discountPercent > 0 ? gross * (discountPercent / 100) : 0;
+            let finalPrice = gross - discount;
+
+            // 💡 Ár megjelenítése
+            if (priceDisplay) priceDisplay.textContent = formatPrice(finalPrice);
+
+            // 🧾 Eredeti ár megjelenítése, ha van kedvezmény
+            if (discountPercent > 0 && originalDisplay && discountDisplay) {
+                originalDisplay.textContent = formatPrice(gross);
+                discountDisplay.innerHTML = `Eredeti ár: <del id="original_${dishId}">${formatPrice(gross)}</del> • Kedvezmény: –${discountPercent}%`;
+            } else if (discountDisplay) {
+                discountDisplay.textContent = '';
             }
-        @endif
+        };
+
+        select?.addEventListener('change', calculatePrice);
+        calculatePrice();
     @endforeach
 });
 </script>
+
 @endsection
 
 

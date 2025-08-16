@@ -23,40 +23,49 @@ class DishController extends Controller
      * Publikus étlap megjelenítése szűrőkkel
      */
     public function menu(Request $request)
-    {
-        $query = Dish::query()->where('active', true);
+{
+    $query = Dish::query()->where('active', true);
 
-        // ➤ Szűrés kategória szerint
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        // ➤ Szűrés típus szerint
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
-        // ➤ Ár szerinti rendezés (bruttó, kedvezményes ár alapján)
-
-
-        $dishes = $query->get();
-
-        if ($request->sort === 'price_asc') {
-        $dishes = $dishes->sortBy(function ($dish) {
-        return $dish->getFinalPrice();
-        })->values();
-        } elseif ($request->sort === 'price_desc') {
-        $dishes = $dishes->sortByDesc(function ($dish) {
-        return $dish->getFinalPrice();
-        })->values();
-        }
-
-        // ➤ Szűrőhöz szükséges értékek
-        $categories = Dish::select('category')->distinct()->pluck('category');
-        $types = Dish::select('type')->distinct()->pluck('type');
-
-        return view('dishes.index', compact('dishes', 'categories', 'types'));
+    // ➤ Szűrés kategória szerint
+    if ($request->filled('category')) {
+        $query->where('category', $request->category);
     }
+
+    // ➤ Szűrés típus szerint
+    if ($request->filled('type')) {
+        $query->where('type', $request->type);
+    }
+
+    // 📏 Kiválasztott méret lekérése (alapértelmezett: 'Normál')
+    $selectedSize = $request->input('size', 'Normál');
+
+    // ➤ Ételek lekérése
+    $dishes = $query->get();
+
+    // ➤ Ár szerinti rendezés (mindig a „Normál” méret alapján)
+if ($request->sort === 'price_asc') {
+    $dishes = $dishes->sortBy(function ($dish) {
+        return $dish->getDiscountedSizePrice('Normál');
+    })->values();
+} elseif ($request->sort === 'price_desc') {
+    $dishes = $dishes->sortByDesc(function ($dish) {
+        return $dish->getDiscountedSizePrice('Normál');
+    })->values();
+}
+
+    // ➤ Szűrőhöz szükséges értékek
+    $categories = Dish::select('category')->distinct()->pluck('category');
+    $types = Dish::select('type')->distinct()->pluck('type');
+
+    // ➤ Nézet visszaadása, a kiválasztott méretet is átadjuk
+    return view('dishes.index', compact('dishes', 'categories', 'types', 'selectedSize'));
+}
+
+public function show($id)
+{
+    $dish = Dish::findOrFail($id);
+    return view('dishes.show', compact('dish'));
+}
 
     /**
      * PDF generálása az étlapból

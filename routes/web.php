@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController; // 🧭 Felhasználói controller importálása
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DishController;
+use App\Http\Controllers\GlobalChargeController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -130,5 +131,17 @@ Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show
 
 // 🛒 Gyors kosárba helyezés
 Route::post('/cart/quick-add/{id}', [App\Http\Controllers\CartController::class, 'quickAdd'])->name('cart.quickAdd');
+
+// Globális díjak admin útvonalai
+Route::get('admin/global-charges', [GlobalChargeController::class, 'index'])->name('global-charges.index');
+Route::get('admin/global-charges/create', [GlobalChargeController::class, 'create'])->name('global-charges.create');
+Route::post('admin/global-charges', [GlobalChargeController::class, 'store'])->name('global-charges.store');
+Route::get('admin/global-charges/{id}/edit', [GlobalChargeController::class, 'edit'])->name('global-charges.edit');
+Route::put('admin/global-charges/{id}', [GlobalChargeController::class, 'update'])->name('global-charges.update');
+Route::delete('admin/global-charges/{id}', [GlobalChargeController::class, 'destroy'])->name('global-charges.destroy');
+
+
+
+Route::post('/order/add/{dish}', [OrderController::class, 'add'])->name('order.add');
 
 
