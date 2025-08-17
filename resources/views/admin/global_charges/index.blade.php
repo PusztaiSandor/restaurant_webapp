@@ -20,6 +20,7 @@
                 <th>Érték</th>
                 <th>Százalékos?</th>
                 <th>Aktív?</th>
+                <th>Választható?</th>
                 <th>Leírás</th>
                 <th>Műveletek</th>
             </tr>
@@ -32,6 +33,7 @@
                     <td>{{ $charge->value }} {{ $charge->is_percentage ? '%' : 'Ft' }}</td>
                     <td>{{ $charge->is_percentage ? 'Igen' : 'Nem' }}</td>
                     <td>{{ $charge->is_active ? 'Igen' : 'Nem' }}</td>
+                    <td>{{ $charge->is_optional ? 'Igen' : 'Nem' }}</td>
                     <td>{{ $charge->description }}</td>
                     <td class="d-flex gap-2">
                         <a href="{{ route('global-charges.edit', $charge->global_charges_id) }}" class="btn btn-sm btn-warning">

@@ -45,6 +45,12 @@
             <label for="is_active" class="form-check-label">Aktív</label>
         </div>
 
+        <div class="form-check mb-3">
+            <input type="hidden" name="is_optional" value="0">
+            <input type="checkbox" name="is_optional" id="is_optional" value="1" class="form-check-input">
+            <label for="is_optional" class="form-check-label">Választható</label>
+        </div>
+
         <div class="mb-3">
             <label for="description" class="form-label">Leírás</label>
             <textarea name="description" id="description" class="form-control" rows="3"></textarea>

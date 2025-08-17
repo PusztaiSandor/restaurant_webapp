@@ -99,6 +99,22 @@
     </li>
 @endif
 
+{{-- 🛒 Kosár --}}
+@php
+    $cart = session()->get('cart', []);
+    $cartCount = array_sum(array_column($cart, 'quantity'));
+@endphp
+<li class="nav-item position-relative">
+    <a class="nav-link" href="{{ route('cart.index') }}">
+        <i class="fa-solid fa-cart-shopping me-1"></i> Kosár
+        @if($cartCount > 0)
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ $cartCount }}
+            </span>
+        @endif
+    </a>
+</li>
+
 {{-- 🧾 "Rendeléseim" csak "user" szerepkörre --}}
 @if(Auth::user()->role === 'user')
     <li class="nav-item">

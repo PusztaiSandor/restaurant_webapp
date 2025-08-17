@@ -34,22 +34,6 @@
             {{-- 💰 Jobb oldal --}}
             <div class="col-md-7">
                 {{-- 📐 Méretválasztó --}}
-                {{-- @if($dish->size_options)
-    @php $sizes = $dish->size_options; @endphp
-    <div class="mb-3">
-        <label for="size" class="form-label">Méret:</label>
-        <select name="size" id="size" class="form-select">
-            @foreach($sizes as $label => $option)
-                <option value="{{ $label }}">
-                    {{ $label }} (
-                    {{ $option['amount'] ?? '' }}{{ $option['unit'] ?? '' }},
-                    szorzó: ×{{ $option['multiplier'] ?? 1.0 }}
-                    )
-                </option>
-            @endforeach
-        </select>
-    </div>
-@endif --}}
 
 @if($dish->size_options)
     @php $sizes = $dish->size_options; @endphp

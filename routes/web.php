@@ -7,6 +7,8 @@ use App\Http\Controllers\UserController; // 🧭 Felhasználói controller impor
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DishController;
 use App\Http\Controllers\GlobalChargeController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -54,10 +56,6 @@ Route::post('/profile/update', [UserController::class, 'update'])->name('profile
 
 // 🔐 Jelszómódosítás
 Route::post('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
-
-
-// 📦 Saját rendelések megtekintése
-Route::get('/mypage/orders', [UserController::class, 'orders'])->name('mypage.orders');
 
 // 🛡️ Admin felhasználókezelés – csak admin jogosultsággal elérhető
 
@@ -140,8 +138,23 @@ Route::get('admin/global-charges/{id}/edit', [GlobalChargeController::class, 'ed
 Route::put('admin/global-charges/{id}', [GlobalChargeController::class, 'update'])->name('global-charges.update');
 Route::delete('admin/global-charges/{id}', [GlobalChargeController::class, 'destroy'])->name('global-charges.destroy');
 
+Route::get('orders/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/quick-add/{dish}', [CartController::class, 'quickAdd'])->name('cart.quickAdd');
+
+Route::post('/order/add/{dish}', [CartController::class, 'add'])->name('order.add');
+
+Route::post('/cart/increase/{key}', [CartController::class, 'increase'])->name('order.increase');
+Route::post('/cart/decrease/{key}', [CartController::class, 'decrease'])->name('order.decrease');
+Route::post('/cart/remove/{key}', [CartController::class, 'remove'])->name('order.remove');
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/order/clear', [CartController::class, 'clear'])->name('order.clear');
+
+Route::get('/checkout', [OrderController::class, 'checkout'])->name('order.checkout');
+Route::post('/submit-order', [OrderController::class, 'submit'])->name('order.submit');
 
 
-Route::post('/order/add/{dish}', [OrderController::class, 'add'])->name('order.add');
+
+// 📦 Saját rendelések megtekintése
+Route::get('/mypage/orders', [UserController::class, 'orders'])->name('mypage.orders');
 
 

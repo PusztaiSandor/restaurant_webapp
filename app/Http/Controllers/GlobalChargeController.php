@@ -29,6 +29,7 @@ class GlobalChargeController extends Controller
             'value' => 'required|numeric|min:0',
             'is_percentage' => 'required|boolean',
             'is_active' => 'required|boolean',
+            'is_optional' => 'required|boolean',
             'description' => 'nullable|string',
         ]);
 
@@ -53,8 +54,10 @@ class GlobalChargeController extends Controller
             'value' => 'required|numeric|min:0',
             'is_percentage' => 'required|boolean',
             'is_active' => 'required|boolean',
+            'is_optional' => 'required|boolean',
             'description' => 'nullable|string',
         ]);
+
 
         $charge = GlobalCharge::findOrFail($id);
         $charge->update($validated);
