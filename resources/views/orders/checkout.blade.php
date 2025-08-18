@@ -9,19 +9,17 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    {{-- 🧍 Felhasználói adatok --}}
+    @guest
+    <div class="alert alert-warning">
+        A rendelés leadásához <a href="{{ route('login') }}">jelentkezz be</a> vagy <a href="{{ route('register') }}">regisztrálj</a>.
+    </div>
+    @endguest
+
+
     <form method="POST" action="{{ route('order.submit') }}">
         @csrf
 
-        <div class="mb-3">
-            <label for="name" class="form-label">Név</label>
-            <input type="text" name="name" id="name" class="form-control" required>
-        </div>
 
-        <div class="mb-3">
-            <label for="phone" class="form-label">Telefonszám</label>
-            <input type="text" name="phone" id="phone" class="form-control" required>
-        </div>
 
         {{-- 🚚 Átvételi mód --}}
         <div class="mb-3">
@@ -63,6 +61,12 @@
     $cutleryRequested = old('cutlery_requested');
     $baseTotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
 @endphp
+
+{{-- 🍽️ Ételek ára összesen --}}
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <strong>Ételek ára összesen:</strong>
+    <span>{{ number_format($baseTotal, 0, ',', ' ') }} Ft</span>
+</div>
 
 @if (!empty($charges))
     <h6 class="mb-2">További díjak:</h6>
@@ -112,8 +116,12 @@
 
         {{-- ✅ Megrendelés gomb --}}
         <div class="text-end">
-            <button type="submit" class="btn btn-success">Megrendelés elküldése</button>
-        </div>
+    @auth
+        <button type="submit" class="btn btn-success">Megrendelés elküldése</button>
+    @else
+        <button type="button" class="btn btn-secondary" disabled>Megrendelés elküldése (bejelentkezés szükséges)</button>
+    @endauth
+</div>
     </form>
 </div>
 <script>

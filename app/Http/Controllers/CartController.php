@@ -46,7 +46,7 @@ class CartController extends Controller
         $cart[$key]['quantity'] += $quantity;
     } else {
         $cart[$key] = [
-            'dish_id' => $dish->id,
+            'dishes_id' => $dish->dishes_id,
             'name' => $dish->name,
             'size' => $size,
             'quantity' => $quantity,
@@ -151,7 +151,7 @@ public function add(Request $request, $dishId)
 
     // 🔑 Egyedi kulcs generálása
     $keyData = [
-        'id' => $dish->dishes_id,
+        'dishes_id' => $dish->dishes_id,
         'size' => $size,
         'extra' => $extraIngredients,
         'excluded' => $excludedIngredients,
@@ -164,11 +164,13 @@ public function add(Request $request, $dishId)
         $cart[$key]['quantity'] += $quantity;
     } else {
         $cart[$key] = [
-            'dish_id' => $dish->dishes_id,
+           'dishes_id' => $dish->dishes_id,
             'name' => $dish->name,
             'size' => $size,
             'extra_ingredients' => $extraIngredients,
             'excluded_ingredients' => $excludedIngredients,
+            'ingredient_price' => round($extraTotal, 2),
+            'exclusion_discount' => round($excludedTotal, 2),
             'quantity' => $quantity,
             'price' => $finalPrice,
         ];

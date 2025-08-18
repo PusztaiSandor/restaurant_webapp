@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\GlobalCharge;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -42,7 +44,7 @@ class OrderController extends Controller
             'delivery_fee' => $deliveryMethod === 'delivery',
             'service_fee' => $deliveryMethod === 'dine-in',
             'order_discount' => true,
-            'cutlery_fee' => request()->boolean('cutlery_requested'),
+            'cutlery' => request()->boolean('cutlery_requested'),
             default => false,
         };
 
@@ -61,6 +63,9 @@ class OrderController extends Controller
 
     $totalWithCharges = max(0, $totalWithCharges);
 
+    // 💾 Díjak mentése a session-be a submit() metódus számára
+        session()->put('charges', $charges->toArray());
+
     return view('orders.checkout', [
         'cart' => $cart,
         'charges' => $charges,
@@ -73,49 +78,126 @@ class OrderController extends Controller
      * Rendelés mentése
      */
     public function submit(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:50',
-            'delivery_method' => 'required|in:delivery,dine-in,pickup',
-        ]);
+{
 
-        $cart = session()->get('cart', []);
-        if (empty($cart)) {
-            return redirect()->route('cart.index')->with('error', 'A kosár üres.');
-        }
-
-        // Rendelés létrehozása
-        $order = new Order();
-        $order->customer_name = $request->name;
-        $order->phone = $request->phone;
-        $order->delivery_method = $request->delivery_method;
-        $order->status = 'pending';
-        $order->created_at = Carbon::now();
-        $order->save();
-
-        // Tételek mentése
-        foreach ($cart as $item) {
-            $orderItem = new OrderItem();
-            $orderItem->orders_id = $order->orders_id;
-            $orderItem->dishes_id = $item['dish_id'];
-            $orderItem->size = $item['size'];
-            $orderItem->size_multiplier = 1.00; // opcionálisan számítható
-            $orderItem->quantity = $item['quantity'];
-            $orderItem->extra_ingredients = json_encode($item['extra_ingredients']);
-            $orderItem->excluded_ingredients = json_encode($item['excluded_ingredients']);
-            $orderItem->ingredient_price = 0.00; // opcionálisan számítható
-            $orderItem->exclusion_discount = 0.00;
-            $orderItem->final_unit_price = $item['price'];
-            $orderItem->tax_amount = 0.00;
-            $orderItem->subtotal = $item['price'] * $item['quantity'];
-            $orderItem->created_at = Carbon::now();
-            $orderItem->save();
-        }
-
-        // Kosár ürítése
-        session()->forget('cart');
-
-        return redirect()->route('menu')->with('success', 'A rendelés sikeresen elküldve!');
+    // 🔐 Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+    if (!Auth::check()) {
+        return redirect()->route('login')->with('error', 'A rendeléshez be kell jelentkezni.');
     }
+
+    // 🚚 Szállítási mód validálása
+    $request->validate([
+        'delivery_method' => 'required|in:delivery,pickup,dine-in',
+    ]);
+
+    // 👤 Felhasználói azonosító lekérése
+    $userId = Auth::id();
+
+    // 🛒 Kosár és extra díjak lekérése a sessionből
+    $cart = session('cart', []);
+    $charges = session('charges', []);
+
+    // 💰 Ételek összesített ára (bruttó)
+    $subtotalSum = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
+
+    // 📦 Alapértelmezett díjak inicializálása
+    $deliveryFee = 0;
+    $serviceFee = 0;
+    $cutleryFee = 0;
+    $discount = 0;
+
+    // ➕ Extra díjak feldolgozása a megfelelő szállítási mód alapján
+    foreach ($charges as $charge) {
+        if ($charge['delivery_method'] !== $request->delivery_method) continue;
+
+        // Százalékos vagy fix összegű díj kiszámítása
+        $amount = $charge['is_percentage']
+            ? round($subtotalSum * ($charge['value'] / 100), 2)
+            : $charge['value'];
+
+        // Díjtípus alapján hozzárendelés
+        switch ($charge['charge_type']) {
+            case 'delivery_fee':
+                $deliveryFee += $amount;
+                break;
+            case 'service_fee':
+                $serviceFee += $amount;
+                break;
+            case 'cutlery':
+                if ($request->has('cutlery_requested')) {
+                    $cutleryFee += $amount;
+                }
+                break;
+            case 'order_discount':
+                $discount += $amount;
+                break;
+        }
+    }
+
+    // 📉 Nettó összeg kiszámítása (ÁFA nélkül)
+    $subtotalNet = round($subtotalSum / 1.27, 2); // 27% ÁFA feltételezve
+    $totalTax = $subtotalSum - $subtotalNet;
+
+    // 🧾 Teljes fizetendő összeg kiszámítása
+    $totalPrice = $subtotalSum + $deliveryFee + $serviceFee + $cutleryFee - $discount;
+
+    // 📝 Új rendelés létrehozása és mentése
+    $order = new Order();
+    $order->users_id = $userId;
+    $order->courier_id = null;
+    $order->status = 'uj';
+    $order->payment_method = 'bankkartya';
+    $order->delivery_method = $request->delivery_method;
+    $order->is_paid = false;
+    $order->payment_time = null;
+    $order->delivery_fee = $deliveryFee;
+    $order->service_fee = $serviceFee;
+    $order->cutlery_fee = $cutleryFee;
+    $order->discount = $discount;
+    $order->subtotal_net = $subtotalNet;
+    $order->subtotal_sum = $subtotalSum;
+    $order->total_tax = $totalTax;
+    $order->total_price = $totalPrice;
+    $order->rating_star = null;
+    $order->rating_comment = null;
+    $order->save();
+
+    // 🍽 Rendeléshez tartozó tételek mentése
+    foreach ($cart as $item) {
+        $orderItem = new OrderItem();
+        $orderItem->orders_id = $order->orders_id;
+        $orderItem->dishes_id = $item['dishes_id'];
+        $orderItem->size = $item['size'] ?? 'Normál';
+        $orderItem->size_multiplier = $item['size_multiplier'] ?? 1.00;
+        $orderItem->quantity = $item['quantity'];
+
+        // 🧂 Extra és kizárt hozzávalók mentése
+        $orderItem->extra_ingredients = $item['extra_ingredients'] ?? null;
+        $orderItem->excluded_ingredients = $item['excluded_ingredients'] ?? null;
+
+        // 💸 Extra hozzávalók ára és kizárások kedvezménye a kosárból
+        $orderItem->ingredient_price = round($item['ingredient_price'] ?? 0.00, 2);
+        $orderItem->exclusion_discount = round($item['exclusion_discount'] ?? 0.00, 2);
+
+        // 🧮 Egységár kiszámítása (bruttó)
+        $basePrice = $item['price']; // már tartalmazza az extrákat és kizárásokat
+        $multiplier = $item['size_multiplier'] ?? 1.00;
+        $finalUnitPrice = round($basePrice * $multiplier, 2);
+        $orderItem->final_unit_price = $finalUnitPrice;
+
+        // 📊 ÁFA lekérése a dishes táblából
+        $dish = \App\Models\Dish::find($item['dishes_id']);
+        $taxRate = ($dish->tax_percent ?? 27) / 100;
+        $orderItem->tax_amount = round($finalUnitPrice * $taxRate, 2);
+
+        // 💵 Végösszeg kiszámítása (ÁFA már benne van az egységárban)
+        $orderItem->subtotal = round($finalUnitPrice * $item['quantity'], 2);
+
+        $orderItem->save();
+    }
+
+    // 🧹 Kosár ürítése és visszairányítás
+    session()->forget('cart');
+    return redirect()->route('home')->with('success', 'A rendelés sikeresen elküldve!');
+}
 }
