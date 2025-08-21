@@ -122,6 +122,8 @@ public function add(Request $request, $dishId)
     if (!isset($sizeOptions[$size])) {
         $size = array_key_first($sizeOptions);
     }
+    // 🔢 Méret szorzó kiszámítása
+$sizeMultiplier = $sizeOptions[$size]['multiplier'] ?? 1.00;
 
     // 🔢 Mennyiség
     $quantity = max(1, (int) $request->input('quantity', 1));
@@ -167,6 +169,7 @@ public function add(Request $request, $dishId)
            'dishes_id' => $dish->dishes_id,
             'name' => $dish->name,
             'size' => $size,
+            'size_multiplier' => $sizeMultiplier,
             'extra_ingredients' => $extraIngredients,
             'excluded_ingredients' => $excludedIngredients,
             'ingredient_price' => round($extraTotal, 2),
@@ -178,7 +181,8 @@ public function add(Request $request, $dishId)
 
     session()->put('cart', $cart);
 
-    return redirect()->route('cart.index')->with('success', 'A termék sikeresen a kosárba került!');
+    // ✅ Visszairányítás sikerüzenettel
+    return redirect()->route('menu')->with('success', 'A termék sikeresen a kosárba került!');
 }
 
 }

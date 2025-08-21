@@ -3,12 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController; // 🧭 Felhasználói controller importálása
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DishController;
 use App\Http\Controllers\GlobalChargeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\CourierOrderController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -152,9 +154,22 @@ Route::post('/order/clear', [CartController::class, 'clear'])->name('order.clear
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('order.checkout');
 Route::post('/submit-order', [OrderController::class, 'submit'])->name('order.submit');
 
-
-
 // 📦 Saját rendelések megtekintése
-Route::get('/mypage/orders', [UserController::class, 'orders'])->name('mypage.orders');
+Route::get('/orders/myorders', [App\Http\Controllers\OrderController::class, 'myOrders'])->name('orders.myorders');
+
+Route::post('/orders/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('order.cancel');
+
+Route::get('/admin/orders', [App\Http\Controllers\AdminOrderController::class, 'index'])->name('admin.orders.index');
+Route::post('/admin/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.updatestatus');
+
+Route::post('/admin/orders/{order}/assign-courier', [AdminOrderController::class, 'assignCourier'])->name('admin.orders.assignCourier');
+
+// Futár rendelései listázása
+Route::get('/courier/orders', [CourierOrderController::class, 'index'])->name('courier.orders.index');
+
+// Futár státuszváltása „kiszállítva” értékre
+Route::post('/courier/orders/{order}/delivered', [CourierOrderController::class, 'markDelivered'])->name('courier.orders.markDelivered');
+
+
 
 

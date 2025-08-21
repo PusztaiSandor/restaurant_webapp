@@ -115,11 +115,22 @@
     </a>
 </li>
 
-{{-- 🧾 "Rendeléseim" csak "user" szerepkörre --}}
-@if(Auth::user()->role === 'user')
+{{-- 🧾 "Rendeléseim" csak bejelentkezett "user" szerepkörű felhasználónak --}}
+@auth
+    @if(Auth::user()->role === 'user')
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('orders.myorders') }}">
+                <i class="fa-solid fa-receipt me-1"></i> Rendeléseim
+            </a>
+        </li>
+    @endif
+@endauth
+
+{{-- 🚚 Futár: Saját kiszállítási rendeléseim --}}
+@if(Auth::user()->role === 'courier')
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('mypage.orders') }}">
-            <i class="fa-solid fa-receipt me-1"></i> Rendeléseim
+        <a class="nav-link" href="{{ route('courier.orders.index') }}">
+            <i class="fa-solid fa-truck me-1"></i> Futár: Rendeléseim
         </a>
     </li>
 @endif
@@ -150,6 +161,13 @@
 <li class="nav-item">
     <a class="nav-link" href="{{ route('admin.dishes.create') }}">
         <i class="fa-solid fa-plus me-1"></i> Admin: Új étel
+    </a>
+</li>
+
+{{-- 📦 Admin: Rendelések --}}
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('admin.orders.index') }}">
+        <i class="fa-solid fa-clipboard-list me-1"></i> Admin: Rendelések
     </a>
 </li>
 

@@ -182,7 +182,11 @@ class OrderController extends Controller
         // 🧮 Egységár kiszámítása (bruttó)
         $basePrice = $item['price']; // már tartalmazza az extrákat és kizárásokat
         $multiplier = $item['size_multiplier'] ?? 1.00;
-        $finalUnitPrice = round($basePrice * $multiplier, 2);
+
+        // $finalUnitPrice = round($basePrice * $multiplier, 2);
+        $finalUnitPrice = round($item['price'], 2);
+
+
         $orderItem->final_unit_price = $finalUnitPrice;
 
         // 📊 ÁFA lekérése a dishes táblából
@@ -200,4 +204,37 @@ class OrderController extends Controller
     session()->forget('cart');
     return redirect()->route('home')->with('success', 'A rendelés sikeresen elküldve!');
 }
+
+public function myOrders()
+{
+    $userId = Auth::id();
+    $orders = Order::with('items.dish')
+        ->where('users_id', $userId)
+        ->orderByDesc('created_at')
+        ->get();
+
+    return view('orders.myorders', compact('orders'));
+}
+
+
+
+public function cancel($orderId)
+{
+    $order = Order::findOrFail($orderId);
+
+    if ($order->users_id !== Auth::id()) {
+        return back()->with('error', 'Nem jogosult a rendelés törlésére.');
+    }
+
+    if ($order->status !== 'uj') {
+        return back()->with('error', 'Csak új rendelést lehet törölni.');
+    }
+
+    $order->status = 'torolve';
+    $order->save();
+
+    return back()->with('success', 'A rendelés törölve lett.');
+}
+
+
 }
