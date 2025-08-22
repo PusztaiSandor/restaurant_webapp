@@ -220,20 +220,34 @@ public function myOrders()
 
 public function cancel($orderId)
 {
+    // 🔍 Lekérjük a rendelést, ha nem létezik, hibát dob
     $order = Order::findOrFail($orderId);
 
+    // 🔐 Jogosultság ellenőrzés – csak saját rendelés törölhető
     if ($order->users_id !== Auth::id()) {
         return back()->with('error', 'Nem jogosult a rendelés törlésére.');
     }
 
-    if ($order->status !== 'uj') {
-        return back()->with('error', 'Csak új rendelést lehet törölni.');
+    // ⛔ Csak akkor törölhető, ha státusz engedélyezett és még nincs fizetve
+    if (!in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) || $order->is_paid) {
+        return back()->with('error', 'Csak fizetetlen, aktív rendelést lehet törölni.');
     }
 
+    // 🗑️ Rendelés státusz módosítása
     $order->status = 'torolve';
     $order->save();
 
-    return back()->with('success', 'A rendelés törölve lett.');
+    // 🪑 Kapcsolódó asztalfoglalás kezelése
+    if (
+        $order->booking && // van foglalás
+        !in_array($order->booking->status, ['teljesitve', 'elutasitva', 'torolve']) // még aktív
+    ) {
+        $order->booking->status = 'torolve';
+        $order->booking->save();
+    }
+
+    // ✅ Visszajelzés a felhasználónak
+    return back()->with('success', 'A rendelés és az esetleges foglalás törölve lett.');
 }
 
 public function showPaymentForm(Order $order)

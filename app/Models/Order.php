@@ -60,4 +60,9 @@ class Order extends Model
 {
     return $this->hasMany(OrderItem::class, 'orders_id');
 }
+
+public function booking()
+{
+    return $this->hasOne(Booking::class, 'orders_id');
+}
 }

@@ -14,7 +14,7 @@ class Booking extends Model
     protected $fillable = [
         'users_id',
         'orders_id',
-        'tables_id',
+        'table_code', // ✅ új mező
         'seats',
         'booking_time',
         'status',
@@ -25,19 +25,24 @@ class Booking extends Model
         'booking_time' => 'datetime',
     ];
 
-    // Kapcsolatok
+    // 👤 Felhasználó kapcsolata
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id');
     }
 
+    // 🍽️ Rendelés kapcsolata
     public function order()
     {
         return $this->belongsTo(Order::class, 'orders_id');
     }
 
-    public function table()
+    // 🪑 Asztalok lekérdezése egyedi módon
+    public function tables()
     {
-        return $this->belongsTo(Table::class, 'tables_id');
+        // Ez nem klasszikus Eloquent kapcsolat, csak segédfüggvény
+        $codes = explode(',', $this->table_code);
+
+        return \App\Models\Table::whereIn('table_code', $codes)->get();
     }
 }

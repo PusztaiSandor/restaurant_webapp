@@ -81,15 +81,41 @@
                             </li>
                         @endforeach
                     </ul>
+{{-- 🪑 Asztalfoglalás blokk --}}
+@if ($order->delivery_method === 'dine-in')
+    <div class="mt-3 p-3 border rounded bg-light">
+        <h5 class="mb-2">Asztalfoglalás</h5>
 
-                    {{-- @if ($order->status === 'uj')
-    <form method="POST" action="{{ route('order.cancel', $order->orders_id) }}" class="mt-2" onsubmit="return confirm('Biztosan törölni szeretnéd ezt a rendelést?');">
-        @csrf
-        <button class="btn btn-outline-danger">Rendelés törlése</button>
-    </form>
-@endif --}}
+        @if ($order->booking)
+            {{-- ✅ Foglalás adatai --}}
+            <p><strong>Státusz:</strong> {{ ucfirst($order->booking->status) }}</p>
+            <p><strong>Időpont:</strong> {{ $order->booking->booking_time->format('Y.m.d H:i') }}</p>
+            <p><strong>Fő:</strong> {{ $order->booking->seats }}</p>
+            <p><strong>Asztalok:</strong> {{ $order->booking->table_code }}</p>
 
-{{-- 🔴 Rendelés törlése csak 'uj' státusz esetén --}}
+            {{-- 🔴 Lemondás lehetősége --}}
+            @if (
+                in_array($order->status, ['uj','keszul','atvetelre_kesz']) &&
+                !in_array($order->booking->status, ['elutasitva', 'torolve'])
+            )
+                <form method="POST" action="{{ route('bookings.cancel', $order->booking->bookings_id) }}" onsubmit="return confirm('Biztosan lemondod az asztalfoglalást?');">
+                    @csrf
+                    <button class="btn btn-outline-danger btn-sm">Foglalás lemondása</button>
+                </form>
+            @endif
+        @else
+            {{-- 🟢 Foglalás indítása csak akkor, ha még nincs foglalás és státusz engedélyezett --}}
+            @if (in_array($order->status, ['uj','keszul','atvetelre_kesz']))
+                <form method="GET" action="{{ route('bookings.create', $order->orders_id) }}">
+                    <button class="btn btn-outline-primary btn-sm">Asztalfoglalás indítása</button>
+                </form>
+            @endif
+        @endif
+    </div>
+@endif
+
+
+{{-- 🔴 Rendelés törlése csak 'uj', 'keszul', 'atvetelre_kesz' státusz esetén --}}
 @if (in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) && !$order->is_paid)
     <form method="POST" action="{{ route('order.cancel', $order->orders_id) }}" class="mt-2" onsubmit="return confirm('Biztosan törölni szeretnéd ezt a rendelést?');">
         @csrf

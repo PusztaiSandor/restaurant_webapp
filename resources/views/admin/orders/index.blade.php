@@ -129,6 +129,34 @@
                             </div>
                         </form>
                     @endif
+
+                    {{-- 🪑 Asztalfoglalás (Admin) --}}
+@if ($order->delivery_method === 'dine-in' && $order->booking)
+    <div class="mt-3 p-3 border rounded bg-light">
+        <h5 class="mb-2">Asztalfoglalás</h5>
+
+        <p><strong>Státusz:</strong> {{ ucfirst($order->booking->status) }}</p>
+        <p><strong>Foglalási idő:</strong> {{ $order->booking->booking_time->format('Y.m.d H:i') }}</p>
+        <p><strong>Fő:</strong> {{ $order->booking->seats }}</p>
+        <p><strong>Asztalok:</strong> {{ $order->booking->table_code }}</p>
+
+        {{-- 🔄 Admin státuszváltás: csak ha még nincs véglegesítve --}}
+        @if (in_array($order->booking->status, ['uj']))
+            <form method="POST" action="{{ route('admin.bookings.updatestatus', $order->booking->bookings_id) }}" class="mt-2">
+                @csrf
+                <div class="input-group input-group-sm" style="max-width: 300px;">
+                    <select name="status" class="form-select" required>
+                        <option value="" disabled selected>– Válassz státuszt –</option>
+                        <option value="teljesitve">Teljesítve</option>
+                        <option value="elutasitva">Elutasítva</option>
+                    </select>
+                    <button class="btn btn-outline-success" type="submit">Mentés</button>
+                </div>
+            </form>
+        @endif
+    </div>
+@endif
+
                 </div>
             </div>
         @endforeach

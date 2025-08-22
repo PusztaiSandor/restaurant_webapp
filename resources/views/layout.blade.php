@@ -184,6 +184,19 @@
     </a>
 </li>
 
+{{-- 🪑 Admin: Asztalok --}}
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('admin.tables.index') }}">
+        <i class="fa-solid fa-table me-1"></i> Admin: Asztalok
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('admin.tables.create') }}">
+        <i class="fa-solid fa-plus me-1"></i> Admin: Új asztal
+    </a>
+</li>
+
 @endif
 
             {{-- 🔓 Kilépés gomb (POST metódus) --}}

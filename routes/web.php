@@ -11,6 +11,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\CourierOrderController;
+use App\Http\Controllers\AdminTableController;
+use App\Http\Controllers\BookingController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -172,6 +174,19 @@ Route::post('/courier/orders/{order}/delivered', [CourierOrderController::class,
 
 Route::get('/orders/{order}/pay', [OrderController::class, 'showPaymentForm'])->name('order.pay');
 Route::post('/orders/{order}/pay', [OrderController::class, 'simulatePayment'])->name('order.pay.submit');
+
+Route::get('/admin/tables', [AdminTableController::class, 'index'])->name('admin.tables.index');
+Route::get('/admin/tables/create', [AdminTableController::class, 'create'])->name('admin.tables.create');
+Route::post('/admin/tables/store', [AdminTableController::class, 'store'])->name('admin.tables.store');
+Route::get('/admin/tables/{table}/edit', [AdminTableController::class, 'edit'])->name('admin.tables.edit');
+Route::put('/admin/tables/{table}', [AdminTableController::class, 'update'])->name('admin.tables.update');
+
+Route::get('/bookings/create/{order}', [BookingController::class, 'create'])->name('bookings.create');
+Route::post('/bookings/store', [BookingController::class, 'store'])->name('bookings.store');
+Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+
+Route::post('/admin/bookings/{booking}/updatestatus', [BookingController::class, 'updateStatus'])->name('admin.bookings.updatestatus');
+
 
 
 

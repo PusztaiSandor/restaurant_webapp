@@ -26,8 +26,8 @@ class Table extends Model
     ];
 
     // Ha később foglalások kapcsolódnak hozzá:
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class, 'tables_id');
-    }
+    // public function bookings()
+    // {
+    //     return $this->hasMany(Booking::class, 'tables_id');
+    // }
 }
