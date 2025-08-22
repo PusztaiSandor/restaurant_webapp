@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Dish;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -337,6 +338,25 @@ public function rate(Request $request, Order $order)
     $order->save();
 
     return back()->with('success', 'Köszönjük az értékelést!');
+}
+
+public function downloadInvoice(Order $order)
+{
+    // 🔐 Csak saját, fizetett rendeléshez engedélyezett
+    if ($order->users_id !== auth()->id()) {
+        abort(403);
+    }
+
+    if (!$order->is_paid) {
+        return back()->with('error', 'Csak fizetett rendeléshez tölthető le számla.');
+    }
+
+    $order->load(['items.dish']);
+
+    $pdf = Pdf::loadView('pdf.invoice', compact('order'))
+        ->setOptions(['defaultFont' => 'DejaVu Sans']);
+
+    return $pdf->download('szamla_rendeles_' . $order->orders_id . '.pdf');
 }
 
 }

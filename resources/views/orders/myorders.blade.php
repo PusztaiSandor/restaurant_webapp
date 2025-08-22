@@ -26,6 +26,15 @@
     @endif
 </p>
 
+@if ($order->is_paid)
+    <a href="{{ route('order.invoice', $order->orders_id) }}"
+       class="btn btn-outline-secondary btn-sm mb-2"
+       target="_blank"
+       title="Számla letöltése PDF-ben">
+        <i class="bi bi-file-earmark-text"></i> Számla PDF
+    </a>
+@endif
+
                     {{-- 🧮 Részletes díjak --}}
 <ul class="list-group mb-3">
     <li class="list-group-item d-flex justify-content-between">
@@ -66,9 +75,6 @@
         <strong>{{ number_format($order->total_price, 0, ',', ' ') }} Ft</strong>
     </li>
 </ul>
-
-
-
 
                     <ul class="list-group mb-3">
                         @foreach ($order->items as $item)

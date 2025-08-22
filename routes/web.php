@@ -14,6 +14,7 @@ use App\Http\Controllers\CourierOrderController;
 use App\Http\Controllers\AdminTableController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\MenuController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -194,6 +195,13 @@ Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
 Route::get('/terms', [ContactController::class, 'terms'])->name('terms');
+
+// 📄 PDF letöltés útvonala
+Route::get('/menu/pdf', [MenuController::class, 'downloadPdf'])->name('menu.pdf');
+
+Route::get('/orders/{order}/invoice', [OrderController::class, 'downloadInvoice'])->name('order.invoice');
+
+
 
 
 
