@@ -20,7 +20,7 @@
                         $statusOptions = ['atvetelre_kesz'];
                         break;
                     case 'atvetelre_kesz':
-                        if ($order->delivery_method !== 'delivery') {
+                        if ($order->delivery_method !== 'delivery' && $order->is_paid) {
                             $statusOptions = ['atvetel_megtortent'];
                         }
                         break;

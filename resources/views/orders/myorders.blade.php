@@ -17,6 +17,15 @@
                     <p><strong>Átvételi mód:</strong> {{ $order->delivery_method }}</p>
                     <p><strong>Fizetendő összeg:</strong> {{ number_format($order->total_price, 0, ',', ' ') }} Ft</p>
 
+                    <p>
+    <strong>Fizetési állapot:</strong>
+    @if ($order->is_paid)
+        <span class="text-success">Fizetve ({{ ucfirst($order->payment_method) }})</span>
+    @else
+        <span class="text-danger">Még nincs fizetve</span>
+    @endif
+</p>
+
                     {{-- 🧮 Részletes díjak --}}
 <ul class="list-group mb-3">
     <li class="list-group-item d-flex justify-content-between">
@@ -73,10 +82,25 @@
                         @endforeach
                     </ul>
 
-                    @if ($order->status === 'uj')
+                    {{-- @if ($order->status === 'uj')
     <form method="POST" action="{{ route('order.cancel', $order->orders_id) }}" class="mt-2" onsubmit="return confirm('Biztosan törölni szeretnéd ezt a rendelést?');">
         @csrf
         <button class="btn btn-outline-danger">Rendelés törlése</button>
+    </form>
+@endif --}}
+
+{{-- 🔴 Rendelés törlése csak 'uj' státusz esetén --}}
+@if (in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) && !$order->is_paid)
+    <form method="POST" action="{{ route('order.cancel', $order->orders_id) }}" class="mt-2" onsubmit="return confirm('Biztosan törölni szeretnéd ezt a rendelést?');">
+        @csrf
+        <button class="btn btn-outline-danger">Rendelés törlése</button>
+    </form>
+@endif
+
+{{-- 🟢 Fizetés szimulálása, ha még nincs fizetve és státusz engedélyezett --}}
+@if (in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) && !$order->is_paid)
+    <form method="GET" action="{{ route('order.pay', $order->orders_id) }}" class="mt-2">
+        <button class="btn btn-success">Fizetés szimulálása</button>
     </form>
 @endif
                 </div>

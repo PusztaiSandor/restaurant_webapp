@@ -18,7 +18,7 @@
                     </div>
 
                     {{-- 🔄 Státuszváltás – csak „atvetelre_kesz” esetén jelenik meg --}}
-                    @if ($order->status === 'atvetelre_kesz')
+                    @if ($order->status === 'atvetelre_kesz' && $order->is_paid)
                         <form method="POST" action="{{ route('courier.orders.markDelivered', $order->orders_id) }}">
                             @csrf
                             <div class="input-group input-group-sm" style="width: 250px;">

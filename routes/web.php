@@ -170,6 +170,9 @@ Route::get('/courier/orders', [CourierOrderController::class, 'index'])->name('c
 // Futár státuszváltása „kiszállítva” értékre
 Route::post('/courier/orders/{order}/delivered', [CourierOrderController::class, 'markDelivered'])->name('courier.orders.markDelivered');
 
+Route::get('/orders/{order}/pay', [OrderController::class, 'showPaymentForm'])->name('order.pay');
+Route::post('/orders/{order}/pay', [OrderController::class, 'simulatePayment'])->name('order.pay.submit');
+
 
 
 

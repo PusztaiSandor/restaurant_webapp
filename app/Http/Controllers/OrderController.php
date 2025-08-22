@@ -236,5 +236,64 @@ public function cancel($orderId)
     return back()->with('success', 'A rendelés törölve lett.');
 }
 
+public function showPaymentForm(Order $order)
+{
+    if ($order->status !== 'uj' || $order->is_paid) {
+        return redirect()->route('orders.my')->with('error', 'Ez a rendelés már fizetve vagy nem aktív.');
+    }
+
+    return view('orders.pay', compact('order'));
+}
+
+public function simulatePayment(Request $request, Order $order)
+{
+    $request->validate([
+        'payment_method' => 'required|in:bankkartya,keszpenz,szepkartya',
+        'card_name' => 'nullable|string|max:255',
+        'card_number' => 'nullable|string|max:19',
+        'card_expiry' => 'nullable|string|max:5',
+        'card_cvc' => 'nullable|string|max:4',
+        'cash_given' => 'nullable|integer|min:0',
+    ]);
+
+    $total = (int) round($order->total_price);
+
+    if ($request->payment_method === 'keszpenz') {
+        $cash = (int) $request->cash_given;
+
+        if ($cash < $total) {
+            return back()->with('error', 'Az átadott összeg nem elegendő a fizetéshez.');
+        }
+
+        if ($cash % 5 !== 0) {
+            return back()->with('error', 'Az átadott összegnek oszthatónak kell lennie 5-tel.');
+        }
+
+        $change = $cash - $total;
+
+// Magyarországi 2 Ft-os szabály: kerekítés 5 Ft-ra
+$changeRounded = round($change / 5) * 5;
+
+// Ha a kerekítés lefelé történik, és a különbség 1 vagy 2 Ft, akkor felfelé kerekítünk
+if ($changeRounded < $change && ($change - $changeRounded) <= 2) {
+    $changeRounded += 5;
+}
+
+$order->is_paid = true;
+$order->payment_method = 'keszpenz';
+$order->payment_time = now();
+$order->save();
+
+return redirect()->route('orders.myorders')->with('success', "Fizetés sikeres. Visszajáró: {$changeRounded} Ft");
+    }
+
+    // Bankkártya vagy SZÉP kártya
+    $order->is_paid = true;
+    $order->payment_method = $request->payment_method;
+    $order->payment_time = now();
+    $order->save();
+
+    return redirect()->route('orders.myorders')->with('success', 'Fizetés szimulálása sikeres.');
+}
 
 }
