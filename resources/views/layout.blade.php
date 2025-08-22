@@ -44,7 +44,7 @@
 
         {{-- 📞 Kapcsolat link --}}
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('home') }}">
+            <a class="nav-link" href="{{ route('contact') }}">
                 <i class="fa-solid fa-phone me-1"></i> Kapcsolat
             </a>
         </li>

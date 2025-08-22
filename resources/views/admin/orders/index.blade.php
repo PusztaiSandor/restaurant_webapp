@@ -130,6 +130,17 @@
                         </form>
                     @endif
 
+{{-- ⭐ Értékelés megjelenítése (Admin) --}}
+@if ($order->rating_star)
+    <div class="mt-3 p-3 border rounded bg-light">
+        <h5 class="mb-2">Felhasználói értékelés</h5>
+        <p><strong>Csillagok:</strong> {{ $order->rating_star }} / 5</p>
+        @if ($order->rating_comment)
+            <p><strong>Megjegyzés:</strong> {{ $order->rating_comment }}</p>
+        @endif
+    </div>
+@endif
+
                     {{-- 🪑 Asztalfoglalás (Admin) --}}
 @if ($order->delivery_method === 'dine-in' && $order->booking)
     <div class="mt-3 p-3 border rounded bg-light">

@@ -67,6 +67,9 @@
     </li>
 </ul>
 
+
+
+
                     <ul class="list-group mb-3">
                         @foreach ($order->items as $item)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -81,6 +84,45 @@
                             </li>
                         @endforeach
                     </ul>
+
+{{-- ⭐ Rendelés értékelése – csak fizetett rendelés esetén --}}
+@if ($order->is_paid && is_null($order->rating_star))
+    <div class="mt-3 p-3 border rounded bg-light">
+        <h5 class="mb-2">Rendelés értékelése</h5>
+
+        <form method="POST" action="{{ route('order.rate', $order->orders_id) }}">
+            @csrf
+
+            {{-- ⭐ Csillagok --}}
+            <div class="mb-2">
+                <label for="rating_star" class="form-label">Értékelés (1–5 csillag):</label>
+                <select name="rating_star" id="rating_star" class="form-select" required>
+                    <option value="" disabled selected>– Válassz –</option>
+                    @for ($i = 1; $i <= 5; $i++)
+                        <option value="{{ $i }}">{{ $i }} csillag</option>
+                    @endfor
+                </select>
+            </div>
+
+            {{-- 💬 Megjegyzés --}}
+            <div class="mb-2">
+                <label for="rating_comment" class="form-label">Megjegyzés (opcionális):</label>
+                <textarea name="rating_comment" id="rating_comment" class="form-control" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-outline-success btn-sm">Értékelés mentése</button>
+        </form>
+    </div>
+@elseif ($order->rating_star)
+    <div class="mt-3 p-3 border rounded bg-light">
+        <h5 class="mb-2">Értékelés</h5>
+        <p><strong>Csillagok:</strong> {{ $order->rating_star }} / 5</p>
+        @if ($order->rating_comment)
+            <p><strong>Megjegyzés:</strong> {{ $order->rating_comment }}</p>
+        @endif
+    </div>
+@endif
+
 {{-- 🪑 Asztalfoglalás blokk --}}
 @if ($order->delivery_method === 'dine-in')
     <div class="mt-3 p-3 border rounded bg-light">

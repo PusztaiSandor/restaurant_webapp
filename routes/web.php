@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\CourierOrderController;
 use App\Http\Controllers\AdminTableController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ContactController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
 Route::get('/', function () {
@@ -186,6 +187,13 @@ Route::post('/bookings/store', [BookingController::class, 'store'])->name('booki
 Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
 Route::post('/admin/bookings/{booking}/updatestatus', [BookingController::class, 'updateStatus'])->name('admin.bookings.updatestatus');
+
+Route::post('/orders/{order}/rate', [OrderController::class, 'rate'])->name('order.rate');
+
+Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+
+Route::get('/terms', [ContactController::class, 'terms'])->name('terms');
 
 
 

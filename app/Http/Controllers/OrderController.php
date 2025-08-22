@@ -310,4 +310,33 @@ return redirect()->route('orders.myorders')->with('success', "Fizetés sikeres. 
     return redirect()->route('orders.myorders')->with('success', 'Fizetés szimulálása sikeres.');
 }
 
+public function rate(Request $request, Order $order)
+{
+    // 🔐 Csak saját rendelés értékelhető
+    if ($order->users_id !== Auth::id()) {
+        return back()->with('error', 'Nem jogosult az értékelésre.');
+    }
+
+    // ✅ Csak fizetett rendelés értékelhető
+    if (!$order->is_paid) {
+        return back()->with('error', 'Csak fizetett rendelést lehet értékelni.');
+    }
+
+    // ⛔ Ne lehessen újra értékelni
+    if (!is_null($order->rating_star)) {
+        return back()->with('error', 'Ez a rendelés már értékelve lett.');
+    }
+
+    $request->validate([
+        'rating_star' => 'required|integer|min:1|max:5',
+        'rating_comment' => 'nullable|string|max:1000',
+    ]);
+
+    $order->rating_star = $request->rating_star;
+    $order->rating_comment = $request->rating_comment;
+    $order->save();
+
+    return back()->with('success', 'Köszönjük az értékelést!');
+}
+
 }
