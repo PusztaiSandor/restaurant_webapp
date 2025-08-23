@@ -2,13 +2,15 @@
 
 @section('content')
   <!-- Bevezető szakasz -->
-  <section class="container mx-auto px-4 py-16 text-center">
-    <h1 class="text-4xl font-semibold mb-6 text-gray-800">Kapcsolat</h1>
-    <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-      Ez a webalkalmazás oktatási céllal készült a Budapesti Műszaki Szakképzési Centrum Verebély László Technikum diákjainak vizsgaremekeként.
-      Az <span class="font-bold text-amber-700">Esszencia</span> az ízek és az oktatás esszenciája.
-    </p>
-  </section>
+<section class="container mx-auto px-4 py-16 text-center">
+  <h1 class="text-4xl font-semibold mb-6 text-gray-800">Kapcsolat</h1>
+  <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+    Ez a webalkalmazás oktatási céllal készült a Budapesti Műszaki Szakképzési Centrum Verebély László Technikum diákjainak vizsgaremekeként.
+  </p>
+  <p class="text-xl font-semibold text-amber-700 mt-4">
+    Az <span class="font-bold">Esszencia</span> az ízek és az oktatás esszenciája.
+  </p>
+</section>
 
   <!-- Elérhetőség és térkép -->
   <section class="container mx-auto px-4 py-8 text-center">
