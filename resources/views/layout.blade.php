@@ -197,6 +197,13 @@
     </a>
 </li>
 
+{{-- 💬 Admin: Visszajelzések --}}
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('admin.feedbacks') }}">
+        <i class="fa-solid fa-comment-dots me-1"></i> Admin: Visszajelzések
+    </a>
+</li>
+
 @endif
 
             {{-- 🔓 Kilépés gomb (POST metódus) --}}

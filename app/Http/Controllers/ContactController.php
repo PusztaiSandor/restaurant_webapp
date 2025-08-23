@@ -42,4 +42,35 @@ public function terms()
     return view('terms');
 }
 
+public function adminFeedbacks(Request $request)
+{
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+
+    $query = \App\Models\Feedback::with('user');
+
+    // Szűrés típus szerint
+    if ($request->filled('type') && in_array($request->type, ['message', 'rating'])) {
+        $query->where('type', $request->type);
+    }
+
+    // Rendezés
+    if ($request->sort === 'date_asc') {
+        $query->orderBy('created_at', 'asc');
+    } elseif ($request->sort === 'date_desc') {
+        $query->orderBy('created_at', 'desc');
+    } elseif ($request->sort === 'rating_desc') {
+        $query->orderBy('rating', 'desc');
+    } elseif ($request->sort === 'rating_asc') {
+        $query->orderBy('rating', 'asc');
+    } else {
+        $query->latest(); // alapértelmezett: legfrissebb elöl
+    }
+
+    $feedbacks = $query->get();
+
+    return view('admin.feedbacks', compact('feedbacks'));
+}
+
 }

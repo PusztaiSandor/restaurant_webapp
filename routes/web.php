@@ -201,6 +201,8 @@ Route::get('/menu/pdf', [MenuController::class, 'downloadPdf'])->name('menu.pdf'
 
 Route::get('/orders/{order}/invoice', [OrderController::class, 'downloadInvoice'])->name('order.invoice');
 
+Route::get('/admin/feedbacks', [ContactController::class, 'adminFeedbacks'])->name('admin.feedbacks');
+
 
 
 

@@ -19,6 +19,8 @@
         <p class="fs-5">Örülünk, hogy újra itt vagy, <strong>{{ Auth::user()->name }}</strong>!</p>
     @endguest
 
+    
+
     {{-- 🍽️ Étlap gomb – az étlapra mutat --}}
     <div class="mt-4">
         <a href="{{ route('menu') }}" class="btn btn-primary btn-lg">
