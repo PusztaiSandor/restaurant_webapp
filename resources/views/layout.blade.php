@@ -8,6 +8,9 @@
     {{-- 🏷️ Oldal címe --}}
     <title>Esszencia Étterem</title>
 
+    <!-- 🌟 Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+
     {{-- 🎨 Bootstrap témaváltáshoz --}}
     <link id="theme-css" rel="stylesheet" href="{{ asset('assets/css/theme-darkly.css') }}">
 

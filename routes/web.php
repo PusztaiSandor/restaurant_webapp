@@ -15,11 +15,10 @@ use App\Http\Controllers\AdminTableController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\HomeController;
 
 // 🔸 Kezdőlap – welcome.blade.php nézet
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'welcome'])->name('home');
 
 // 📝 Regisztráció
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
