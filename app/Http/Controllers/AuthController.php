@@ -28,42 +28,108 @@ class AuthController extends Controller
      * majd automatikusan bejelentkezteti és irányítja a szerepkör szerint.
      */
     public function register(Request $request)
-    {
-        // 📋 Adatok validálása
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
-            'phone' => 'nullable|string|max:30',
-            'postal_code' => 'nullable|string|max:10',
-            'city' => 'nullable|string|max:50',
-            'street_name' => 'nullable|string|max:100',
-            'street_number' => 'nullable|string|max:10',
-            'role' => 'required|in:user,admin,courier'
-        ]);
+{
+    // 📋 Adatok validálása
+    $validated = $request->validate([
+        'name' => [
+            'required',
+            'string',
+            'min:2',
+            'max:50',
+            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű. ]+$/u'
+        ],
+        'email' => [
+            'required',
+            'string',
+            'email',
+            'min:5',
+            'max:60',
+            'unique:users,email',
+            'regex:/^[A-Za-z0-9@.]{5,60}$/'
+        ],
+        'password' => [
+            'required',
+            'string',
+            'min:8',
+            'max:36',
+            'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,36}$/',
+            'confirmed'
+        ],
+        'role' => 'required|in:user,admin,courier', //Csak a teszt üzem miatt
+        'phone' => [
+            'nullable',
+            'string',
+            'regex:/^\+36-(20|30|40|70)-\d{3}-\d{4}$/'
+        ],
+        'postal_code' => [
+            'nullable',
+            'string',
+            'regex:/^\d{4}$/'
+        ],
+        'city' => [
+            'nullable',
+            'string',
+            'max:50',
+            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű -]{1,50}$/u'
+        ],
+        'street_name' => [
+            'nullable',
+            'string',
+            'max:100',
+            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .-]{1,100}$/u'
+        ],
+        'street_number' => [
+            'nullable',
+            'string',
+            'max:10',
+            'regex:/^[0-9A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\/\-]{1,10}$/u'
+        ],
+    ], [
+        // 🗣️ Magyar hibaüzenetek
+        'name.required' => 'A név megadása kötelező.',
+        'name.min' => 'A név legalább 2 karakter hosszú legyen.',
+        'name.max' => 'A név legfeljebb 50 karakter lehet.',
+        'name.regex' => 'A név csak betűket, szóközt és pontot tartalmazhat.',
+        'email.required' => 'Az e-mail cím megadása kötelező.',
+        'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
+        'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
+        'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
+        'email.unique' => 'Ez az e-mail cím már regisztrálva van.',
+        'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot és @ karaktert tartalmazhat.',
+        'password.required' => 'A jelszó megadása kötelező.',
+        'password.min' => 'A jelszónak legalább 8 karakter hosszúnak kell lennie.',
+        'password.max' => 'A jelszó legfeljebb 36 karakter lehet.',
+        'password.regex' => 'A jelszónak tartalmaznia kell betűt és számot, és csak betűket és számokat tartalmazhat.',
+        'password.confirmed' => 'A jelszó megerősítése nem egyezik.',
+        'phone.regex' => 'A telefonszám formátuma csak a következő lehet: +36-20|30|40|70-123-4567',
+        'postal_code.regex' => 'Az irányítószámnak pontosan 4 számjegyből kell állnia. Példa: 1139',
+        'city.regex' => 'A település neve csak betűket, szóközt és kötőjelet tartalmazhat. Példa: Budapest vagy Dunakeszi-Alag',
+        'street_name.regex' => 'A közterület neve csak betűket, számokat, szóközt, pontot és kötőjelet tartalmazhat. Példa: 10. kerület vagy 27. utca',
+        'street_number.regex' => 'A házszám csak számokat, betűket, kötőjelet és perjelet tartalmazhat. Példa: 15/A vagy 13–15',
+    ]);
 
-        // 👤 Új felhasználó létrehozása
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']), // 🔐 Jelszó titkosítása
-            'phone' => $validated['phone'],
-            'role' => $validated['role'],
-            'postal_code' => $validated['postal_code'],
-            'city' => $validated['city'],
-            'street_name' => $validated['street_name'],
-            'street_number' => $validated['street_number'],
-            'active' => 1, // ✅ Legyen aktív
-        ]);
+    // 👤 Új felhasználó létrehozása
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        'phone' => $validated['phone'],
+        'role' => $validated['role'], //Csak a teszt üzem miatt
+        'postal_code' => $validated['postal_code'],
+        'city' => $validated['city'],
+        'street_name' => $validated['street_name'],
+        'street_number' => $validated['street_number'],
+        'active' => 1,
+    ]);
 
-        // 🔑 Automatikus bejelentkeztetés
-        Auth::login($user);
-        $user->last_login_at = now();
-        $user->save();
+    // 🔑 Automatikus bejelentkeztetés
+    Auth::login($user);
+    $user->last_login_at = now();
+    $user->save();
 
-        // 🧭 Irányítás szerepkör szerint
-        return $this->redirectBasedOnRole($user)->with('success', 'Sikeres regisztráció!');
-    }
+    // 🧭 Irányítás szerepkör szerint
+    return $this->redirectBasedOnRole($user)->with('success', 'Sikeres regisztráció!');
+}
 
     /**
      * 🔐 Bejelentkezési űrlap megjelenítése
@@ -85,9 +151,33 @@ class AuthController extends Controller
 {
     // 📋 Beviteli adatok validálása
     $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
+    'email' => [
+        'required',
+        'string',
+        'email',
+        'min:5',
+        'max:60',
+        'regex:/^[A-Za-z0-9@.]{5,60}$/'
+    ],
+    'password' => [
+        'required',
+        'string',
+        'min:8',
+        'max:36',
+        'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,36}$/'
+    ],
+], [
+   // 🗣️ Magyar hibaüzenetek
+    'email.required' => 'Az e-mail cím megadása kötelező.',
+    'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
+    'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
+    'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
+    'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot és @ karaktert tartalmazhat.',
+    'password.required' => 'A jelszó megadása kötelező.',
+    'password.min' => 'A jelszónak legalább 8 karakter hosszúnak kell lennie.',
+    'password.max' => 'A jelszó legfeljebb 36 karakter lehet.',
+    'password.regex' => 'A jelszónak tartalmaznia kell betűt és számot, és csak betűket és számokat tartalmazhat.',
+]);
 
     // 👤 Felhasználó lekérése az e-mail alapján
     $user = User::where('email', $request->email)->first();
@@ -153,7 +243,22 @@ class AuthController extends Controller
 public function simulateReset(Request $request)
 {
     // 📋 E-mail mező validálása
-    $request->validate(['email' => 'required|email']);
+    $request->validate([
+    'email' => [
+        'required',
+        'string',
+        'email',
+        'min:5',
+        'max:60',
+        'regex:/^[A-Za-z0-9@.]{5,60}$/'
+    ]
+], [
+    'email.required' => 'Az e-mail cím megadása kötelező.',
+    'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
+    'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
+    'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
+    'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot és @ karaktert tartalmazhat.',
+]);
 
     // 👤 Felhasználó lekérése az e-mail alapján
     $user = User::where('email', $request->email)->first();
@@ -191,8 +296,21 @@ public function simulateReset(Request $request)
     public function updatePassword(Request $request, $email)
     {
         $request->validate([
-            'password' => 'required|min:6|confirmed'
-        ]);
+    'password' => [
+        'required',
+        'string',
+        'min:8',
+        'max:36',
+        'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,36}$/',
+        'confirmed'
+    ]
+], [
+    'password.required' => 'A jelszó megadása kötelező.',
+    'password.min' => 'A jelszónak legalább 8 karakter hosszúnak kell lennie.',
+    'password.max' => 'A jelszó legfeljebb 36 karakter lehet.',
+    'password.regex' => 'A jelszónak tartalmaznia kell betűt és számot, és csak betűket és számokat tartalmazhat.',
+    'password.confirmed' => 'A jelszó megerősítése nem egyezik.',
+]);
 
         $user = User::where('email', $email)->first();
 

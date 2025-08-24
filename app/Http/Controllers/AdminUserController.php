@@ -42,9 +42,20 @@ class AdminUserController extends Controller
 
         // Validáció
         $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'role' => 'required|in:waiter,courier,admin',
-        ]);
+        'name' => [
+            'required',
+            'string',
+            'min:2',
+            'max:50',
+            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű. ]+$/u'
+        ],
+    'role' => 'required|in:admin,courier',
+], [
+    'name.required' => 'A név megadása kötelező.',
+    'name.min' => 'A név legalább 2 karakter hosszú legyen.',
+    'name.max' => 'A név legfeljebb 50 karakter lehet.',
+    'name.regex' => 'A név csak betűket, szóközt és pontot tartalmazhat.',
+]);
 
         // 📧 Email generálása
         $baseEmail = Str::slug($validated['name'], '.');
@@ -122,7 +133,7 @@ class AdminUserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'role' => 'required|in:waiter,courier,admin',
+            'role' => 'required|in:courier,admin',
         ]);
 
         $user->update([

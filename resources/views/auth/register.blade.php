@@ -21,40 +21,67 @@
         @csrf
 
         {{-- 👤 Alapadatok --}}
-        <div class="mb-3">
-            <label for="name" class="form-label">Név</label>
-            <input type="text" class="form-control" id="name" name="name"
-                   value="{{ old('name') }}" required>
-        </div>
+        {{-- 👤 Név --}}
+<div class="mb-3">
+    <label for="name" class="form-label">Név</label>
+    <input type="text" class="form-control @error('name') is-invalid @enderror"
+           id="name" name="name" value="{{ old('name') }}" required
+           placeholder="Pl. Teszt User">
+    <small class="form-text text-muted">
+        Csak betűk, szóköz és pont. Minimum 2, maximum 50 karakter.
+    </small>
+    @error('name')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
+        {{-- 📧 E-mail cím --}}
+<div class="mb-3">
+    <label for="email" class="form-label">E-mail cím</label>
+    <input type="email" class="form-control @error('email') is-invalid @enderror"
+           id="email" name="email" value="{{ old('email') }}" required
+           placeholder="Pl. tesztuser@example.com">
+    <small class="form-text text-muted">
+        Legalább 5, legfeljebb 60 karakter. Csak betűk, számok, pont és @ karakter engedélyezett.
+    </small>
+    @error('email')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+{{-- 📧 Telefonszám --}}
         <div class="mb-3">
-            <label for="email" class="form-label">E-mail cím</label>
-            <input type="email" class="form-control" id="email" name="email"
-                   value="{{ old('email') }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="phone" class="form-label">Telefonszám</label>
-            <input type="text" name="phone" id="phone"
-                   class="form-control @error('phone') is-invalid @enderror"
-                   value="{{ old('phone') }}" required>
-            @error('phone')
-            <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+    <label for="phone" class="form-label">Telefonszám (opcionális)</label>
+    <input type="text" name="phone" id="phone"
+           class="form-control @error('phone') is-invalid @enderror"
+           value="{{ old('phone') }}"
+           placeholder="+36-30-123-4567">
+    <small class="form-text text-muted">
+        Csak magyar mobilszám formátum: +36-20|30|40|70-123-4567.
+    </small>
+    @error('phone')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
         {{-- 🔐 Jelszó --}}
-        <div class="mb-3">
-            <label for="password" class="form-label">Jelszó</label>
-            <input type="password" class="form-control" id="password"
-                   name="password" required>
-        </div>
+<div class="mb-3">
+    <label for="password" class="form-label">Jelszó</label>
+    <input type="password" class="form-control @error('password') is-invalid @enderror"
+           id="password" name="password" required>
+    <small class="form-text text-muted">
+        Legalább 8, legfeljebb 36 karakter. Csak kis- és nagybetűk, valamint számok. Példa: Teszt123
+    </small>
+    @error('password')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
-        <div class="mb-3">
-            <label for="password_confirmation" class="form-label">Jelszó megerősítése</label>
-            <input type="password" class="form-control" id="password_confirmation"
-                   name="password_confirmation" required>
-        </div>
+        {{-- 🔐 Jelszó megerősítése --}}
+<div class="mb-3">
+    <label for="password_confirmation" class="form-label">Jelszó megerősítése</label>
+    <input type="password" class="form-control" id="password_confirmation"
+           name="password_confirmation" required>
+</div>
 
         {{-- 🎭 Szerepkör választás – csak teszteléshez --}}
         <hr>
@@ -76,30 +103,59 @@
         {{-- 🏡 Címadatok (opcionális) --}}
         <hr>
         <h5 class="mt-4">Cím kiszállításhoz (opcionális)</h5>
+        {{-- Irányítószám --}}
+        <div class="mb-3">
+    <label for="postal_code" class="form-label">Irányítószám</label>
+    <input type="text" class="form-control @error('postal_code') is-invalid @enderror"
+           name="postal_code" id="postal_code"
+           value="{{ old('postal_code') }}" maxlength="4" placeholder="Pl. 1139">
+    <small class="form-text text-muted">
+        Magyar irányítószám, pontosan 4 számjegy. Példa: 1139
+    </small>
+    @error('postal_code')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+{{-- Település --}}
 
         <div class="mb-3">
-            <label for="postal_code" class="form-label">Irányítószám</label>
-            <input type="text" class="form-control" name="postal_code"
-                   value="{{ old('postal_code') }}" maxlength="10">
-        </div>
-
+    <label for="city" class="form-label">Település</label>
+    <input type="text" class="form-control @error('city') is-invalid @enderror"
+           name="city" id="city"
+           value="{{ old('city') }}" maxlength="50" placeholder="Pl. Budapest">
+    <small class="form-text text-muted">
+        Csak betűk, szóköz és kötőjel engedélyezett. Maximum 50 karakter. Példa: Dunakeszi-Alag
+    </small>
+    @error('city')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+{{-- Közterület neve --}}
         <div class="mb-3">
-            <label for="city" class="form-label">Település</label>
-            <input type="text" class="form-control" name="city"
-                   value="{{ old('city') }}" maxlength="50">
-        </div>
-
+    <label for="street_name" class="form-label">Közterület neve</label>
+    <input type="text" class="form-control @error('street_name') is-invalid @enderror"
+           name="street_name" id="street_name"
+           value="{{ old('street_name') }}" maxlength="100" placeholder="Pl. 10. kerület">
+    <small class="form-text text-muted">
+        Betűk, számok, szóköz, pont és kötőjel engedélyezett. Maximum 100 karakter. Példa: 27. utca
+    </small>
+    @error('street_name')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+{{-- Közterület neve --}}
         <div class="mb-3">
-            <label for="street_name" class="form-label">Közterület neve</label>
-            <input type="text" class="form-control" name="street_name"
-                   value="{{ old('street_name') }}" maxlength="100">
-        </div>
-
-        <div class="mb-3">
-            <label for="street_number" class="form-label">Házszám</label>
-            <input type="text" class="form-control" name="street_number"
-                   value="{{ old('street_number') }}" maxlength="10">
-        </div>
+    <label for="street_number" class="form-label">Házszám</label>
+    <input type="text" class="form-control @error('street_number') is-invalid @enderror"
+           name="street_number" id="street_number"
+           value="{{ old('street_number') }}" maxlength="10" placeholder="Pl. 15/A">
+    <small class="form-text text-muted">
+        Szám, betű, kötőjel és perjel engedélyezett. Maximum 10 karakter. Példa: 13–15 vagy 27/b
+    </small>
+    @error('street_number')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
         {{-- ✅ Küldés gomb --}}
         <button type="submit" class="btn btn-success w-100">Fiók létrehozása</button>

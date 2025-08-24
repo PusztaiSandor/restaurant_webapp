@@ -18,10 +18,17 @@
 
         {{-- 📧 E-mail mező --}}
         <div class="mb-3">
-            <label for="email" class="form-label">E-mail cím</label>
-            <input type="email" name="email" id="email" class="form-control"
-                   required value="{{ old('email') }}"> {{-- 🔁 Hibás beküldés után visszatöltés --}}
-        </div>
+    <label for="email" class="form-label">E-mail cím</label>
+    <input type="email" name="email" id="email"
+           class="form-control @error('email') is-invalid @enderror"
+           required value="{{ old('email') }}" placeholder="Pl. tesztuser@example.com">
+    <small class="form-text text-muted">
+        Legalább 5, legfeljebb 60 karakter. Csak betűk, számok, pont és @ karakter engedélyezett.
+    </small>
+    @error('email')
+        <div class="invalid-feedback text-center">{{ $message }}</div>
+    @enderror
+</div>
 
         {{-- 🚀 Küldés gomb --}}
         <button type="submit" class="btn btn-primary w-100">Jelszó visszaállítása</button>

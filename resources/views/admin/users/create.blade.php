@@ -4,15 +4,35 @@
 <div class="container">
     <h2>Új felhasználó létrehozása</h2>
 
+
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+
     {{-- Felhasználó létrehozása űrlap --}}
     <form method="POST" action="{{ route('admin.users.store') }}">
         @csrf {{-- Laravel CSRF token a biztonságos POST kéréshez --}}
 
         {{-- Név mező --}}
         <div class="mb-3">
-            <label for="name">Név</label>
-            <input type="text" name="name" id="name" class="form-control" required>
-        </div>
+    <label for="name" class="form-label">Név</label>
+    <input type="text" class="form-control @error('name') is-invalid @enderror"
+           id="name" name="name" value="{{ old('name') }}" required
+           placeholder="Pl. Teszt User">
+    <small class="form-text text-muted">
+        Csak betűk, szóköz és pont. Minimum 2, maximum 50 karakter.
+    </small>
+    @error('name')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
         {{-- Szerepkör kiválasztása --}}
         <div class="mb-3">
