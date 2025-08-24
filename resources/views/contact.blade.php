@@ -89,57 +89,63 @@
 
   <!-- Üzenetküldés és értékelés -->
 <section class="container mx-auto px-4 py-12">
-  <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Kapcsolat és visszajelzés</h2>
+  <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Értékelés és visszajelzés</h2>
 
-  @auth
+
+
+  @if(auth()->check() && auth()->user()->role === 'user')
     <form method="POST" action="{{ route('contact.send') }}" class="mx-auto" style="max-width:600px;">
-      @csrf
+        @csrf
+        {{-- 📌 Típusválasztó --}}
+        <div class="mb-3">
+            <label for="type" class="form-label">Visszajelzés típusa</label>
+            <select name="type" id="type" class="form-select" required>
+                <option value="" disabled selected>– Válassz –</option>
+                <option value="message">Üzenet az étteremnek</option>
+                <option value="rating">Étterem értékelése</option>
+            </select>
+        </div>
 
-      {{-- 📌 Típusválasztó --}}
-      <div class="mb-3">
-        <label for="type" class="form-label">Visszajelzés típusa</label>
-        <select name="type" id="type" class="form-select" required>
-          <option value="" disabled selected>– Válassz –</option>
-          <option value="message">Üzenet az étteremnek</option>
-          <option value="rating">Étterem értékelése</option>
-        </select>
-      </div>
+        {{-- ⭐ Csillagos értékelés – csak ha type = rating --}}
+        <div class="mb-3" id="rating-block" style="display:none;">
+            <label for="rating" class="form-label">Értékelés (1–5 csillag)</label>
+            <select name="rating" id="rating" class="form-select">
+                <option value="" disabled selected>– Válassz –</option>
+                @for ($i = 1; $i <= 5; $i++)
+                    <option value="{{ $i }}">{{ $i }} csillag</option>
+                @endfor
+            </select>
+        </div>
 
-      {{-- ⭐ Csillagos értékelés – csak ha type = rating --}}
-      <div class="mb-3" id="rating-block" style="display:none;">
-        <label for="rating" class="form-label">Értékelés (1–5 csillag)</label>
-        <select name="rating" id="rating" class="form-select">
-          <option value="" disabled selected>– Válassz –</option>
-          @for ($i = 1; $i <= 5; $i++)
-            <option value="{{ $i }}">{{ $i }} csillag</option>
-          @endfor
-        </select>
-      </div>
+        {{-- 📝 Tárgy --}}
+        <div class="mb-3">
+            <label for="subject" class="form-label">Tárgy (opcionális)</label>
+            <input type="text" id="subject" name="subject" class="form-control" placeholder="Pl. Kérdés, javaslat, dicséret">
+        </div>
 
-      {{-- 📝 Tárgy – csak üzenet esetén opcionális --}}
-      <div class="mb-3">
-        <label for="subject" class="form-label">Tárgy (opcionális)</label>
-        <input type="text" id="subject" name="subject" class="form-control" placeholder="Pl. Kérdés, javaslat, dicséret">
-      </div>
+        {{-- 💬 Tartalom --}}
+        <div class="mb-3">
+            <label for="content" class="form-label">Üzenet / Vélemény</label>
+            <textarea id="content" name="content" class="form-control" rows="5" placeholder="Írd meg az üzeneted vagy értékelésed" required></textarea>
+        </div>
 
-      {{-- 💬 Tartalom --}}
-      <div class="mb-3">
-        <label for="content" class="form-label">Üzenet / Vélemény</label>
-        <textarea id="content" name="content" class="form-control" rows="5" placeholder="Írd meg az üzeneted vagy értékelésed" required></textarea>
-      </div>
-
-      <button type="submit" class="btn btn-dark w-100">Küldés</button>
+        <button type="submit" class="btn btn-dark w-100">Küldés</button>
     </form>
 
     {{-- 🔧 Dinamikus megjelenítés JS --}}
     <script>
-      document.getElementById('type').addEventListener('change', function () {
-        const ratingBlock = document.getElementById('rating-block');
-        ratingBlock.style.display = this.value === 'rating' ? 'block' : 'none';
-      });
+        document.getElementById('type').addEventListener('change', function () {
+            const ratingBlock = document.getElementById('rating-block');
+            ratingBlock.style.display = this.value === 'rating' ? 'block' : 'none';
+        });
     </script>
-  @else
-    <p class="text-center text-gray-700">A visszajelzéshez kérlek <a href="{{ route('login') }}" class="text-amber-700 hover:underline">jelentkezz be</a>.</p>
-  @endauth
+@else
+    <p class="text-center text-gray-700">
+        Az értékeléshez és visszajelzéshez kérlek
+        <a href="{{ route('login') }}" class="text-amber-700 hover:underline">jelentkezz be</a>.
+    </p>
+@endif
+
+
 </section>
 @endsection

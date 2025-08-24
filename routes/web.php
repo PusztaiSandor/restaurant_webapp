@@ -57,8 +57,6 @@ Route::post('/profile/credentials', [UserController::class, 'updateCredentials']
 // 💾 Profiladatok frissítése
 Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
 
-
-
 // 🔐 Jelszómódosítás
 Route::post('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
 

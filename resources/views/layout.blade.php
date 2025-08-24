@@ -39,11 +39,14 @@
             <div class="collapse navbar-collapse" id="navbarLinks">
     <ul class="navbar-nav me-auto">
         {{-- 🍽️ Étlap link --}}
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('menu') }}">
-                <i class="fa-solid fa-utensils me-1"></i> Étlap
-            </a>
-        </li>
+        @if(!auth()->check() || auth()->user()->role === 'user')
+    {{-- 🍽️ Étlap link – csak vendég és user szerepkör számára --}}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('menu') }}">
+            <i class="fa-solid fa-utensils me-1"></i> Étlap
+        </a>
+    </li>
+@endif
 
         {{-- 📞 Kapcsolat link --}}
         <li class="nav-item">
@@ -85,6 +88,25 @@
             </li>
         @endguest
 
+        {{-- 🛒 Kosár – vendégek és user szerepkörű felhasználók számára --}}
+@php
+    $cart = session()->get('cart', []);
+    $cartCount = array_sum(array_column($cart, 'quantity'));
+@endphp
+
+@if(!auth()->check() || auth()->user()->role === 'user')
+    <li class="nav-item position-relative">
+        <a class="nav-link" href="{{ route('cart.index') }}">
+            <i class="fa-solid fa-cart-shopping me-1"></i> Kosár
+            @if($cartCount > 0)
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ $cartCount }}
+                </span>
+            @endif
+        </a>
+    </li>
+@endif
+
         {{-- ✅ Bejelentkezett felhasználók számára: Üdvözlés + Kilépés --}}
         @auth
             {{-- 👋 Üdvözlés névvel --}}
@@ -101,22 +123,6 @@
         </a>
     </li>
 @endif
-
-{{-- 🛒 Kosár --}}
-@php
-    $cart = session()->get('cart', []);
-    $cartCount = array_sum(array_column($cart, 'quantity'));
-@endphp
-<li class="nav-item position-relative">
-    <a class="nav-link" href="{{ route('cart.index') }}">
-        <i class="fa-solid fa-cart-shopping me-1"></i> Kosár
-        @if($cartCount > 0)
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{ $cartCount }}
-            </span>
-        @endif
-    </a>
-</li>
 
 {{-- 🧾 "Rendeléseim" csak bejelentkezett "user" szerepkörű felhasználónak --}}
 @auth

@@ -24,6 +24,11 @@ class DishController extends Controller
      */
     public function menu(Request $request)
 {
+
+if (auth()->check() && auth()->user()->role !== 'user') {
+        abort(403, 'Az étlap csak user szerepkörű felhasználók számára érhető el.');
+    }
+
     $query = Dish::query()->where('active', true);
 
     // ➤ Szűrés kategória szerint

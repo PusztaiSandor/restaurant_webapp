@@ -19,6 +19,7 @@
         <p class="fs-5">Örülünk, hogy újra itt vagy, <strong>{{ Auth::user()->name }}</strong>!</p>
     @endguest
 
+    @if(!auth()->check() || auth()->user()->role === 'user')
     <!-- 🍽️ Kínálatunkból – Véletlenszerű ételkártyák -->
 <section class="container py-5">
   <h2 class="mb-4 text-center">Kínálatunkból</h2>
@@ -70,6 +71,14 @@
   </div>
 </section>
 
+    {{-- 🍽️ Étlap gomb – az étlapra mutat --}}
+    <div class="mt-4">
+        <a href="{{ route('menu') }}" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-utensils me-2"></i> Nézd meg az étlapot
+        </a>
+    </div>
+    @endif
+
 <!-- 💬 Rólunk írták – kiemelt értékelések -->
 <section class="container py-5">
   <h2 class="mb-4 text-center">Rólunk írták</h2>
@@ -98,11 +107,5 @@
   </div>
 </section>
 
-    {{-- 🍽️ Étlap gomb – az étlapra mutat --}}
-    <div class="mt-4">
-        <a href="{{ route('menu') }}" class="btn btn-primary btn-lg">
-            <i class="fa-solid fa-utensils me-2"></i> Nézd meg az étlapot
-        </a>
-    </div>
 </section>
 @endsection

@@ -253,9 +253,9 @@ public function cancel($orderId)
 
 public function showPaymentForm(Order $order)
 {
-    if ($order->status !== 'uj' || $order->is_paid) {
-        return redirect()->route('orders.my')->with('error', 'Ez a rendelés már fizetve vagy nem aktív.');
-    }
+    if (!in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) || $order->is_paid) {
+    return redirect()->route('orders.myorders')->with('error', 'Ez a rendelés már fizetve vagy nem aktív.');
+}
 
     return view('orders.pay', compact('order'));
 }
