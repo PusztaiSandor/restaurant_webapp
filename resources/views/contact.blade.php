@@ -95,6 +95,17 @@
 
   @if(auth()->check() && auth()->user()->role === 'user')
     <form method="POST" action="{{ route('contact.send') }}" class="mx-auto" style="max-width:600px;">
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
         @csrf
         {{-- 📌 Típusválasztó --}}
         <div class="mb-3">
@@ -104,6 +115,9 @@
                 <option value="message">Üzenet az étteremnek</option>
                 <option value="rating">Étterem értékelése</option>
             </select>
+            <small class="form-text text-muted">
+            Válaszd ki, hogy üzenetet vagy értékelést szeretnél küldeni.
+            </small>
         </div>
 
         {{-- ⭐ Csillagos értékelés – csak ha type = rating --}}
@@ -115,18 +129,27 @@
                     <option value="{{ $i }}">{{ $i }} csillag</option>
                 @endfor
             </select>
+            <small class="form-text text-muted">
+            Csak egész szám választható 1 és 5 között. Az értékelés csak akkor kötelező, ha értékelést küldesz.
+            </small>
         </div>
 
         {{-- 📝 Tárgy --}}
         <div class="mb-3">
             <label for="subject" class="form-label">Tárgy (opcionális)</label>
-            <input type="text" id="subject" name="subject" class="form-control" placeholder="Pl. Kérdés, javaslat, dicséret">
+            <input type="text" id="subject" name="subject" class="form-control" placeholder="Pl. Kérdés, javaslat, dicséret" maxlength="150">
+            <small class="form-text text-muted">
+            Opcionális. Maximum 150 karakter. Csak betűk, számok és írásjelek engedélyezettek.
+            </small>
         </div>
 
         {{-- 💬 Tartalom --}}
         <div class="mb-3">
             <label for="content" class="form-label">Üzenet / Vélemény</label>
-            <textarea id="content" name="content" class="form-control" rows="5" placeholder="Írd meg az üzeneted vagy értékelésed" required></textarea>
+            <textarea id="content" name="content" class="form-control" rows="5" placeholder="Írd meg az üzeneted vagy értékelésed" required minlength="10" maxlength="1000"></textarea>
+            <small class="form-text text-muted">
+            Kötelező mező. Legalább 10, legfeljebb 1000 karakter. HTML, szkript és speciális karakterek nem engedélyezettek.
+            </small>
         </div>
 
         <button type="submit" class="btn btn-dark w-100">Küldés</button>

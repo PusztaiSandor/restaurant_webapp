@@ -17,11 +17,24 @@ class ContactController extends Controller
 
     // ✅ Validáció
     $request->validate([
-        'type' => 'required|in:message,rating',
-        'rating' => 'nullable|integer|min:1|max:5',
-        'subject' => 'nullable|string|max:150',
-        'content' => 'required|string',
-    ]);
+    'type' => 'required|in:message,rating',
+    'rating' => 'nullable|required_if:type,rating|integer|min:1|max:5',
+    'subject' => 'nullable|string|max:150|regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .,!?()@\\-]*$/u',
+    'content' => 'required|string|min:10|max:1000|regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .,!?()@\\-\\n\\r]*$/u',
+], [
+    'type.required' => 'Kérlek válaszd ki a visszajelzés típusát.',
+    'type.in' => 'A visszajelzés típusa csak üzenet vagy értékelés lehet.',
+    'rating.required_if' => 'Az értékelés kiválasztása kötelező, ha értékelést küldesz.',
+    'rating.integer' => 'Az értékelés csak egész szám lehet.',
+    'rating.min' => 'Legalább 1 csillagot kell választani.',
+    'rating.max' => 'Legfeljebb 5 csillagot lehet választani.',
+    'subject.max' => 'A tárgy legfeljebb 150 karakter lehet.',
+    'subject.regex' => 'A tárgy csak betűket, számokat és írásjeleket tartalmazhat.',
+    'content.required' => 'Az üzenet vagy vélemény megadása kötelező.',
+    'content.min' => 'Az üzenet legalább 10 karakter hosszú legyen.',
+    'content.max' => 'Az üzenet legfeljebb 1000 karakter lehet.',
+    'content.regex' => 'Az üzenet nem tartalmazhat nem engedélyezett karaktereket.',
+]);
 
     // 💾 Mentés
     Feedback::create([

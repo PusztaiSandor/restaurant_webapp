@@ -96,6 +96,16 @@
     <div class="mt-3 p-3 border rounded bg-light">
         <h5 class="mb-2">Rendelés értékelése</h5>
 
+        @if ($errors->any())
+    <div class="alert alert-danger mt-2">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
         <form method="POST" action="{{ route('order.rate', $order->orders_id) }}">
             @csrf
 
@@ -113,7 +123,14 @@
             {{-- 💬 Megjegyzés --}}
             <div class="mb-2">
                 <label for="rating_comment" class="form-label">Megjegyzés (opcionális):</label>
-                <textarea name="rating_comment" id="rating_comment" class="form-control" rows="2"></textarea>
+                <textarea name="rating_comment" id="rating_comment"
+          class="form-control"
+          rows="2"
+          maxlength="300"
+          placeholder="Pl. Finom volt minden étel."></textarea>
+        <small class="form-text text-muted">
+        Opcionális. Maximum 300 karakter. HTML, szkript és speciális karakterek nem engedélyezettek.
+        </small>
             </div>
 
             <button type="submit" class="btn btn-outline-success btn-sm">Értékelés mentése</button>

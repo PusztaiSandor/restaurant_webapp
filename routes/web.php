@@ -49,6 +49,7 @@ Route::post('/logout', function () {
 
 // 🔸 Profil főoldal – teljes szerkesztés és jelszómódosítás
 Route::get('/profile', [UserController::class, 'show'])->name('profile');
+Route::get('/profile/mypage-edit', [UserController::class, 'editMypage'])->name('profile.mypage.edit');
 
 // 🛠️ Csak e-mail és jelszó frissítése
 Route::get('/profile/edit', [UserController::class, 'edit'])->name('profile.edit');

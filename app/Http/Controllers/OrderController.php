@@ -98,6 +98,20 @@ class OrderController extends Controller
     $cart = session('cart', []);
     $charges = session('charges', []);
 
+
+// ✅ Mennyiség validálása minden kosár elemre
+foreach ($cart as $item) {
+    if (!isset($item['quantity']) || !is_numeric($item['quantity']) || $item['quantity'] < 1) {
+        return back()->with('error', 'A mennyiség nem lehet nulla vagy negatív.');
+    }
+
+    $dish = \App\Models\Dish::find($item['dishes_id']);
+    if ($item['quantity'] > $dish->stock) {
+        return back()->with('error', 'A rendelni kívánt mennyiség meghaladja a készletet.');
+    }
+}
+
+
     // 💰 Ételek összesített ára (bruttó)
     $subtotalSum = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
 
@@ -329,9 +343,16 @@ public function rate(Request $request, Order $order)
     }
 
     $request->validate([
-        'rating_star' => 'required|integer|min:1|max:5',
-        'rating_comment' => 'nullable|string|max:1000',
-    ]);
+    'rating_star' => 'required|integer|min:1|max:5',
+    'rating_comment' => 'nullable|string|max:300|regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .,!?()@\\-\\n\\r]*$/u',
+], [
+    'rating_star.required' => 'Kérlek válaszd ki az értékelést.',
+    'rating_star.integer' => 'Az értékelés csak egész szám lehet.',
+    'rating_star.min' => 'Legalább 1 csillagot kell választani.',
+    'rating_star.max' => 'Legfeljebb 5 csillagot lehet választani.',
+    'rating_comment.max' => 'A megjegyzés legfeljebb 300 karakter lehet.',
+    'rating_comment.regex' => 'A megjegyzés csak betűket, számokat és írásjeleket tartalmazhat.',
+]);
 
     $order->rating_star = $request->rating_star;
     $order->rating_comment = $request->rating_comment;

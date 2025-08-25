@@ -56,10 +56,10 @@
     </ul>
 
     {{-- ⚙️ Profil szerkesztése gomb --}}
-    <div class="mt-4">
-        <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-secondary">
-            <i class="fa-solid fa-user-pen me-1"></i> Profil szerkesztése
-        </a>
-    </div>
+<div class="mt-4">
+    <a href="{{ route('profile.mypage.edit') }}" class="btn btn-sm btn-secondary">
+        <i class="fa-solid fa-user-pen me-1"></i> Profil szerkesztése
+    </a>
+</div>
 </div>
 @endsection

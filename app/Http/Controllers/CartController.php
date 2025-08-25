@@ -128,6 +128,17 @@ $sizeMultiplier = $sizeOptions[$size]['multiplier'] ?? 1.00;
     // 🔢 Mennyiség
     $quantity = max(1, (int) $request->input('quantity', 1));
 
+
+// ✅ Mennyiség validálása
+if ($quantity < 1) {
+    return back()->with('error', 'A mennyiség nem lehet nulla vagy negatív.');
+}
+
+if ($quantity > $dish->stock) {
+    return back()->with('error', 'A rendelni kívánt mennyiség meghaladja a készletet.');
+}
+
+
     // ➕ Extrák
     $extraIngredients = $request->input('extra_ingredients', []);
     $excludedIngredients = $request->input('excluded_ingredients', []);
