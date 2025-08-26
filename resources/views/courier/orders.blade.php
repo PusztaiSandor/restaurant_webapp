@@ -13,7 +13,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
                         <strong>Rendelés #{{ $order->orders_id }}</strong>
-                        <span class="badge bg-secondary ms-2">{{ ucfirst(str_replace('_', ' ', $order->status)) }}</span>
+                        <span class="badge bg-secondary ms-2">{{ $order->status_label }}</span>
                         <span class="ms-3 text-muted">{{ $order->created_at->format('Y.m.d H:i') }}</span>
                     </div>
 
@@ -38,7 +38,7 @@
                 {{-- Rendelés részletei --}}
                 <div class="card-body">
                     <p><strong>Felhasználó:</strong> {{ $order->user->name ?? 'N/A' }}</p>
-                    <p><strong>Átvételi mód:</strong> {{ ucfirst($order->delivery_method) }}</p>
+                    <p><strong>Átvételi mód:</strong> {{ $order->delivery_method_label }}</p>
                     <p><strong>Fizetve:</strong> {{ $order->is_paid ? 'Igen' : 'Nem' }}</p>
 
                     {{-- Tételek listája --}}

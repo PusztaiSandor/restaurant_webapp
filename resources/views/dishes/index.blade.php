@@ -2,11 +2,11 @@
 
 @section('content')
 <div class="container">
-    @if (session('success'))
+    {{-- @if (session('success'))
         <div class="alert alert-success text-center">
             {{ session('success') }}
         </div>
-    @endif
+    @endif --}}
 
     <h2 class="mb-4 text-center">Étlap</h2>
 
@@ -36,7 +36,7 @@
             </select>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-12 col-md-2">
             <label for="sort" class="form-label">Rendezés:</label>
             <select name="sort" id="sort" class="form-select">
                 <option value="">-- Alapértelmezett --</option>
@@ -45,9 +45,10 @@
             </select>
         </div>
 
-        <div class="col-md-2 d-flex align-items-end">
+        <div class="col-12 col-md-2 d-flex align-items-end mt-2 mt-md-0">
             <button type="submit" class="btn btn-primary w-100">Szűrés</button>
         </div>
+
     </form>
 
     <a href="{{ route('menu.pdf') }}"

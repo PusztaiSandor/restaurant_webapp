@@ -4,7 +4,7 @@
 <section class="text-center py-5">
     {{-- Üdvözlő szöveg --}}
     <h1 class="display-5 mb-3">Üdvözlünk az Esszencia Étteremben!</h1>
-    <p class="lead mb-4">Az ízek lényege — friss, fenntartható, barátságos.</p>
+    <p class="lead mb-4">Az ízek lényege - friss, fenntartható, barátságos.</p>
 
     {{-- Étterem logó megjelenítése --}}
     <img src="{{ asset('assets/images/components/logo.png') }}" alt="Esszencia Étterem logó" class="img-fluid my-4" style="max-height: 150px;">

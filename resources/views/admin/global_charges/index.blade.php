@@ -4,15 +4,16 @@
 <div class="container py-4">
     <h2 class="mb-4">Globális díjak</h2>
 
-    @if(session('success'))
+    {{-- @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    @endif --}}
 
     <a href="{{ route('global-charges.create') }}" class="btn btn-primary mb-3">
         <i class="fa-solid fa-plus me-1"></i> Új díj hozzáadása
     </a>
 
-    <table class="table table-bordered table-hover">
+    <div class="table-responsive overflow-x-auto">
+  <table class="table table-bordered table-hover w-100">
         <thead class="table-dark">
             <tr>
                 <th>Típus</th>
@@ -55,5 +56,7 @@
             @endforelse
         </tbody>
     </table>
+</div>
+
 </div>
 @endsection

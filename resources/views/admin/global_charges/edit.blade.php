@@ -4,6 +4,16 @@
 <div class="container py-4">
     <h2 class="mb-4">Globális díj szerkesztése</h2>
 
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
     <form action="{{ route('global-charges.update', $charge->global_charges_id) }}" method="POST">
         @csrf
         @method('PUT')

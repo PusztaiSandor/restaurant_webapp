@@ -215,16 +215,50 @@ foreach ($cart as $item) {
 
     // Kosár ürítése és visszairányítás
     session()->forget('cart');
-    return redirect()->route('home')->with('success', 'A rendelés sikeresen elküldve!');
+    return redirect()->route('orders.myorders')->with('success', 'A rendelés sikeresen elküldve!');
 }
 
-public function myOrders()
+public function myOrders(Request $request)
 {
     $userId = Auth::id();
-    $orders = Order::with('items.dish')
-        ->where('users_id', $userId)
-        ->orderByDesc('created_at')
-        ->get();
+
+    $query = Order::with(['items.dish', 'booking'])
+        ->where('users_id', $userId);
+
+    // Rendelés státusz szűrés
+    if ($request->filled('status') && $request->status !== 'mind') {
+        $query->where('status', $request->status);
+    }
+
+    // Átvételi mód szűrés
+    if ($request->filled('delivery_method') && $request->delivery_method !== 'mind') {
+        $query->where('delivery_method', $request->delivery_method);
+    }
+
+    // Fizetési állapot szűrés
+    if ($request->filled('payment_status')) {
+        if ($request->payment_status === 'paid') {
+            $query->where('is_paid', true);
+        } elseif ($request->payment_status === 'unpaid') {
+            $query->where('is_paid', false);
+        }
+    }
+
+    // Asztalfoglalás státusz szűrés
+    if ($request->filled('booking_status') && $request->booking_status !== 'mind') {
+        $query->whereHas('booking', function ($q) use ($request) {
+            $q->where('status', $request->booking_status);
+        });
+    }
+
+    // Rendezés
+    if ($request->filled('sort') && $request->sort === 'date_asc') {
+        $query->orderBy('created_at', 'asc');
+    } else {
+        $query->orderBy('created_at', 'desc');
+    }
+
+    $orders = $query->get();
 
     return view('orders.myorders', compact('orders'));
 }
@@ -320,7 +354,7 @@ return redirect()->route('orders.myorders')->with('success', "Fizetés sikeres. 
     $order->payment_time = now();
     $order->save();
 
-    return redirect()->route('orders.myorders')->with('success', 'Fizetés szimulálása sikeres.');
+    return redirect()->route('orders.myorders')->with('success', 'A rendelés fizetése sikeres.');
 }
 
 public function rate(Request $request, Order $order)

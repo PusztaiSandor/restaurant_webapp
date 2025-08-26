@@ -138,6 +138,12 @@ class UserController extends Controller
 ]);
 
     $user = Auth::user();
+
+// Ne lehessen ugyanaz a jelszó
+    if (Hash::check($request->password, $user->password)) {
+        return back()->withErrors(['password' => 'Az új jelszó nem lehet azonos a jelenlegi jelszóval.']);
+    }
+
     $user->password = Hash::make($request->password);
 
     // Ha korábban ideiglenes jelszóval lépett be, megszüntetjük a jelzést

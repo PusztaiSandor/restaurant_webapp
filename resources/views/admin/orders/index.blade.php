@@ -20,7 +20,13 @@
                         $statusOptions = ['atvetelre_kesz'];
                         break;
                     case 'atvetelre_kesz':
-                        if ($order->delivery_method !== 'delivery' && $order->is_paid) {
+                        if (
+                            $order->delivery_method !== 'delivery' &&
+                            $order->is_paid &&
+                            (
+                                !$order->booking || !in_array($order->booking->status, ['uj'])
+                            )
+                        ) {
                             $statusOptions = ['atvetel_megtortent'];
                         }
                         break;
@@ -35,7 +41,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
                         <strong>Rendelés #{{ $order->orders_id }}</strong>
-                        <span class="badge bg-secondary ms-2">{{ ucfirst($order->status) }}</span>
+                        <span class="badge bg-secondary ms-2">{{ $order->status_label }}</span>
                         <span class="ms-3 text-muted">{{ $order->created_at->format('Y.m.d H:i') }}</span>
                     </div>
                 </div>
@@ -43,7 +49,7 @@
                 <div class="card-body">
                     {{-- Összefoglaló adatok --}}
                     <p><strong>Felhasználó:</strong> {{ $order->user->name ?? 'N/A' }}</p>
-                    <p><strong>Átvételi mód:</strong> {{ ucfirst($order->delivery_method) }}</p>
+                    <p><strong>Átvételi mód:</strong> {{ $order->delivery_method_label }}</p>
                     <p><strong>Fizetve:</strong> {{ $order->is_paid ? 'Igen' : 'Nem' }}</p>
 
                     {{-- Tételek --}}
@@ -146,7 +152,7 @@
     <div class="mt-3 p-3 border rounded bg-light">
         <h5 class="mb-2">Asztalfoglalás</h5>
 
-        <p><strong>Státusz:</strong> {{ ucfirst($order->booking->status) }}</p>
+        <p><strong>Státusz:</strong> {{ $order->booking->status_label }}</p>
         <p><strong>Foglalási idő:</strong> {{ $order->booking->booking_time->format('Y.m.d H:i') }}</p>
         <p><strong>Fő:</strong> {{ $order->booking->seats }}</p>
         <p><strong>Asztalok:</strong> {{ $order->booking->table_code }}</p>

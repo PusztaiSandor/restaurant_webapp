@@ -6,9 +6,9 @@
     <h2>Profil szerkesztése</h2>
 
     {{-- Sikeres frissítés visszajelzése --}}
-    @if(session('success'))
+    {{-- @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    @endif --}}
 
     {{-- Profiladatok frissítése --}}
     <form method="POST" action="{{ route('profile.update') }}">

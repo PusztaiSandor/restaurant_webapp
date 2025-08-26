@@ -83,7 +83,7 @@
 </section>
 
   <!-- Általános Felhasználási Feltételek -->
-  <section class="container mx-auto px-4 py-8 my-12 text-center">
+  <section class="container mx-auto px-4 py-8 mt-20 my-20 text-center">
     <a href="{{ route('terms') }}" class="text-amber-700 hover:underline text-lg">Általános Felhasználási Feltételek megtekintése</a>
   </section>
 

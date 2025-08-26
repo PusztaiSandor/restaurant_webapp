@@ -25,9 +25,12 @@
     </select>
   </div>
 
+  <div class="w-full mt-4">
   <button type="submit" class="btn btn-sm btn-dark">Szűrés</button>
+  </div>
 </form>
 
+  <div class="overflow-x-auto">
   <table class="table-auto w-full text-left bg-white shadow-md rounded">
     <thead class="bg-gray-100">
       <tr>
@@ -56,5 +59,6 @@
       @endforelse
     </tbody>
   </table>
+</div>
 </section>
 @endsection

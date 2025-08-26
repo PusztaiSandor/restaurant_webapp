@@ -320,6 +320,11 @@ public function simulateReset(Request $request)
             return redirect('/login')->withErrors(['email' => 'Nem található felhasználó.']);
         }
 
+        //  Új jelszó ne egyezzen a régivel
+    if (Hash::check($request->password, $user->password)) {
+        return back()->withErrors(['password' => 'Az új jelszó nem lehet azonos a jelenlegi jelszóval.']);
+    }
+
         $user->password = Hash::make($request->password);
         $user->save();
 

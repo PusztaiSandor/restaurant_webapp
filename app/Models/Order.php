@@ -65,4 +65,31 @@ public function booking()
 {
     return $this->hasOne(Booking::class, 'orders_id');
 }
+
+// Segédfüggvény szállítási módra
+public function getDeliveryMethodLabelAttribute()
+{
+    return match($this->delivery_method) {
+        'delivery' => 'Kiszállítás',
+        'pickup' => 'Személyes átvétel',
+        'dine-in' => 'Helyben fogyasztás',
+        default => ucfirst($this->delivery_method),
+    };
+}
+
+// Segédfüggvény ételrendelési státuszra
+public function getStatusLabelAttribute()
+{
+    return match($this->status) {
+        'uj' => 'Új',
+        'keszul' => 'Készül',
+        'atvetelre_kesz' => 'Átvételre kész',
+        'atvetel_megtortent' => 'Átvétel megtörtént',
+        'kiszallitva' => 'Kiszállítva',
+        'lezarva' => 'Lezárva',
+        'torolve' => 'Törölve',
+        default => ucfirst($this->status),
+    };
+}
+
 }

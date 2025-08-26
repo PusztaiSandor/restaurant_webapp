@@ -6,14 +6,14 @@
     <h2 class="mb-4 text-center">📦 Készlet módosítása</h2>
 
     {{-- Sikeres mentés visszajelzése --}}
-    @if(session('success'))
+    {{-- @if(session('success'))
         <div class="alert alert-success text-center">{{ session('success') }}</div>
-    @endif
+    @endif --}}
 
     {{-- Hibaüzenet visszajelzése --}}
-    @if(session('error'))
+    {{-- @if(session('error'))
         <div class="alert alert-danger text-center">{{ session('error') }}</div>
-    @endif
+    @endif --}}
 
     {{-- Validációs hibák megjelenítése --}}
     @if ($errors->any())

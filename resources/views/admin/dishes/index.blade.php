@@ -15,9 +15,9 @@
     @endif
 
     {{-- Sikeres művelet visszajelzése --}}
-    @if(session('success'))
+    {{-- @if(session('success'))
         <div class="alert alert-success text-center">{{ session('success') }}</div>
-    @endif
+    @endif --}}
 
     {{-- Aktív ételek táblázata --}}
     <table class="table table-bordered table-hover">

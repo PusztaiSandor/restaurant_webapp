@@ -6,7 +6,8 @@
 
     <a href="{{ route('admin.tables.create') }}" class="btn btn-primary mb-3">Új asztal hozzáadása</a>
 
-    <table class="table table-bordered">
+    <div class="table-responsive overflow-x-auto">
+  <table class="table table-bordered w-100">
         <thead>
             <tr>
                 <th>Kód</th>
@@ -34,5 +35,6 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

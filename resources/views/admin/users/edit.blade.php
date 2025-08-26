@@ -16,14 +16,21 @@
     @endif
 
     {{-- Flash üzenetek: sikeres mentés vagy jelszó generálás --}}
-    @foreach (['success', 'success_password'] as $type)
+    {{-- @foreach (['success', 'success_password'] as $type)
         @if (session($type))
             <div class="alert alert-{{ $type === 'success' ? 'success' : 'info' }}">
                 <i class="fa-solid fa-{{ $type === 'success' ? 'check-circle' : 'key' }} me-1"></i>
                 {{ session($type) }}
             </div>
         @endif
-    @endforeach
+    @endforeach --}}
+
+    @if (session('success_password'))
+    <div class="alert alert-info">
+        <i class="fa-solid fa-key me-1"></i>
+        {{ session('success_password') }}
+    </div>
+    @endif
 
     {{-- Felhasználó szerkesztő űrlap --}}
     <form method="POST" action="{{ route('admin.users.update', $user->users_id) }}">

@@ -6,20 +6,20 @@
     <h2 class="text-center mb-4">Belépés</h2>
 
     {{-- ⚠️ Hibás bejelentkezés esetén megjelenő hibaüzenet --}}
-    @if (session('error'))
+    {{-- @if (session('error'))
         <div class="alert alert-danger text-center">
             {{ session('error') }}
         </div>
-    @endif
+    @endif --}}
 
     {{-- ✅ Sikeres regisztráció vagy jelszócsere után megjelenő üzenet --}}
-    @if(session('success'))
+    {{-- @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
-    @endif
+    @endif --}}
 
-    {{-- 🔐 Bejelentkezési űrlap --}}
+    {{-- Bejelentkezési űrlap --}}
     <form method="POST" action="{{ route('login.submit') }}">
         @csrf {{-- 🛡️ Laravel CSRF token a biztonságos POST kéréshez --}}
 

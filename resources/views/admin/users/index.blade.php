@@ -3,20 +3,21 @@
 @section('content')
 <div class="container">
     {{-- Flash üzenetek megjelenítése: siker, hiba, információ --}}
-    @foreach (['success', 'error', 'info'] as $type)
+    {{-- @foreach (['success', 'error', 'info'] as $type)
         @if(session($type))
             <div class="alert alert-{{ $type === 'error' ? 'danger' : $type }}">
-                {{-- Ikon típusa az üzenet típusától függően --}}
+
                 <i class="fa-solid fa-{{ $type === 'success' ? 'check-circle' : ($type === 'error' ? 'exclamation-triangle' : 'info-circle') }} me-1"></i>
                 {{ session($type) }}
             </div>
         @endif
-    @endforeach
+    @endforeach --}}
 
     <h2>Felhasználók</h2>
 
     {{-- Felhasználók táblázata --}}
-    <table class="table table-bordered align-middle">
+    <div class="table-responsive overflow-x-auto">
+    <table class="table table-bordered align-middle w-100">
         <thead>
             <tr>
                 <th>Név</th>
@@ -59,7 +60,7 @@
                     </td>
 
                     {{-- Műveletek: szerkesztés + aktiválás/inaktiválás --}}
-                    <td>
+                    <td class="d-flex flex-wrap gap-1">
                         {{-- Szerkesztés gomb --}}
                         <a href="{{ route('admin.users.edit', $user->users_id) }}" class="btn btn-sm btn-primary">
                             Szerkesztés
@@ -78,6 +79,7 @@
             @endforeach
         </tbody>
     </table>
+   </div>
 
     {{-- Új felhasználó létrehozása gomb --}}
     <a href="{{ route('admin.users.create') }}" class="btn btn-success mt-3">➕ Új felhasználó</a>

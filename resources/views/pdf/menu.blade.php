@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: sans-serif; font-size: 12px; }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px;}
         h1, h2 { color: #333; }
         .section { margin-bottom: 30px; }
         .dish { margin-bottom: 10px; }

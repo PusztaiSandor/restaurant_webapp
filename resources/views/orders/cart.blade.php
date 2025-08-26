@@ -5,12 +5,12 @@
     <h2 class="mb-4 text-center">Kosár tartalma</h2>
 
     {{-- Visszajelzések --}}
-    @if (session('success'))
+    {{-- @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
     @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+    @endif --}}
 
     <div class="text-start mb-3">
         <a href="{{ route('menu') }}" class="btn btn-secondary">

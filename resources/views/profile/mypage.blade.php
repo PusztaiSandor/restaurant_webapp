@@ -3,11 +3,11 @@
 @section('content')
 <div class="container py-4">
     {{-- Sikeres műveletek visszajelzése --}}
-    @if(session('success'))
+    {{-- @if(session('success'))
         <div class="alert alert-success">
             <i class="fa-solid fa-check-circle me-1"></i> {{ session('success') }}
         </div>
-    @endif
+    @endif --}}
 
     @if(session('success_password'))
         <div class="alert alert-success">

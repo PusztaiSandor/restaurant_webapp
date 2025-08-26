@@ -5,15 +5,24 @@
     <h2 class="mb-4 text-center">Rendelés véglegesítése</h2>
 
     {{-- Visszajelzések --}}
-    @if (session('error'))
+    {{-- @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+    @endif --}}
 
     @guest
     <div class="alert alert-warning">
         A rendelés leadásához <a href="{{ route('login') }}">jelentkezz be</a> vagy <a href="{{ route('register') }}">regisztrálj</a>.
     </div>
     @endguest
+
+    <div class="d-flex justify-content-between mb-4">
+    <a href="{{ route('cart.index') }}" class="btn btn-outline-secondary">
+        ← Vissza a kosárhoz
+    </a>
+    <a href="{{ route('menu') }}" class="btn btn-outline-primary">
+        ← Vissza az étlapra
+    </a>
+    </div>
 
 
     <form method="POST" action="{{ route('order.submit') }}">

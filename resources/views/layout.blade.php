@@ -191,6 +191,18 @@
 
     {{-- Tartalom helye --}}
     <main class="container py-4">
+
+{{-- Flash üzenetek --}}
+    @foreach (['success', 'error', 'info', 'warning'] as $type)
+        @if (session($type))
+            <div class="alert alert-{{ $type === 'error' ? 'danger' : $type }} alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-{{ $type === 'success' ? 'check-circle' : ($type === 'error' ? 'exclamation-triangle' : 'info-circle') }} me-2"></i>
+                {{ session($type) }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Bezárás"></button>
+            </div>
+        @endif
+    @endforeach
+
         @yield('content')
     </main>
 

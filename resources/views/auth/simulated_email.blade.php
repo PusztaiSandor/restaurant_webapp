@@ -7,14 +7,14 @@
 
     {{-- Információs üzenet: szimulált e-mail küldés --}}
     <div class="alert alert-info text-center">
-        A jelszómódosításhoz elküldtünk egy linket az e-mail címedre. 📩
+        A jelszómódosításhoz elküldtünk egy linket az e-mail címedre.
         <br>
-        <small>(Ez most csak szimuláció – nincs valódi levél.)</small>
+        <small>(Jelszó módosításához kattints a Jelszómódosítás gombra)</small>
     </div>
 
     {{-- Műveleti gombok: jelszómódosítás vagy visszalépés --}}
     <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mt-4">
-        {{-- ✅ Jelszómódosítás gomb – átirányítás a reset formra --}}
+        {{-- Jelszómódosítás gomb – átirányítás a reset formra --}}
         <form method="GET" action="{{ route('confirm-reset', ['email' => $email]) }}">
             <button type="submit" class="btn btn-success w-100">Jelszómódosítás</button>
         </form>

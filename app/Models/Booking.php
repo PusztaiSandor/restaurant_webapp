@@ -45,4 +45,17 @@ class Booking extends Model
 
         return \App\Models\Table::whereIn('table_code', $codes)->get();
     }
+
+    // Segédfüggvény az asztalfoglalási státuszok megjelenítéséhez
+
+    public function getStatusLabelAttribute()
+    {
+        return match($this->status) {
+            'uj' => 'Új',
+            'teljesitve' => 'Teljesítve',
+            'elutasitva' => 'Elutasítva',
+            'torolve' => 'Törölve',
+            default => ucfirst($this->status),
+        };
+    }
 }

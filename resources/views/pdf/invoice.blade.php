@@ -18,10 +18,21 @@
     <div class="section">
         <strong>Rendelés #{{ $order->orders_id }}</strong><br>
         Dátum: {{ $order->created_at->format('Y.m.d H:i') }}<br>
-        Átvételi mód: {{ ucfirst($order->delivery_method) }}<br>
+        Átvételi mód: {{ $order->delivery_method_label }}<br>
         Fizetési mód: {{ ucfirst($order->payment_method) }}<br>
-        Fizetve: {{ $order->is_paid ? 'Igen' : 'Nem' }}
+        Fizetve: {{ $order->is_paid ? 'Igen' : 'Nem' }}<br>
+        Rendelés státusza: {{ $order->status_label }}<br>
     </div>
+
+    @if ($order->booking)
+    <div class="section">
+        <h3>Asztalfoglalás</h3>
+        <p><strong>Státusz:</strong> {{ $order->booking->status_label }}</p>
+        <p><strong>Időpont:</strong> {{ $order->booking->booking_time->format('Y.m.d H:i') }}</p>
+        <p><strong>Fő:</strong> {{ $order->booking->seats }}</p>
+        <p><strong>Asztalok:</strong> {{ $order->booking->table_code }}</p>
+    </div>
+    @endif
 
     <div class="section">
         <h3>Tételek</h3>
