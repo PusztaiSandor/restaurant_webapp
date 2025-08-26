@@ -1,11 +1,11 @@
-@extends('layout') {{-- 🌐 Alap layout betöltése --}}
+@extends('layout')
 
 @section('content')
 <div class="container py-4">
-    {{-- 🧾 Oldalcím --}}
+    {{-- Oldalcím --}}
     <h2 class="text-center mb-4">Új jelszó megadása</h2>
 
-    {{-- ⚠️ Validációs hibák megjelenítése --}}
+    {{-- Validációs hibák megjelenítése --}}
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
@@ -16,11 +16,11 @@
         </div>
     @endif
 
-    {{-- 🔐 Jelszófrissítő űrlap --}}
+    {{-- Jelszófrissítő űrlap --}}
     <form method="POST" action="{{ route('confirm-reset.post', ['email' => $email]) }}">
         @csrf {{-- 🛡️ Laravel CSRF token a biztonságos POST kéréshez --}}
 
-        {{-- 🔑 Új jelszó mező --}}
+        {{-- Új jelszó mező --}}
 <div class="mb-3">
     <label for="password" class="form-label">Új jelszó</label>
     <input type="password" name="password" id="password"
@@ -33,14 +33,14 @@
     @enderror
 </div>
 
-{{-- 🔁 Jelszó megerősítése --}}
+{{-- Jelszó megerősítése --}}
 <div class="mb-3">
     <label for="password_confirmation" class="form-label">Jelszó megerősítése</label>
     <input type="password" name="password_confirmation" id="password_confirmation"
            class="form-control" required>
 </div>
 
-        {{-- ✅ Küldés gomb --}}
+        {{-- Küldés gomb --}}
         <button type="submit" class="btn btn-success w-100 mt-3">Jelszó módosítása</button>
     </form>
 </div>

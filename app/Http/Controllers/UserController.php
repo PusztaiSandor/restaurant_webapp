@@ -10,24 +10,24 @@ use App\Models\Order;
 class UserController extends Controller
 {
     /**
-     * 🧑‍💼 Megjeleníti a profil főoldalt, ahol a felhasználó
+     * Megjeleníti a profil főoldalt, ahol a felhasználó
      * szerkesztheti az adatait és módosíthatja a jelszavát.
      * A nézet: 'profile.mypage_edit'
      */
     public function show()
     {
-        $user = Auth::user(); // 🔐 Bejelentkezett felhasználó lekérése
+        $user = Auth::user(); // Bejelentkezett felhasználó lekérése
         return view('profile.mypage', compact('user'));
     }
 
     public function editMypage()
 {
-    $user = Auth::user(); // 🔐 Bejelentkezett felhasználó lekérése
+    $user = Auth::user(); // Bejelentkezett felhasználó lekérése
     return view('profile.mypage_edit', compact('user'));
 }
 
     /**
-     * 🛠️ Megjeleníti az e-mail és jelszó frissítő nézetet.
+     * Megjeleníti az e-mail és jelszó frissítő nézetet.
      * Ez egy különálló szerkesztő oldal.
      * A nézet: 'profile.edit'
      */
@@ -38,7 +38,7 @@ class UserController extends Controller
     }
 
     /**
-     * 📝 Profiladatok frissítése (név, email, cím stb.).
+     * Profiladatok frissítése (név, email, cím stb.).
      * Validálja a bemenetet, majd menti az új adatokat.
      * Visszairányít a fő szerkesztő oldalra.
      */
@@ -50,7 +50,7 @@ class UserController extends Controller
             'string',
             'min:2',
             'max:50',
-            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű. ]+$/u'
+            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$/u'
         ],
         'email' => [
             'required',
@@ -59,7 +59,7 @@ class UserController extends Controller
             'min:5',
             'max:60',
             'unique:users,email,' . Auth::user()->users_id . ',users_id',
-            'regex:/^[A-Za-z0-9@.]{5,60}$/'
+            'regex:/^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/'
         ],
         'phone' => [
             'nullable',
@@ -93,13 +93,13 @@ class UserController extends Controller
         'name.required' => 'A név megadása kötelező.',
         'name.min' => 'A név legalább 2 karakter hosszú legyen.',
         'name.max' => 'A név legfeljebb 50 karakter lehet.',
-        'name.regex' => 'A név csak betűket, szóközt és pontot tartalmazhat.',
+        'name.regex' => 'A név csak betűket, szóközt, pontot és kötőjelet tartalmazhat. Példa: Kiss-Kovács János',
         'email.required' => 'Az e-mail cím megadása kötelező.',
         'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
         'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
         'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
         'email.unique' => 'Ez az e-mail cím már regisztrálva van.',
-        'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot és @ karaktert tartalmazhat.',
+        'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
         'phone.regex' => 'A telefonszám formátuma csak a következő lehet: +36-20|30|40|70-123-4567',
         'postal_code.regex' => 'Az irányítószámnak pontosan 4 számjegyből kell állnia. Példa: 1139',
         'city.regex' => 'A település neve csak betűket, szóközt és kötőjelet tartalmazhat. Példa: Budapest vagy Dunakeszi-Alag',
@@ -107,11 +107,11 @@ class UserController extends Controller
         'street_number.regex' => 'A házszám csak számokat, betűket, kötőjelet és perjelet tartalmazhat. Példa: 15/A vagy 13–15',
     ]);
 
-    // 🧑‍💻 Felhasználó frissítése
+    // Felhasználó frissítése
     $user = Auth::user();
     $user->update($validated);
 
-    // 🔔 Sikeres frissítés után visszairányítás
+    // Sikeres frissítés után visszairányítás
     return redirect()->route('profile')->with('success', 'Profilod frissítve!');
 }
 
@@ -140,7 +140,7 @@ class UserController extends Controller
     $user = Auth::user();
     $user->password = Hash::make($request->password);
 
-    // 🔓 Ha korábban ideiglenes jelszóval lépett be, megszüntetjük a jelzést
+    // Ha korábban ideiglenes jelszóval lépett be, megszüntetjük a jelzést
     if ($user->must_change_password) {
         $user->must_change_password = false;
     }
@@ -160,7 +160,7 @@ public function updateCredentials(Request $request)
             'min:5',
             'max:60',
             'unique:users,email,' . Auth::user()->users_id . ',users_id',
-            'regex:/^[A-Za-z0-9@.]{5,60}$/'
+            'regex:/^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/'
         ],
         'password' => [
             'required',
@@ -176,7 +176,7 @@ public function updateCredentials(Request $request)
         'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
         'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
         'email.unique' => 'Ez az e-mail cím már regisztrálva van.',
-        'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot és @ karaktert tartalmazhat.',
+        'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
         'password.required' => 'A jelszó megadása kötelező.',
         'password.min' => 'A jelszónak legalább 8 karakter hosszúnak kell lennie.',
         'password.max' => 'A jelszó legfeljebb 36 karakter lehet.',

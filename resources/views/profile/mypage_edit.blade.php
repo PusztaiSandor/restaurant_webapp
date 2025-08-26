@@ -2,51 +2,51 @@
 
 @section('content')
 <div class="container py-4">
-    {{-- 🧑‍💼 Oldalcím --}}
+    {{-- Oldalcím --}}
     <h2>Profil szerkesztése</h2>
 
-    {{-- ✅ Sikeres frissítés visszajelzése --}}
+    {{-- Sikeres frissítés visszajelzése --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- 📝 Profiladatok frissítése --}}
+    {{-- Profiladatok frissítése --}}
     <form method="POST" action="{{ route('profile.update') }}">
-        @csrf {{-- 🔐 CSRF token --}}
+        @csrf {{-- CSRF token --}}
 
-        {{-- 🔤 Név mező --}}
+        {{-- Név mező --}}
         <div class="mb-3">
     <label for="name">Név</label>
     <input type="text"
-           name="name"
-           value="{{ old('name', $user->name) }}"
-           class="form-control"
-           required
-           minlength="2"
-           maxlength="50"
-           pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű. ]+$">
-    <small class="form-text text-muted">
-        Csak betűk, szóköz és pont. Minimum 2, maximum 50 karakter.
-    </small>
+       name="name"
+       value="{{ old('name', $user->name) }}"
+       class="form-control"
+       required
+       minlength="2"
+       maxlength="50"
+       pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$">
+<small class="form-text text-muted">
+    Csak betűk, szóköz, pont és kötőjel. Minimum 2, maximum 50 karakter.
+</small>
 </div>
 
-        {{-- 📧 Email mező --}}
+        {{-- Email mező --}}
         <div class="mb-3">
     <label for="email">Email</label>
     <input type="email"
-           name="email"
-           value="{{ old('email', $user->email) }}"
-           class="form-control"
-           required
-           minlength="5"
-           maxlength="60"
-           pattern="^[A-Za-z0-9@.]{5,60}$">
-    <small class="form-text text-muted">
-        Csak betűk, számok, pont és @ karakter. Minimum 5, maximum 60 karakter.
-    </small>
+       name="email"
+       value="{{ old('email', $user->email) }}"
+       class="form-control"
+       required
+       minlength="5"
+       maxlength="60"
+       pattern="^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$">
+<small class="form-text text-muted">
+    Betűk, számok, pont, kötőjel, aláhúzás és @ karakter engedélyezett. Minimum 5, maximum 60 karakter.
+</small>
 </div>
 
-        {{-- 📱 Telefonszám mező --}}
+        {{-- Telefonszám mező --}}
         <div class="mb-3">
     <label for="phone">Telefonszám</label>
     <input type="text"
@@ -59,11 +59,11 @@
     </small>
 </div>
 
-        {{-- 🏡 Szállítási cím szekció --}}
+        {{-- Szállítási cím szekció --}}
         <hr>
         <h5 class="mt-4">Szállítási cím</h5>
 
-        {{-- 📮 Irányítószám --}}
+        {{-- Irányítószám --}}
         <div class="mb-3">
     <label for="postal_code">Irányítószám</label>
     <input type="text"
@@ -77,7 +77,7 @@
     </small>
 </div>
 
-        {{-- 🏙️ Település --}}
+        {{-- Település --}}
         <div class="mb-3">
     <label for="city">Település</label>
     <input type="text"
@@ -91,7 +91,7 @@
     </small>
 </div>
 
-        {{-- 🛣️ Közterület neve --}}
+        {{-- Közterület neve --}}
         <div class="mb-3">
     <label for="street_name">Közterület neve</label>
     <input type="text"
@@ -105,7 +105,7 @@
     </small>
 </div>
 
-        {{-- 🏠 Házszám --}}
+        {{-- Házszám --}}
         <div class="mb-3">
     <label for="street_number">Házszám</label>
     <input type="text"
@@ -119,15 +119,15 @@
     </small>
 </div>
 
-        {{-- 💾 Mentés gomb --}}
+        {{-- Mentés gomb --}}
         <button type="submit" class="btn btn-primary">Mentés</button>
     </form>
 
-    {{-- 🔐 Jelszómódosítás szekció --}}
+    {{-- Jelszómódosítás szekció --}}
     <hr class="my-4">
     <h4>Jelszómódosítás</h4>
 
-    {{-- ✅ Sikeres jelszófrissítés visszajelzése --}}
+    {{-- Sikeres jelszófrissítés visszajelzése --}}
     @if(session('success_password'))
         <div class="alert alert-success">{{ session('success_password') }}</div>
     @endif
@@ -142,11 +142,11 @@
     </div>
 @endif
 
-    {{-- 🔒 Jelszó frissítő űrlap --}}
+    {{-- Jelszó frissítő űrlap --}}
 <form method="POST" action="{{ route('profile.password') }}">
     @csrf
 
-    {{-- 🔐 Új jelszó --}}
+    {{-- Új jelszó --}}
     <div class="mb-3">
         <label for="password">Új jelszó</label>
         <input type="password"
@@ -161,7 +161,7 @@
         </small>
     </div>
 
-    {{-- 🔐 Jelszó megerősítése --}}
+    {{-- Jelszó megerősítése --}}
     <div class="mb-3">
         <label for="password_confirmation">Új jelszó megerősítése</label>
         <input type="password"
@@ -173,7 +173,7 @@
         </small>
     </div>
 
-    {{-- 🔄 Jelszó frissítése gomb --}}
+    {{-- Jelszó frissítése gomb --}}
     <div class="mt-3">
         <button type="submit" class="btn btn-warning">Jelszó frissítése</button>
     </div>

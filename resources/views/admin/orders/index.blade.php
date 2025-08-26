@@ -41,12 +41,12 @@
                 </div>
 
                 <div class="card-body">
-                    {{-- 🧾 Összefoglaló adatok --}}
+                    {{-- Összefoglaló adatok --}}
                     <p><strong>Felhasználó:</strong> {{ $order->user->name ?? 'N/A' }}</p>
                     <p><strong>Átvételi mód:</strong> {{ ucfirst($order->delivery_method) }}</p>
                     <p><strong>Fizetve:</strong> {{ $order->is_paid ? 'Igen' : 'Nem' }}</p>
 
-                    {{-- 🧾 Tételek --}}
+                    {{-- Tételek --}}
                     <ul class="list-group mb-3">
                         @foreach ($order->items as $item)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -59,7 +59,7 @@
                         @endforeach
                     </ul>
 
-                    {{-- 💸 Díjak --}}
+                    {{-- Díjak --}}
                     <ul class="list-group mb-3">
                         <li class="list-group-item d-flex justify-content-between">
                             <span>Ételek ára összesen</span>
@@ -95,7 +95,7 @@
                         </li>
                     </ul>
 
-                    {{-- 🔄 Státuszváltás --}}
+                    {{-- Státuszváltás --}}
                     @if (!in_array($order->status, ['lezarva', 'torolve']) && count($statusOptions) > 0)
                         <form method="POST" action="{{ route('admin.orders.updatestatus', $order->orders_id) }}" class="mb-2">
                             @csrf
@@ -112,7 +112,7 @@
                         </form>
                     @endif
 
-                    {{-- 🚚 Futárhoz rendelés --}}
+                    {{-- Futárhoz rendelés --}}
                     @if ($order->delivery_method === 'delivery' && $order->status === 'atvetelre_kesz' && !$order->courier_id)
                         <form method="POST" action="{{ route('admin.orders.assignCourier', $order->orders_id) }}">
                             @csrf
@@ -130,7 +130,7 @@
                         </form>
                     @endif
 
-{{-- ⭐ Értékelés megjelenítése (Admin) --}}
+{{-- Értékelés megjelenítése (Admin) --}}
 @if ($order->rating_star)
     <div class="mt-3 p-3 border rounded bg-light">
         <h5 class="mb-2">Felhasználói értékelés</h5>
@@ -141,7 +141,7 @@
     </div>
 @endif
 
-                    {{-- 🪑 Asztalfoglalás (Admin) --}}
+                    {{-- Asztalfoglalás (Admin) --}}
 @if ($order->delivery_method === 'dine-in' && $order->booking)
     <div class="mt-3 p-3 border rounded bg-light">
         <h5 class="mb-2">Asztalfoglalás</h5>
@@ -151,7 +151,7 @@
         <p><strong>Fő:</strong> {{ $order->booking->seats }}</p>
         <p><strong>Asztalok:</strong> {{ $order->booking->table_code }}</p>
 
-        {{-- 🔄 Admin státuszváltás: csak ha még nincs véglegesítve --}}
+        {{-- Admin státuszváltás: csak ha még nincs véglegesítve --}}
         @if (in_array($order->booking->status, ['uj']))
             <form method="POST" action="{{ route('admin.bookings.updatestatus', $order->booking->bookings_id) }}" class="mt-2">
                 @csrf

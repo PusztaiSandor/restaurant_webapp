@@ -13,7 +13,7 @@ class MenuController extends Controller
      */
     public function downloadPdf()
     {
-        // 🔍 Aktív ételek lekérése és csoportosítása kategória + típus szerint
+        // Aktív ételek lekérése és csoportosítása kategória + típus szerint
         $dishes = Dish::where('active', true)->get()->groupBy([
             'category',
             function ($dish) {
@@ -21,7 +21,7 @@ class MenuController extends Controller
             }
         ]);
 
-        // 📄 PDF generálása a nézet alapján
+        // PDF generálása a nézet alapján
         $pdf = Pdf::loadView('pdf.menu', [
             'dishesGrouped' => $dishes,
             'restaurantName' => 'Esszencia Étterem',
@@ -29,7 +29,7 @@ class MenuController extends Controller
             'footer' => '© 2025 Esszencia Étterem. Minden jog fenntartva. Budapest, Magyarország | +36 1 234 5678 | info@esszencia.hu'
         ]);
 
-        // 📥 Letöltés
+        // Letöltés
         return $pdf->download('etlap.pdf');
     }
 }

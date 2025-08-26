@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="container py-4">
-    {{-- 🧾 Oldalcím --}}
+    {{-- Oldalcím --}}
     <h2 class="mb-4 text-center">🍽️ Új étel felvétele</h2>
 
-    {{-- ⚠️ Validációs hibák megjelenítése --}}
+    {{-- Validációs hibák megjelenítése --}}
     @if ($errors->any())
         <div class="alert alert-danger text-center">
             @foreach ($errors->all() as $error)
@@ -14,11 +14,11 @@
         </div>
     @endif
 
-    {{-- 📝 Étel létrehozása űrlap --}}
+    {{-- Étel létrehozása űrlap --}}
     <form method="POST" action="{{ route('admin.dishes.store') }}">
         @csrf
 
-        {{-- ➤ Alapinformációk --}}
+        {{-- Alapinformációk --}}
         <div class="mb-3">
             <label for="name" class="form-label">Étel neve:</label>
             <input type="text" name="name" id="name" class="form-control" required maxlength="100" value="{{ old('name') }}">
@@ -35,7 +35,7 @@
             <small class="text-muted">Pl.: sult_banan.jpg</small>
         </div>
 
-        {{-- ➤ Kategória és típus --}}
+        {{-- Kategória és típus --}}
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="category" class="form-label">Kategória:</label>
@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        {{-- ➤ Ár és akció --}}
+        {{-- Ár és akció --}}
         <div class="row mb-3">
             <div class="col-md-4">
                 <label for="gross_price" class="form-label">Bruttó alapár (Ft):</label>
@@ -91,7 +91,7 @@
             </div>
         </div>
 
-        {{-- ➤ Méretprofil táblázat --}}
+        {{-- Méretprofil táblázat --}}
         <h5 class="mt-4">➕ Méretprofil beállítása</h5>
         @php
             $defaultSizes = ['Kicsi', 'Normál', 'Nagy'];
@@ -118,7 +118,7 @@
         </table>
         <small class="text-muted">Add meg a méretvariációkat mértékegységgel és szorzóval.</small>
 
-        {{-- ➤ Összetevők --}}
+        {{-- Összetevők --}}
         <div class="mb-3 mt-4">
             <label for="base_ingredients" class="form-label">Alapösszetevők (vesszővel):</label>
             <input type="text" name="base_ingredients" id="base_ingredients" class="form-control"
@@ -139,15 +139,15 @@
             </small>
         </div>
 
-       {{-- ➤ Egyéb jellemzők --}}
+       {{-- Egyéb jellemzők --}}
         <div class="row mb-3">
-            {{-- 🔥 Kalóriatartalom --}}
+            {{-- Kalóriatartalom --}}
             <div class="col-md-4">
                 <label for="calories" class="form-label">Kalóriatartalom (kcal):</label>
                 <input type="number" name="calories" id="calories" class="form-control" min="0" step="1" value="{{ old('calories') }}">
             </div>
 
-            {{-- 🌱 Vegetáriánus jelölés --}}
+            {{-- Vegetáriánus jelölés --}}
             <div class="col-md-4">
                 <label class="form-label d-block">Vegetáriánus:</label>
                 <div class="form-check form-check-inline">
@@ -160,21 +160,21 @@
                 </div>
             </div>
 
-            {{-- 📦 Készlet --}}
+            {{-- Készlet --}}
             <div class="col-md-4">
                 <label for="stock" class="form-label">Készlet (db):</label>
                 <input type="number" name="stock" id="stock" class="form-control" min="0" step="1" required value="{{ old('stock') }}">
             </div>
         </div>
 
-        {{-- ➤ Allergének --}}
+        {{-- Allergének --}}
         <div class="mb-3">
             <label for="allergens" class="form-label">Allergének (vesszővel):</label>
             <input type="text" name="allergens" id="allergens" class="form-control"
                 value="{{ is_array(old('allergens')) ? implode(',', old('allergens')) : old('allergens') }}">
         </div>
 
-        {{-- ➤ Aktív állapot --}}
+        {{-- Aktív állapot --}}
         <div class="mb-3">
             <label class="form-label d-block">Aktív:</label>
             <div class="form-check form-check-inline">
@@ -187,13 +187,13 @@
             </div>
         </div>
 
-        {{-- ➤ Mentés gomb --}}
+        {{-- Mentés gomb --}}
         <button type="submit" class="btn btn-success w-100">➕ Étel felvétele</button>
 
-        {{-- ⬅️ Vissza az étlaphoz --}}
+        {{-- Vissza az étlaphoz --}}
         <div class="text-center mt-3">
             <a href="{{ route('admin.dishes.index') }}" class="btn btn-outline-secondary">
-                ⬅️ Vissza az étlaphoz
+                Vissza az étlaphoz
             </a>
         </div>
     </form>

@@ -10,12 +10,12 @@ class ContactController extends Controller
 {
     public function send(Request $request)
 {
-    // 🔒 Csak bejelentkezett user szerepkörű felhasználó küldhet visszajelzést
+    // Csak bejelentkezett user szerepkörű felhasználó küldhet visszajelzést
     if (!Auth::check() || Auth::user()->role !== 'user') {
         return redirect()->route('login')->with('error', 'A visszajelzéshez be kell jelentkezned user szerepkörben.');
     }
 
-    // ✅ Validáció
+    // Validáció
     $request->validate([
     'type' => 'required|in:message,rating',
     'rating' => 'nullable|required_if:type,rating|integer|min:1|max:5',
@@ -36,7 +36,7 @@ class ContactController extends Controller
     'content.regex' => 'Az üzenet nem tartalmazhat nem engedélyezett karaktereket.',
 ]);
 
-    // 💾 Mentés
+    // Mentés
     Feedback::create([
         'users_id' => Auth::id(),
         'type' => $request->type,

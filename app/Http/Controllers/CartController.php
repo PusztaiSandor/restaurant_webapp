@@ -17,31 +17,31 @@ class CartController extends Controller
 
     public function quickAdd(Request $request, $dishId)
 {
-    // 🔍 Étel lekérése adatbázisból
+    // Étel lekérése adatbázisból
     $dish = Dish::findOrFail($dishId);
 
-    // 📏 Méret lekérése (alapértelmezett: 'Normál')
+    // Méret lekérése (alapértelmezett: 'Normál')
     $size = $request->input('size', 'Normál');
     $sizeOptions = $dish->size_options ?? [];
 
-    // ⚠️ Ha nincs ilyen méret, használjuk az első elérhetőt
+    // Ha nincs ilyen méret, használjuk az első elérhetőt
     if (!isset($sizeOptions[$size])) {
         $size = isset($sizeOptions['Normál']) ? 'Normál' : array_key_first($sizeOptions);
     }
 
-    // 🔢 Mennyiség lekérése
+    // Mennyiség lekérése
     $quantity = max(1, (int) $request->input('quantity', 1));
 
-    // 💰 Ár kiszámítása a kiválasztott méret alapján
+    // Ár kiszámítása a kiválasztott méret alapján
     $price = $dish->getDiscountedSizePrice($size);
 
-    // 🛒 Kosár lekérése a session-ből
+    // Kosár lekérése a session-ből
     $cart = session()->get('cart', []);
 
-    // 🔑 Egyedi kulcs generálása (étel ID + méret)
+    // Egyedi kulcs generálása (étel ID + méret)
     $key = $dish->dishes_id . '_' . $size;
 
-    // 📦 Ha már van ilyen tétel, növeljük a mennyiséget
+    // Ha már van ilyen tétel, növeljük a mennyiséget
     if (isset($cart[$key])) {
         $cart[$key]['quantity'] += $quantity;
     } else {
@@ -54,10 +54,10 @@ class CartController extends Controller
         ];
     }
 
-    // 💾 Kosár visszamentése a session-be
+    // Kosár visszamentése a session-be
     session()->put('cart', $cart);
 
-    // ✅ Visszairányítás sikerüzenettel
+    // Visszairányítás sikerüzenettel
     return redirect()->route('menu')->with('success', 'A termék sikeresen a kosárba került!');
 }
 
@@ -116,20 +116,20 @@ public function add(Request $request, $dishId)
 {
     $dish = Dish::findOrFail($dishId);
 
-    // 📏 Méret
+    // Méret
     $size = $request->input('size', 'Normál');
     $sizeOptions = $dish->size_options ?? [];
     if (!isset($sizeOptions[$size])) {
         $size = array_key_first($sizeOptions);
     }
-    // 🔢 Méret szorzó kiszámítása
+    // Méret szorzó kiszámítása
 $sizeMultiplier = $sizeOptions[$size]['multiplier'] ?? 1.00;
 
-    // 🔢 Mennyiség
+    // Mennyiség
     $quantity = max(1, (int) $request->input('quantity', 1));
 
 
-// ✅ Mennyiség validálása
+// Mennyiség validálása
 if ($quantity < 1) {
     return back()->with('error', 'A mennyiség nem lehet nulla vagy negatív.');
 }
@@ -139,30 +139,30 @@ if ($quantity > $dish->stock) {
 }
 
 
-    // ➕ Extrák
+    // Extrák
     $extraIngredients = $request->input('extra_ingredients', []);
     $excludedIngredients = $request->input('excluded_ingredients', []);
     $modifiers = $dish->ingredient_modifiers ?? [];
 
-    // 💰 Alapár méret alapján
+    // Alapár méret alapján
     $basePrice = $dish->getDiscountedSizePrice($size);
 
-    // ➕ Extrák árának összeadása
+    // Extrák árának összeadása
     $extraTotal = 0;
     foreach ($extraIngredients as $extra) {
         $extraTotal += $modifiers[$extra] ?? 0;
     }
 
-    // ❌ Kizárások árának összeadása
+    // Kizárások árának összeadása
     $excludedTotal = 0;
     foreach ($excludedIngredients as $excluded) {
         $excludedTotal += $modifiers[$excluded] ?? 0;
     }
 
-    // 🧾 Végső ár
+    // Végső ár
     $finalPrice = ($basePrice + $extraTotal + $excludedTotal);
 
-    // 🔑 Egyedi kulcs generálása
+    // Egyedi kulcs generálása
     $keyData = [
         'dishes_id' => $dish->dishes_id,
         'size' => $size,
@@ -171,7 +171,7 @@ if ($quantity > $dish->stock) {
     ];
     $key = md5(json_encode($keyData));
 
-    // 🛒 Kosár frissítése
+    // Kosár frissítése
     $cart = session()->get('cart', []);
     if (isset($cart[$key])) {
         $cart[$key]['quantity'] += $quantity;
@@ -192,7 +192,7 @@ if ($quantity > $dish->stock) {
 
     session()->put('cart', $cart);
 
-    // ✅ Visszairányítás sikerüzenettel
+    // Visszairányítás sikerüzenettel
     return redirect()->route('menu')->with('success', 'A termék sikeresen a kosárba került!');
 }
 

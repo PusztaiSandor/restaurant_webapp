@@ -10,7 +10,7 @@ use App\Models\User;
 class AdminOrderController extends Controller
 {
     /**
-     * 🗂️ Összes rendelés listázása
+     * Összes rendelés listázása
      */
     public function index()
     {
@@ -21,7 +21,7 @@ class AdminOrderController extends Controller
     }
 
     /**
-     * 🔍 Egy rendelés részleteinek megtekintése
+     * Egy rendelés részleteinek megtekintése
      */
     public function show($orderId)
     {
@@ -30,7 +30,7 @@ class AdminOrderController extends Controller
     }
 
     /**
-     * 🛠️ Rendelés státuszának módosítása (opcionális)
+     * Rendelés státuszának módosítása (opcionális)
      */
     public function updateStatus(Request $request, $orderId)
 {

@@ -2,14 +2,14 @@
 
 @section('content')
 <section class="text-center py-5">
-    {{-- 🏠 Üdvözlő szöveg --}}
+    {{-- Üdvözlő szöveg --}}
     <h1 class="display-5 mb-3">Üdvözlünk az Esszencia Étteremben!</h1>
     <p class="lead mb-4">Az ízek lényege — friss, fenntartható, barátságos.</p>
 
-    {{-- 🖼️ Étterem logó megjelenítése --}}
+    {{-- Étterem logó megjelenítése --}}
     <img src="{{ asset('assets/images/components/logo.png') }}" alt="Esszencia Étterem logó" class="img-fluid my-4" style="max-height: 150px;">
 
-    {{-- 🔐 Dinamikus üzenet a felhasználó állapota szerint --}}
+    {{-- Dinamikus üzenet a felhasználó állapota szerint --}}
     @guest
         <p class="fs-5">
             A rendeléshez kérlek <a href="{{ route('login') }}" class="text-decoration-underline">jelentkezz be</a>
@@ -20,7 +20,7 @@
     @endguest
 
     @if(!auth()->check() || auth()->user()->role === 'user')
-    <!-- 🍽️ Kínálatunkból – Véletlenszerű ételkártyák -->
+    <!-- Kínálatunkból – Véletlenszerű ételkártyák -->
 <section class="container py-5">
   <h2 class="mb-4 text-center">Kínálatunkból</h2>
 
@@ -71,7 +71,7 @@
   </div>
 </section>
 
-    {{-- 🍽️ Étlap gomb – az étlapra mutat --}}
+    {{-- Étlap gomb – az étlapra mutat --}}
     <div class="mt-4">
         <a href="{{ route('menu') }}" class="btn btn-primary btn-lg">
             <i class="fa-solid fa-utensils me-2"></i> Nézd meg az étlapot
@@ -79,7 +79,7 @@
     </div>
     @endif
 
-<!-- 💬 Rólunk írták – kiemelt értékelések -->
+<!-- Rólunk írták – kiemelt értékelések -->
 <section class="container py-5">
   <h2 class="mb-4 text-center">Rólunk írták</h2>
 

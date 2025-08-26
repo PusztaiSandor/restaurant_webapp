@@ -38,15 +38,37 @@
         {{-- Név mező --}}
         <div class="mb-3">
             <label for="name">Név</label>
-            <input type="text" name="name" id="name" class="form-control"
-                   value="{{ old('name', $user->name) }}" required>
+            <input type="text"
+       name="name"
+       id="name"
+       class="form-control"
+       value="{{ old('name', $user->name) }}"
+       required
+       minlength="2"
+       maxlength="50"
+       pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$"
+       placeholder="Pl. Kiss-Kovács János">
+<small class="form-text text-muted">
+    Csak betűk, szóköz, pont és kötőjel. Minimum 2, maximum 50 karakter.
+</small>
         </div>
 
         {{-- Email mező + ideiglenes hozzáférés figyelmeztetés --}}
         <div class="mb-3">
             <label for="email">Email cím</label>
-            <input type="email" name="email" id="email" class="form-control"
-                   value="{{ old('email', $user->email) }}" required>
+            <input type="email"
+       name="email"
+       id="email"
+       class="form-control"
+       value="{{ old('email', $user->email) }}"
+       required
+       minlength="5"
+       maxlength="60"
+       pattern="^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"
+       placeholder="Pl. kiss_auto@example.hu">
+<small class="form-text text-muted">
+    Betűk, számok, pont, kötőjel, aláhúzás és @ karakter engedélyezett. Minimum 5, maximum 60 karakter.
+</small>
 
             @if($hasTemporaryAccess)
                 <div class="alert alert-warning d-inline-block py-2 px-3 mt-2">

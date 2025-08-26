@@ -55,7 +55,7 @@ class Dish extends Model
     }
 
      /**
-     * 💰 Végső ár kiszámítása méret és extrák alapján
+     * Végső ár kiszámítása méret és extrák alapján
      */
     public function getFinalPrice(string $sizeLabel = 'Normál', array $extras = []): float
 {
@@ -82,7 +82,7 @@ class Dish extends Model
 }
 
 /**
- * 💰 Méretarányos ár kiszámítása extrák nélkül, kedvezménnyel
+ * Méretarányos ár kiszámítása extrák nélkül, kedvezménnyel
  *
  * @param string $sizeLabel - Méret neve (pl. "Normál", "Nagy")
  * @return float - Kedvezményes ár az adott méretre
@@ -112,7 +112,7 @@ public function getDiscountedSizePrice(string $sizeLabel = 'Normál'): float
 
 
 /**
- * 💰 Eredeti ár kiszámítása méret alapján (extrák nélkül, kedvezmény nélkül)
+ * Eredeti ár kiszámítása méret alapján (extrák nélkül, kedvezmény nélkül)
  */
 public function getOriginalPrice(string $sizeLabel = 'Normál'): float
 {

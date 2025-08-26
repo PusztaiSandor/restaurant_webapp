@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     /**
-     * 📄 Regisztrációs űrlap megjelenítése
+     * Regisztrációs űrlap megjelenítése
      *
      * Ez a metódus visszaadja a regisztrációs nézetet.
      * A felhasználó itt tudja megadni az adatait.
@@ -22,21 +22,21 @@ class AuthController extends Controller
     }
 
     /**
-     * 📝 Regisztrációs adatok feldolgozása
+     * Regisztrációs adatok feldolgozása
      *
      * Validálja a beküldött adatokat, létrehozza az új felhasználót,
      * majd automatikusan bejelentkezteti és irányítja a szerepkör szerint.
      */
     public function register(Request $request)
 {
-    // 📋 Adatok validálása
+    // Adatok validálása
     $validated = $request->validate([
         'name' => [
             'required',
             'string',
             'min:2',
             'max:50',
-            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű. ]+$/u'
+            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$/u'
         ],
         'email' => [
             'required',
@@ -45,7 +45,7 @@ class AuthController extends Controller
             'min:5',
             'max:60',
             'unique:users,email',
-            'regex:/^[A-Za-z0-9@.]{5,60}$/'
+            'regex:/^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/'
         ],
         'password' => [
             'required',
@@ -85,17 +85,17 @@ class AuthController extends Controller
             'regex:/^[0-9A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\/\-]{1,10}$/u'
         ],
     ], [
-        // 🗣️ Magyar hibaüzenetek
+        // Magyar hibaüzenetek
         'name.required' => 'A név megadása kötelező.',
         'name.min' => 'A név legalább 2 karakter hosszú legyen.',
         'name.max' => 'A név legfeljebb 50 karakter lehet.',
-        'name.regex' => 'A név csak betűket, szóközt és pontot tartalmazhat.',
+        'name.regex' => 'A név csak betűket, szóközt, pontot és kötőjelet tartalmazhat. Példa: Kiss-Kovács János',
         'email.required' => 'Az e-mail cím megadása kötelező.',
         'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
         'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
         'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
         'email.unique' => 'Ez az e-mail cím már regisztrálva van.',
-        'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot és @ karaktert tartalmazhat.',
+        'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
         'password.required' => 'A jelszó megadása kötelező.',
         'password.min' => 'A jelszónak legalább 8 karakter hosszúnak kell lennie.',
         'password.max' => 'A jelszó legfeljebb 36 karakter lehet.',
@@ -108,7 +108,7 @@ class AuthController extends Controller
         'street_number.regex' => 'A házszám csak számokat, betűket, kötőjelet és perjelet tartalmazhat. Példa: 15/A vagy 13–15',
     ]);
 
-    // 👤 Új felhasználó létrehozása
+    // Új felhasználó létrehozása
     $user = User::create([
         'name' => $validated['name'],
         'email' => $validated['email'],
@@ -122,7 +122,7 @@ class AuthController extends Controller
         'active' => 1,
     ]);
 
-    // 🔑 Automatikus bejelentkeztetés
+    // Automatikus bejelentkeztetés
     Auth::login($user);
     $user->last_login_at = now();
     $user->save();
@@ -132,7 +132,7 @@ class AuthController extends Controller
 }
 
     /**
-     * 🔐 Bejelentkezési űrlap megjelenítése
+     * Bejelentkezési űrlap megjelenítése
      *
      * Visszaadja a login nézetet, ahol a felhasználó megadhatja az e-mailt és jelszót.
      */
@@ -142,14 +142,14 @@ class AuthController extends Controller
     }
 
     /**
-     * 🔓 Bejelentkezési adatok feldolgozása
+     * Bejelentkezési adatok feldolgozása
      *
      * Ellenőrzi az e-mail és jelszó párost, majd irányítja a felhasználót
      * a szerepkörének megfelelő oldalra.
      */
     public function login(Request $request)
 {
-    // 📋 Beviteli adatok validálása
+    // Beviteli adatok validálása
     $request->validate([
     'email' => [
         'required',
@@ -157,7 +157,7 @@ class AuthController extends Controller
         'email',
         'min:5',
         'max:60',
-        'regex:/^[A-Za-z0-9@.]{5,60}$/'
+        'regex:/^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/'
     ],
     'password' => [
         'required',
@@ -167,34 +167,34 @@ class AuthController extends Controller
         'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,36}$/'
     ],
 ], [
-   // 🗣️ Magyar hibaüzenetek
+   // Magyar hibaüzenetek
     'email.required' => 'Az e-mail cím megadása kötelező.',
     'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
     'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
     'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
-    'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot és @ karaktert tartalmazhat.',
+    'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
     'password.required' => 'A jelszó megadása kötelező.',
     'password.min' => 'A jelszónak legalább 8 karakter hosszúnak kell lennie.',
     'password.max' => 'A jelszó legfeljebb 36 karakter lehet.',
     'password.regex' => 'A jelszónak tartalmaznia kell betűt és számot, és csak betűket és számokat tartalmazhat.',
 ]);
 
-    // 👤 Felhasználó lekérése az e-mail alapján
+    // Felhasználó lekérése az e-mail alapján
     $user = User::where('email', $request->email)->first();
 
-    // ❌ Ha nincs ilyen felhasználó vagy nem aktív
+    // Ha nincs ilyen felhasználó vagy nem aktív
     if (!$user || !$user->active) {
         return back()->with('error', 'A fiókod jelenleg nem aktív. Kérjük, vedd fel a kapcsolatot az Adminnal.')
                      ->withInput(); // 🔁 Visszatöltés a formba
     }
 
-    // 🔑 Hitelesítési próbálkozás (csak ha aktív)
+    // Hitelesítési próbálkozás (csak ha aktív)
     $successful = Auth::attempt(
         ['email' => $request->email, 'password' => $request->password],
         $request->filled('remember') // „Emlékezzen rám” opció
     );
 
-    // ✅ Sikeres bejelentkezés
+    // Sikeres bejelentkezés
     if ($successful) {
         $user = Auth::user();
 
@@ -202,22 +202,22 @@ class AuthController extends Controller
         $user->last_login_at = now();
         $user->save();
 
-        // ⚠️ Kötelező jelszó/email módosítás ellenőrzése
+        // Kötelező jelszó/email módosítás ellenőrzése
         if ($user->must_change_password) {
             return redirect()->route('profile.edit')
                 ->with('info', 'Kérlek, módosítsd a jelszavad és email címed!');
         }
 
-        // 🧭 Irányítás szerepkör szerint
+        // Irányítás szerepkör szerint
         return $this->redirectBasedOnRole($user);
     }
 
-    // ❌ Hibás jelszó
+    // Hibás jelszó
     return back()->with('error', 'Hibás e-mail vagy jelszó!')->withInput();
 }
 
     /**
-     * 🧭 Irányítás szerepkör szerint
+     * Irányítás szerepkör szerint
      *
      * A bejelentkezett felhasználót a szerepkörének megfelelő oldalra irányítja.
      */
@@ -234,7 +234,7 @@ class AuthController extends Controller
     }
 
     /**
- * 📧 Jelszóemlékeztető szimuláció
+ * Jelszóemlékeztető szimuláció
  *
  * Ellenőrzi, hogy létezik-e a megadott e-mail, és hogy a fiók aktív-e.
  * Ha aktív, megjeleníti a szimulált e-mail nézetet.
@@ -242,7 +242,7 @@ class AuthController extends Controller
  */
 public function simulateReset(Request $request)
 {
-    // 📋 E-mail mező validálása
+    // E-mail mező validálása
     $request->validate([
     'email' => [
         'required',
@@ -250,36 +250,37 @@ public function simulateReset(Request $request)
         'email',
         'min:5',
         'max:60',
-        'regex:/^[A-Za-z0-9@.]{5,60}$/'
+        'regex:/^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/'
     ]
+    // Magyar hibaüzenetek
 ], [
     'email.required' => 'Az e-mail cím megadása kötelező.',
     'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
     'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
     'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
-    'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot és @ karaktert tartalmazhat.',
+    'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
 ]);
 
-    // 👤 Felhasználó lekérése az e-mail alapján
+    // Felhasználó lekérése az e-mail alapján
     $user = User::where('email', $request->email)->first();
 
-    // ❌ Ha nincs ilyen felhasználó
+    // Ha nincs ilyen felhasználó
     if (!$user) {
         return back()->withErrors(['email' => 'Nincs ilyen e-mail cím regisztrálva.'])->withInput();
     }
 
-    // ❌ Ha a felhasználó nem aktív
+    // Ha a felhasználó nem aktív
     if (!$user->active) {
         return redirect()->route('login')
             ->with('error', 'A fiókod jelenleg nem aktív. Kérjük, vedd fel a kapcsolatot az Adminnal.');
     }
 
-    // ✅ Aktív fiók esetén megjelenítjük a szimulált e-mail nézetet
+    // Aktív fiók esetén megjelenítjük a szimulált e-mail nézetet
     return view('auth.simulated_email', ['email' => $request->email]);
 }
 
     /**
-     * 🔁 Jelszóemlékeztető űrlap megjelenítése
+     * Jelszóemlékeztető űrlap megjelenítése
      *
      * A felhasználó itt tud új jelszót megadni a korábban megadott e-mail alapján.
      */
@@ -289,7 +290,7 @@ public function simulateReset(Request $request)
     }
 
     /**
-     * 🔄 Jelszó frissítése
+     * Jelszó frissítése
      *
      * A megadott e-mail címhez tartozó felhasználó jelszavát frissíti.
      */
@@ -304,6 +305,7 @@ public function simulateReset(Request $request)
         'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,36}$/',
         'confirmed'
     ]
+    // Magyar hibaüzenetek
 ], [
     'password.required' => 'A jelszó megadása kötelező.',
     'password.min' => 'A jelszónak legalább 8 karakter hosszúnak kell lennie.',
@@ -325,7 +327,7 @@ public function simulateReset(Request $request)
     }
 
     /**
-     * ❓ Elfelejtett jelszó nézet
+     * Elfelejtett jelszó nézet
      *
      * A felhasználó itt tudja megadni az e-mail címét jelszóemlékeztető céljából.
      */
@@ -333,4 +335,16 @@ public function simulateReset(Request $request)
     {
         return view('auth.forgot');
     }
+
+    // Kilépés
+    public function logout(Request $request)
+{
+    Auth::logout(); // Felhasználó kijelentkeztetése
+
+    // Session ürítése (opcionális)
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('login')->with('success', 'Sikeresen kiléptél.');
+}
 }

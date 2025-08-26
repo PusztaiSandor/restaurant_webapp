@@ -82,8 +82,8 @@
   </div>
 </section>
 
-  <!-- Általános Felhasználási Szabályok -->
-  <section class="container mx-auto px-4 py-8 text-center">
+  <!-- Általános Felhasználási Feltételek -->
+  <section class="container mx-auto px-4 py-8 my-12 text-center">
     <a href="{{ route('terms') }}" class="text-amber-700 hover:underline text-lg">Általános Felhasználási Feltételek megtekintése</a>
   </section>
 
@@ -107,7 +107,7 @@
 @endif
 
         @csrf
-        {{-- 📌 Típusválasztó --}}
+        {{-- Típusválasztó --}}
         <div class="mb-3">
             <label for="type" class="form-label">Visszajelzés típusa</label>
             <select name="type" id="type" class="form-select" required>
@@ -120,7 +120,7 @@
             </small>
         </div>
 
-        {{-- ⭐ Csillagos értékelés – csak ha type = rating --}}
+        {{-- Csillagos értékelés – csak ha type = rating --}}
         <div class="mb-3" id="rating-block" style="display:none;">
             <label for="rating" class="form-label">Értékelés (1–5 csillag)</label>
             <select name="rating" id="rating" class="form-select">
@@ -134,7 +134,7 @@
             </small>
         </div>
 
-        {{-- 📝 Tárgy --}}
+        {{-- Tárgy --}}
         <div class="mb-3">
             <label for="subject" class="form-label">Tárgy (opcionális)</label>
             <input type="text" id="subject" name="subject" class="form-control" placeholder="Pl. Kérdés, javaslat, dicséret" maxlength="150">
@@ -143,7 +143,7 @@
             </small>
         </div>
 
-        {{-- 💬 Tartalom --}}
+        {{-- Tartalom --}}
         <div class="mb-3">
             <label for="content" class="form-label">Üzenet / Vélemény</label>
             <textarea id="content" name="content" class="form-control" rows="5" placeholder="Írd meg az üzeneted vagy értékelésed" required minlength="10" maxlength="1000"></textarea>
@@ -155,7 +155,7 @@
         <button type="submit" class="btn btn-dark w-100">Küldés</button>
     </form>
 
-    {{-- 🔧 Dinamikus megjelenítés JS --}}
+    {{-- Dinamikus megjelenítés JS --}}
     <script>
         document.getElementById('type').addEventListener('change', function () {
             const ratingBlock = document.getElementById('rating-block');

@@ -31,23 +31,23 @@ if (auth()->check() && auth()->user()->role !== 'user') {
 
     $query = Dish::query()->where('active', true);
 
-    // ➤ Szűrés kategória szerint
+    // Szűrés kategória szerint
     if ($request->filled('category')) {
         $query->where('category', $request->category);
     }
 
-    // ➤ Szűrés típus szerint
+    // Szűrés típus szerint
     if ($request->filled('type')) {
         $query->where('type', $request->type);
     }
 
-    // 📏 Kiválasztott méret lekérése (alapértelmezett: 'Normál')
+    // Kiválasztott méret lekérése (alapértelmezett: 'Normál')
     $selectedSize = $request->input('size', 'Normál');
 
-    // ➤ Ételek lekérése
+    // Ételek lekérése
     $dishes = $query->get();
 
-    // ➤ Ár szerinti rendezés (mindig a „Normál” méret alapján)
+    // Ár szerinti rendezés (mindig a „Normál” méret alapján)
 if ($request->sort === 'price_asc') {
     $dishes = $dishes->sortBy(function ($dish) {
         return $dish->getDiscountedSizePrice('Normál');
@@ -58,11 +58,11 @@ if ($request->sort === 'price_asc') {
     })->values();
 }
 
-    // ➤ Szűrőhöz szükséges értékek
+    // Szűrőhöz szükséges értékek
     $categories = Dish::select('category')->distinct()->pluck('category');
     $types = Dish::select('type')->distinct()->pluck('type');
 
-    // ➤ Nézet visszaadása, a kiválasztott méretet is átadjuk
+    // Nézet visszaadása, a kiválasztott méretet is átadjuk
     return view('dishes.index', compact('dishes', 'categories', 'types', 'selectedSize'));
 }
 
@@ -72,44 +72,6 @@ public function show($id)
     return view('dishes.show', compact('dish'));
 }
 
-    /**
-     * PDF generálása az étlapból
-     */
-    // public function generateMenuPdf()
-    // {
-    //     $dishes = Dish::where('active', true)->get();
-
-    //     foreach ($dishes as $dish) {
-    //         $taxRate = ($dish->tax_percent ?? 27) / 100;
-
-    //         $sizeOptions = $dish->size_options ?? [];
-    //         $defaultSize = isset($sizeOptions['Normál']) ? 'Normál' : array_key_first($sizeOptions);
-    //         $defaultSizeData = $sizeOptions[$defaultSize] ?? ['multiplier' => 1.0, 'price_modifier' => 0];
-
-    //         $baseNet = $dish->base_price ?? 0;
-    //         $sizeMultiplier = $defaultSizeData['multiplier'] ?? 1.0;
-    //         $sizeModifier = $defaultSizeData['price_modifier'] ?? 0;
-    //         $dynamicMultiplier = $dish->dynamic_multiplier ?? 1;
-
-    //         $grossBase = ($baseNet * $dynamicMultiplier * $sizeMultiplier + $sizeModifier) * (1 + $taxRate);
-    //         $discountPercent = $dish->on_sale ? ($dish->discount_percent ?? 0) : 0;
-    //         $finalGross = $grossBase * (1 - $discountPercent / 100);
-
-    //         // ➤ Árak hozzáadása a modellhez
-    //         $dish->price_gross = round($finalGross);
-    //         $dish->price_original = round($grossBase);
-    //         $dish->price_discount_percent = $discountPercent;
-    //         $dish->price_size_label = $defaultSize;
-    //     }
-
-    //     $categorized = $dishes->filter(fn($dish) => !empty($dish->category) && !empty($dish->type));
-    //     $uncategorized = $dishes->filter(fn($dish) => empty($dish->category) || empty($dish->type));
-
-    //     return Pdf::loadView('pdf.menu', [
-    //         'categorized' => $categorized,
-    //         'uncategorized' => $uncategorized,
-    //     ])->download('etlap.pdf');
-    // }
     /**
      * Új étel létrehozásának űrlapja (csak admin)
      */
@@ -131,7 +93,7 @@ public function show($id)
             abort(403);
         }
 
-        // ✅ Validáció a mezők alapján
+        // Validáció a mezők alapján
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -152,7 +114,7 @@ public function show($id)
             'active' => 'required|boolean',
         ]);
 
-        // ✅ Méretprofil összeállítása tömbökből
+        // Méretprofil összeállítása tömbökből
         $labels = $request->input('size_labels', []);
         $units = $request->input('size_units', []);
         $amounts = $request->input('size_amounts', []);
@@ -173,12 +135,12 @@ public function show($id)
 
         $validated['size_options'] = $sizeOptions;
 
-        // ✅ Tömb típusú mezők konvertálása
+        // Tömb típusú mezők konvertálása
         $validated['base_ingredients'] = array_map('trim', explode(',', $validated['base_ingredients'] ?? ''));
         $validated['extra_ingredients'] = array_map('trim', explode(',', $validated['extra_ingredients'] ?? ''));
         $validated['allergens'] = array_map('trim', explode(',', $validated['allergens'] ?? ''));
 
-        // ✅ JSON mező dekódolása
+        // JSON mező dekódolása
         if (!empty($validated['ingredient_modifiers']) && is_string($validated['ingredient_modifiers'])) {
             $json = json_decode($validated['ingredient_modifiers'], true);
             $validated['ingredient_modifiers'] = is_array($json) ? $json : [];
@@ -226,7 +188,7 @@ public function show($id)
             abort(403);
         }
 
-        // ✅ Validáció
+        // Validáció
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -247,7 +209,7 @@ public function show($id)
             'active' => 'required|boolean',
         ]);
 
-        // ✅ Méretprofil újraépítése
+        // Méretprofil újraépítése
         $labels = $request->input('size_labels', []);
         $units = $request->input('size_units', []);
         $amounts = $request->input('size_amounts', []);
@@ -268,12 +230,12 @@ public function show($id)
 
         $validated['size_options'] = $sizeOptions;
 
-        // ✅ Tömb típusú mezők konvertálása
+        // Tömb típusú mezők konvertálása
         $validated['base_ingredients'] = array_map('trim', explode(',', $validated['base_ingredients'] ?? ''));
         $validated['extra_ingredients'] = array_map('trim', explode(',', $validated['extra_ingredients'] ?? ''));
         $validated['allergens'] = array_map('trim', explode(',', $validated['allergens'] ?? ''));
 
-        // ✅ JSON mező dekódolása
+        // JSON mező dekódolása
         if (!empty($validated['ingredient_modifiers']) && is_string($validated['ingredient_modifiers'])) {
             $json = json_decode($validated['ingredient_modifiers'], true);
             $validated['ingredient_modifiers'] = is_array($json) ? $json : [];
@@ -332,47 +294,4 @@ public function show($id)
             ->with('success', 'Készlet frissítve: „' . $dish->name . '”');
     }
 
-    /**
-     * Publikus nézet egy adott ételhez
-     */
-    // public function show(Dish $dish)
-    // {
-    //     $selectedSize = null;
-    //     $price = $dish->base_price;
-
-    //     // ➤ Méretprofil alapján árképzés
-    //     if (!empty($dish->size_options)) {
-    //         $sizeKeys = array_keys($dish->size_options);
-    //         $selectedSize = $sizeKeys[0];
-    //         $data = $dish->size_options[$selectedSize] ?? null;
-
-    //         if ($data) {
-    //             $multiplier = $data['multiplier'] ?? 1.0;
-    //             $modifier = $data['price_modifier'] ?? 0;
-    //             $price = ($dish->base_price * $multiplier) + $modifier;
-    //         }
-    //     }
-
-    //     $tax = $price * ($dish->tax_percent ?? 0) / 100;
-    //     $priceWithTax = round($price + $tax, 2);
-
-    //     // ➤ JSON→tömb konverziók a nézethez
-    //     $dish->ingredient_modifiers = is_string($dish->ingredient_modifiers)
-    //         ? json_decode($dish->ingredient_modifiers, true)
-    //         : $dish->ingredient_modifiers;
-
-    //     $dish->extra_ingredients = is_string($dish->extra_ingredients)
-    //         ? array_map('trim', explode(',', $dish->extra_ingredients))
-    //         : $dish->extra_ingredients;
-
-    //     $dish->base_ingredients = is_string($dish->base_ingredients)
-    //         ? array_map('trim', explode(',', $dish->base_ingredients))
-    //         : $dish->base_ingredients;
-
-    //     $dish->allergens = is_string($dish->allergens)
-    //         ? array_map('trim', explode(',', $dish->allergens))
-    //         : $dish->allergens;
-
-    //     return view('dishes.show', compact('dish', 'priceWithTax', 'selectedSize'));
-    // }
 }

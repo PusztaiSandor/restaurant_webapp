@@ -64,7 +64,7 @@ class OrderController extends Controller
 
     $totalWithCharges = max(0, $totalWithCharges);
 
-    // 💾 Díjak mentése a session-be a submit() metódus számára
+    // Díjak mentése a session-be a submit() metódus számára
         session()->put('charges', $charges->toArray());
 
     return view('orders.checkout', [
@@ -81,25 +81,25 @@ class OrderController extends Controller
     public function submit(Request $request)
 {
 
-    // 🔐 Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+    // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
     if (!Auth::check()) {
         return redirect()->route('login')->with('error', 'A rendeléshez be kell jelentkezni.');
     }
 
-    // 🚚 Szállítási mód validálása
+    // Szállítási mód validálása
     $request->validate([
         'delivery_method' => 'required|in:delivery,pickup,dine-in',
     ]);
 
-    // 👤 Felhasználói azonosító lekérése
+    // Felhasználói azonosító lekérése
     $userId = Auth::id();
 
-    // 🛒 Kosár és extra díjak lekérése a sessionből
+    // Kosár és extra díjak lekérése a sessionből
     $cart = session('cart', []);
     $charges = session('charges', []);
 
 
-// ✅ Mennyiség validálása minden kosár elemre
+// Mennyiség validálása minden kosár elemre
 foreach ($cart as $item) {
     if (!isset($item['quantity']) || !is_numeric($item['quantity']) || $item['quantity'] < 1) {
         return back()->with('error', 'A mennyiség nem lehet nulla vagy negatív.');
@@ -112,16 +112,16 @@ foreach ($cart as $item) {
 }
 
 
-    // 💰 Ételek összesített ára (bruttó)
+    // Ételek összesített ára (bruttó)
     $subtotalSum = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
 
-    // 📦 Alapértelmezett díjak inicializálása
+    // Alapértelmezett díjak inicializálása
     $deliveryFee = 0;
     $serviceFee = 0;
     $cutleryFee = 0;
     $discount = 0;
 
-    // ➕ Extra díjak feldolgozása a megfelelő szállítási mód alapján
+    // Extra díjak feldolgozása a megfelelő szállítási mód alapján
     foreach ($charges as $charge) {
         if ($charge['delivery_method'] !== $request->delivery_method) continue;
 
@@ -149,14 +149,14 @@ foreach ($cart as $item) {
         }
     }
 
-    // 📉 Nettó összeg kiszámítása (ÁFA nélkül)
+    // Nettó összeg kiszámítása (ÁFA nélkül)
     $subtotalNet = round($subtotalSum / 1.27, 2); // 27% ÁFA feltételezve
     $totalTax = $subtotalSum - $subtotalNet;
 
-    // 🧾 Teljes fizetendő összeg kiszámítása
+    // Teljes fizetendő összeg kiszámítása
     $totalPrice = $subtotalSum + $deliveryFee + $serviceFee + $cutleryFee - $discount;
 
-    // 📝 Új rendelés létrehozása és mentése
+    // Új rendelés létrehozása és mentése
     $order = new Order();
     $order->users_id = $userId;
     $order->courier_id = null;
@@ -177,7 +177,7 @@ foreach ($cart as $item) {
     $order->rating_comment = null;
     $order->save();
 
-    // 🍽 Rendeléshez tartozó tételek mentése
+    // Rendeléshez tartozó tételek mentése
     foreach ($cart as $item) {
         $orderItem = new OrderItem();
         $orderItem->orders_id = $order->orders_id;
@@ -186,36 +186,34 @@ foreach ($cart as $item) {
         $orderItem->size_multiplier = $item['size_multiplier'] ?? 1.00;
         $orderItem->quantity = $item['quantity'];
 
-        // 🧂 Extra és kizárt hozzávalók mentése
+        // Extra és kizárt hozzávalók mentése
         $orderItem->extra_ingredients = $item['extra_ingredients'] ?? null;
         $orderItem->excluded_ingredients = $item['excluded_ingredients'] ?? null;
 
-        // 💸 Extra hozzávalók ára és kizárások kedvezménye a kosárból
+        // Extra hozzávalók ára és kizárások kedvezménye a kosárból
         $orderItem->ingredient_price = round($item['ingredient_price'] ?? 0.00, 2);
         $orderItem->exclusion_discount = round($item['exclusion_discount'] ?? 0.00, 2);
 
-        // 🧮 Egységár kiszámítása (bruttó)
+        // Egységár kiszámítása (bruttó)
         $basePrice = $item['price']; // már tartalmazza az extrákat és kizárásokat
         $multiplier = $item['size_multiplier'] ?? 1.00;
 
-        // $finalUnitPrice = round($basePrice * $multiplier, 2);
         $finalUnitPrice = round($item['price'], 2);
-
 
         $orderItem->final_unit_price = $finalUnitPrice;
 
-        // 📊 ÁFA lekérése a dishes táblából
+        // ÁFA lekérése a dishes táblából
         $dish = \App\Models\Dish::find($item['dishes_id']);
         $taxRate = ($dish->tax_percent ?? 27) / 100;
         $orderItem->tax_amount = round($finalUnitPrice * $taxRate, 2);
 
-        // 💵 Végösszeg kiszámítása (ÁFA már benne van az egységárban)
+        // Végösszeg kiszámítása (ÁFA már benne van az egységárban)
         $orderItem->subtotal = round($finalUnitPrice * $item['quantity'], 2);
 
         $orderItem->save();
     }
 
-    // 🧹 Kosár ürítése és visszairányítás
+    // Kosár ürítése és visszairányítás
     session()->forget('cart');
     return redirect()->route('home')->with('success', 'A rendelés sikeresen elküldve!');
 }
@@ -235,24 +233,24 @@ public function myOrders()
 
 public function cancel($orderId)
 {
-    // 🔍 Lekérjük a rendelést, ha nem létezik, hibát dob
+    // Lekérjük a rendelést, ha nem létezik, hibát dob
     $order = Order::findOrFail($orderId);
 
-    // 🔐 Jogosultság ellenőrzés – csak saját rendelés törölhető
+    // Jogosultság ellenőrzés – csak saját rendelés törölhető
     if ($order->users_id !== Auth::id()) {
         return back()->with('error', 'Nem jogosult a rendelés törlésére.');
     }
 
-    // ⛔ Csak akkor törölhető, ha státusz engedélyezett és még nincs fizetve
+    // Csak akkor törölhető, ha státusz engedélyezett és még nincs fizetve
     if (!in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) || $order->is_paid) {
         return back()->with('error', 'Csak fizetetlen, aktív rendelést lehet törölni.');
     }
 
-    // 🗑️ Rendelés státusz módosítása
+    // Rendelés státusz módosítása
     $order->status = 'torolve';
     $order->save();
 
-    // 🪑 Kapcsolódó asztalfoglalás kezelése
+    // Kapcsolódó asztalfoglalás kezelése
     if (
         $order->booking && // van foglalás
         !in_array($order->booking->status, ['teljesitve', 'elutasitva', 'torolve']) // még aktív
@@ -261,7 +259,7 @@ public function cancel($orderId)
         $order->booking->save();
     }
 
-    // ✅ Visszajelzés a felhasználónak
+    // Visszajelzés a felhasználónak
     return back()->with('success', 'A rendelés és az esetleges foglalás törölve lett.');
 }
 
@@ -327,17 +325,17 @@ return redirect()->route('orders.myorders')->with('success', "Fizetés sikeres. 
 
 public function rate(Request $request, Order $order)
 {
-    // 🔐 Csak saját rendelés értékelhető
+    // Csak saját rendelés értékelhető
     if ($order->users_id !== Auth::id()) {
         return back()->with('error', 'Nem jogosult az értékelésre.');
     }
 
-    // ✅ Csak fizetett rendelés értékelhető
+    // Csak fizetett rendelés értékelhető
     if (!$order->is_paid) {
         return back()->with('error', 'Csak fizetett rendelést lehet értékelni.');
     }
 
-    // ⛔ Ne lehessen újra értékelni
+    // Ne lehessen újra értékelni
     if (!is_null($order->rating_star)) {
         return back()->with('error', 'Ez a rendelés már értékelve lett.');
     }
@@ -363,7 +361,7 @@ public function rate(Request $request, Order $order)
 
 public function downloadInvoice(Order $order)
 {
-    // 🔐 Csak saját, fizetett rendeléshez engedélyezett
+    // Csak saját, fizetett rendeléshez engedélyezett
     if ($order->users_id !== auth()->id()) {
         abort(403);
     }

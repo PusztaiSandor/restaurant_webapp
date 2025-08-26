@@ -9,7 +9,7 @@
     @else
         @foreach ($orders as $order)
             <div class="card mb-4">
-                {{-- 🔹 Fejléc: Rendelés azonosító + státusz + időpont --}}
+                {{-- Fejléc: Rendelés azonosító + státusz + időpont --}}
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
                         <strong>Rendelés #{{ $order->orders_id }}</strong>
@@ -17,7 +17,7 @@
                         <span class="ms-3 text-muted">{{ $order->created_at->format('Y.m.d H:i') }}</span>
                     </div>
 
-                    {{-- 🔄 Státuszváltás – csak „atvetelre_kesz” esetén jelenik meg --}}
+                    {{-- Státuszváltás – csak „atvetelre_kesz” esetén jelenik meg --}}
                     @if ($order->status === 'atvetelre_kesz' && $order->is_paid)
                         <form method="POST" action="{{ route('courier.orders.markDelivered', $order->orders_id) }}">
                             @csrf
@@ -35,13 +35,13 @@
                     @endif
                 </div>
 
-                {{-- 🔍 Rendelés részletei --}}
+                {{-- Rendelés részletei --}}
                 <div class="card-body">
                     <p><strong>Felhasználó:</strong> {{ $order->user->name ?? 'N/A' }}</p>
                     <p><strong>Átvételi mód:</strong> {{ ucfirst($order->delivery_method) }}</p>
                     <p><strong>Fizetve:</strong> {{ $order->is_paid ? 'Igen' : 'Nem' }}</p>
 
-                    {{-- 🧾 Tételek listája --}}
+                    {{-- Tételek listája --}}
                     <ul class="list-group mb-3">
                         @foreach ($order->items as $item)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -54,7 +54,7 @@
                         @endforeach
                     </ul>
 
-                    {{-- 💸 Díjak és végösszeg --}}
+                    {{-- Díjak és végösszeg --}}
                     <ul class="list-group mb-3">
                         <li class="list-group-item d-flex justify-content-between">
                             <span>Ételek ára összesen</span>

@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="container py-4">
-    {{-- 📝 Cím a szerkesztő oldalhoz --}}
+    {{-- Cím a szerkesztő oldalhoz --}}
     <h2 class="mb-4">Fiók frissítése</h2>
 
- {{-- ⚠️ Figyelmeztetés ideiglenes jelszóra --}}
+ {{-- Figyelmeztetés ideiglenes jelszóra --}}
     @if($user->must_change_password)
         <div class="alert alert-warning">
             <i class="fa-solid fa-key me-1"></i>
@@ -13,29 +13,30 @@
         </div>
     @endif
 
-    {{-- 📬 Űrlap a profiladatok frissítéséhez --}}
+    {{-- Űrlap a profiladatok frissítéséhez --}}
     <form method="POST" action="{{ route('profile.credentials') }}">
-        @csrf {{-- 🔐 Laravel CSRF token a biztonságos POST kéréshez --}}
-        {{--@method('PUT') 🛠️ HTTP PUT metódus, mivel frissítést végzünk--}}
+        @csrf {{-- Laravel CSRF token a biztonságos POST kéréshez --}}
+        {{--@method('PUT') HTTP PUT metódus, mivel frissítést végzünk--}}
 
-        {{-- 📧 Új e-mail cím mező --}}
+        {{-- Új e-mail cím mező --}}
         <div class="mb-3">
     <label for="email" class="form-label">Új e-mail cím</label>
     <input type="email"
-           name="email"
-           id="email"
-           class="form-control"
-           value="{{ old('email', $user->email) }}"
-           required
-           minlength="5"
-           maxlength="60"
-           pattern="^[A-Za-z0-9@.]{5,60}$">
-    <small class="form-text text-muted">
-        Csak betűk, számok, pont és @ karakter. Minimum 5, maximum 60 karakter.
-    </small>
+       name="email"
+       id="email"
+       class="form-control"
+       value="{{ old('email', $user->email) }}"
+       required
+       minlength="5"
+       maxlength="60"
+       pattern="^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"
+       placeholder="Pl. kiss_auto@example.hu">
+<small class="form-text text-muted">
+    Betűk, számok, pont, kötőjel, aláhúzás és @ karakter engedélyezett. Minimum 5, maximum 60 karakter.
+</small>
 </div>
 
-        {{-- 🔐 Új jelszó mező --}}
+        {{-- Új jelszó mező --}}
         <div class="mb-3">
     <label for="password" class="form-label">Új jelszó</label>
     <input type="password"
@@ -51,7 +52,7 @@
     </small>
 </div>
 
-        {{-- 🔐 Jelszó megerősítése --}}
+        {{-- Jelszó megerősítése --}}
         <div class="mb-3">
     <label for="password_confirmation" class="form-label">Jelszó megerősítése</label>
     <input type="password"
@@ -64,7 +65,7 @@
     </small>
 </div>
 
-        {{-- 💾 Mentés gomb --}}
+        {{-- Mentés gomb --}}
         <div class="mt-3">
     <button type="submit" class="btn btn-success">
         ✅ Mentés

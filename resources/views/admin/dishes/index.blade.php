@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="container py-4">
-    {{-- 🧾 Oldalcím --}}
+    {{-- Oldalcím --}}
     <h2 class="text-center mb-4">🍽️ Étlap</h2>
 
-    {{-- ➕ Új étel hozzáadása csak admin számára --}}
+    {{-- Új étel hozzáadása csak admin számára --}}
     @if(auth()->user()?->role === 'admin')
         <div class="mb-4 text-end">
             <a href="{{ route('admin.dishes.create') }}" class="btn btn-outline-success">
@@ -14,12 +14,12 @@
         </div>
     @endif
 
-    {{-- ✅ Sikeres művelet visszajelzése --}}
+    {{-- Sikeres művelet visszajelzése --}}
     @if(session('success'))
         <div class="alert alert-success text-center">{{ session('success') }}</div>
     @endif
 
-    {{-- 📋 Aktív ételek táblázata --}}
+    {{-- Aktív ételek táblázata --}}
     <table class="table table-bordered table-hover">
         <thead class="table-light">
             <tr>
@@ -34,31 +34,31 @@
         <tbody>
             @forelse($activeDishes as $dish)
                 <tr>
-                    {{-- 🍲 Étel neve --}}
+                    {{-- Étel neve --}}
                     <td>{{ $dish->name }}</td>
 
-                    {{-- 💰 Alapár (bruttó ár) --}}
+                    {{-- Alapár (bruttó ár) --}}
                     <td>{{ number_format($dish->gross_price, 0, '', ' ') }} Ft</td>
 
-                    {{-- 📦 Készlet mennyisége --}}
+                    {{-- Készlet mennyisége --}}
                     <td>{{ $dish->stock }} db</td>
 
-                    {{-- ⚙️ Admin műveletek --}}
+                    {{-- Admin műveletek --}}
                     @if(auth()->user()?->role === 'admin')
                         <td>
-                            {{-- ✏️ Szerkesztés --}}
+                            {{-- Szerkesztés --}}
                             <a href="{{ route('admin.dishes.edit', $dish->dishes_id) }}"
                                class="btn btn-sm btn-outline-secondary me-1">
                                 ✏️ Étel szerkesztése
                             </a>
 
-                            {{-- 📦 Készlet módosítása --}}
+                            {{-- Készlet módosítása --}}
                             <a href="{{ route('admin.dishes.editStock', $dish->dishes_id) }}"
                                class="btn btn-sm btn-outline-primary">
                                 📦 Készlet módosítása
                             </a>
 
-                            {{-- 🗑️ Archiválás (inaktiválás) --}}
+                            {{-- Archiválás (inaktiválás) --}}
                             <form method="POST" action="{{ route('admin.dishes.deactivate', $dish->dishes_id) }}"
                                   class="d-inline"
                                   onsubmit="return confirm('Biztosan archiválni szeretnéd ezt az ételt?');">
@@ -72,7 +72,7 @@
                     @endif
                 </tr>
             @empty
-                {{-- 🚫 Nincs aktív étel --}}
+                {{-- Nincs aktív étel --}}
                 <tr>
                     <td colspan="{{ auth()->user()?->role === 'admin' ? 4 : 3 }}" class="text-center">
                         Nincs elérhető étel.
@@ -82,7 +82,7 @@
         </tbody>
     </table>
 
-    {{-- 🗃️ Archivált ételek szekció --}}
+    {{-- Archivált ételek szekció --}}
     <h3 class="mt-5 mb-3 text-center">🗃️ Archivált ételek</h3>
 
     <table class="table table-bordered table-hover table-secondary">
@@ -101,7 +101,7 @@
                     <td>{{ number_format($dish->gross_price, 0, '', ' ') }} Ft</td>
                     <td>{{ $dish->stock }} db</td>
                     <td>
-                        {{-- 🔄 Visszaállítás aktív állapotba --}}
+                        {{-- Visszaállítás aktív állapotba --}}
                         <form method="POST" action="{{ route('admin.dishes.activate', $dish->dishes_id) }}"
                               class="d-inline"
                               onsubmit="return confirm('Biztosan visszaállítod ezt az ételt az étlapra?');">
@@ -114,7 +114,7 @@
                     </td>
                 </tr>
             @empty
-                {{-- 🚫 Nincs archivált étel --}}
+                {{-- Nincs archivált étel --}}
                 <tr>
                     <td colspan="4" class="text-center">Nincs archivált étel.</td>
                 </tr>
@@ -122,7 +122,7 @@
         </tbody>
     </table>
 
-    {{-- ⬅️ Vissza a főoldalra --}}
+    {{-- Vissza a főoldalra --}}
     <div class="text-center mt-4">
         <a href="{{ url('/') }}" class="btn btn-outline-secondary">⬅️ Vissza a főoldalra</a>
     </div>

@@ -23,12 +23,19 @@
         {{-- Név mező --}}
         <div class="mb-3">
     <label for="name" class="form-label">Név</label>
-    <input type="text" class="form-control @error('name') is-invalid @enderror"
-           id="name" name="name" value="{{ old('name') }}" required
-           placeholder="Pl. Teszt User">
-    <small class="form-text text-muted">
-        Csak betűk, szóköz és pont. Minimum 2, maximum 50 karakter.
-    </small>
+    <input type="text"
+       class="form-control @error('name') is-invalid @enderror"
+       id="name"
+       name="name"
+       value="{{ old('name') }}"
+       required
+       minlength="2"
+       maxlength="50"
+       pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$"
+       placeholder="Pl. Kiss-Kovács János">
+<small class="form-text text-muted">
+    Csak betűk, szóköz, pont és kötőjel. Minimum 2, maximum 50 karakter.
+</small>
     @error('name')
         <div class="invalid-feedback">{{ $message }}</div>
     @enderror

@@ -13,7 +13,7 @@
     <form method="POST" action="{{ route('order.pay.submit', $order->orders_id) }}">
         @csrf
 
-        {{-- 💳 Fizetési mód választása --}}
+        {{-- Fizetési mód választása --}}
         <div class="mb-3">
             <label for="payment_method" class="form-label">Fizetési mód</label>
             <select id="payment_method" name="payment_method" class="form-select" required>
@@ -24,7 +24,7 @@
             </select>
         </div>
 
-        {{-- 💳 Bankkártya / SZÉP kártya mezők (szimuláció) --}}
+        {{-- Bankkártya / SZÉP kártya mezők (szimuláció) --}}
         <div id="card-fields" style="display: none;">
             <div class="alert alert-info">
                 Ez csak <strong>szimulációs fizetés</strong>. Az adatok nem kerülnek mentésre.
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        {{-- 💵 Készpénzes fizetés mező --}}
+        {{-- Készpénzes fizetés mező --}}
         <div id="cash-field" style="display: none;">
             <div class="mb-2">
                 <label for="cash_given" class="form-label">Átadott összeg (Ft)</label>
@@ -61,14 +61,14 @@
             </div>
         </div>
 
-        {{-- ✅ Szimulált fizetés gomb --}}
+        {{-- Szimulált fizetés gomb --}}
         <div class="text-end mt-4">
             <button type="submit" class="btn btn-success">Fizetés szimulálása</button>
         </div>
     </form>
 </div>
 
-{{-- 🧠 Dinamikus mezők megjelenítése --}}
+{{-- Dinamikus mezők megjelenítése --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const methodSelect = document.getElementById('payment_method');

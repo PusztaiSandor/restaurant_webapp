@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    {{-- 🔤 Karakterkódolás és reszponzív nézet --}}
+    {{-- Karakterkódolás és reszponzív nézet --}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {{-- 🏷️ Oldal címe --}}
+    {{-- Oldal címe --}}
     <title>Esszencia Étterem</title>
 
-    <!-- 🌟 Favicon -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
 
-    {{-- 🎨 Bootstrap témaváltáshoz --}}
+    {{-- Bootstrap témaváltáshoz --}}
     <link id="theme-css" rel="stylesheet" href="{{ asset('assets/css/theme-darkly.css') }}">
 
-    {{-- 🧾 Saját stíluslap --}}
+    {{-- Saját stíluslap --}}
     <link rel="stylesheet" href="{{ asset('assets/css/mystyle.css') }}">
 
-    {{-- ⭐ Font Awesome ikonok (helyi fájlokból) --}}
+    {{-- Font Awesome ikonok (helyi fájlokból) --}}
     <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/fontawesome.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/solid.css') }}">
 </head>
 <body class="bg-light">
-    {{-- 🔝 Navigációs fejléc --}}
+    {{-- Navigációs fejléc --}}
     <header class="container-fluid bg-dark sticky-top">
         <nav class="navbar navbar-expand-md navbar-dark container">
-            {{-- 🔗 Logó és kezdőlap hivatkozás --}}
+            {{-- Logó és kezdőlap hivatkozás --}}
             <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
                 <img src="{{ asset('assets/images/components/logo.png') }}" alt="Esszencia logó" height="40" class="me-2">
                 <span>Esszencia Étterem</span>
             </a>
 
-            {{-- 🔘 Mobil nézet gomb --}}
+            {{-- Mobil nézet gomb --}}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarLinks">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarLinks">
     <ul class="navbar-nav me-auto">
-        {{-- 🍽️ Étlap link --}}
+        {{-- Étlap link --}}
         @if(!auth()->check() || auth()->user()->role === 'user')
     {{-- 🍽️ Étlap link – csak vendég és user szerepkör számára --}}
     <li class="nav-item">
@@ -48,7 +48,7 @@
     </li>
 @endif
 
-        {{-- 📞 Kapcsolat link --}}
+        {{-- Kapcsolat link --}}
         <li class="nav-item">
             <a class="nav-link" href="{{ route('contact') }}">
                 <i class="fa-solid fa-phone me-1"></i> Kapcsolat
@@ -56,9 +56,9 @@
         </li>
     </ul>
 
-    {{-- 🎨 Téma választó + Felhasználói menü --}}
+    {{-- Téma választó + Felhasználói menü --}}
     <ul class="navbar-nav ms-auto align-items-center">
-        {{-- 🎨 Téma választó --}}
+        {{-- Téma választó --}}
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                 <i class="fa-solid fa-brush me-1"></i> Témák
@@ -74,7 +74,7 @@
             </ul>
         </li>
 
-        {{-- 🔐 Vendég felhasználók számára: Belépés és Regisztráció --}}
+        {{-- Vendég felhasználók számára: Belépés és Regisztráció --}}
         @guest
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('login') }}">
@@ -88,7 +88,7 @@
             </li>
         @endguest
 
-        {{-- 🛒 Kosár – vendégek és user szerepkörű felhasználók számára --}}
+        {{-- Kosár – vendégek és user szerepkörű felhasználók számára --}}
 @php
     $cart = session()->get('cart', []);
     $cartCount = array_sum(array_column($cart, 'quantity'));
@@ -107,15 +107,15 @@
     </li>
 @endif
 
-        {{-- ✅ Bejelentkezett felhasználók számára: Üdvözlés + Kilépés --}}
+        {{-- Bejelentkezett felhasználók számára: Üdvözlés + Kilépés --}}
         @auth
-            {{-- 👋 Üdvözlés névvel --}}
+            {{-- Üdvözlés névvel --}}
             <li class="nav-item nav-link text-white d-flex align-items-center">
                 <i class="fa-solid fa-user me-2"></i> Üdv, {{ Auth::user()->name }}!
             </li>
 
 
-            {{-- 👤 "Profilom" minden szerepkör számára --}}
+            {{-- "Profilom" minden szerepkör számára --}}
 @if(in_array(Auth::user()->role, ['admin', 'user', 'courier']))
     <li class="nav-item">
         <a class="nav-link" href="{{ route('profile') }}">
@@ -124,7 +124,7 @@
     </li>
 @endif
 
-{{-- 🧾 "Rendeléseim" csak bejelentkezett "user" szerepkörű felhasználónak --}}
+{{-- "Rendeléseim" csak bejelentkezett "user" szerepkörű felhasználónak --}}
 @auth
     @if(Auth::user()->role === 'user')
         <li class="nav-item">
@@ -135,7 +135,7 @@
     @endif
 @endauth
 
-{{-- 🚚 Futár: Saját kiszállítási rendeléseim --}}
+{{-- Futár: Saját kiszállítási rendeléseim --}}
 @if(Auth::user()->role === 'courier')
     <li class="nav-item">
         <a class="nav-link" href="{{ route('courier.orders.index') }}">
@@ -144,78 +144,34 @@
     </li>
 @endif
 
-{{-- 🛡️ Admin funkciók – csak admin szerepkör esetén jelenik meg --}}
+{{-- Admin funkciók – csak admin szerepkör esetén jelenik meg --}}
+{{-- Admin lenyíló menü --}}
 @if(Auth::user()->role === 'admin')
-    {{-- 👥 Felhasználók kezelése --}}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('admin.users.index') }}">
-            <i class="fa-solid fa-users-gear me-1"></i> Admin: Felhasználók
-        </a>
-    </li>
-
-    {{-- ➕ Új felhasználó létrehozása --}}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('admin.users.create') }}">
-            <i class="fa-solid fa-user-plus me-1"></i> Admin: Új felhasználó
-        </a>
-    </li>
-
-{{-- 🍽️ Admin: Ételkezelés --}}
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('admin.dishes.index') }}">
-        <i class="fa-solid fa-bowl-food me-1"></i> Admin: Ételek
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+        <i class="fa-solid fa-shield-halved me-1"></i> Admin menü
     </a>
+    <ul class="dropdown-menu dropdown-menu-dark">
+        <li><a class="dropdown-item" href="{{ route('admin.users.index') }}"><i class="fa-solid fa-users-gear me-1"></i> Felhasználók</a></li>
+        <li><a class="dropdown-item" href="{{ route('admin.users.create') }}"><i class="fa-solid fa-user-plus me-1"></i> Új felhasználó</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ route('admin.dishes.index') }}"><i class="fa-solid fa-bowl-food me-1"></i> Ételek</a></li>
+        <li><a class="dropdown-item" href="{{ route('admin.dishes.create') }}"><i class="fa-solid fa-plus me-1"></i> Új étel</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ route('admin.orders.index') }}"><i class="fa-solid fa-clipboard-list me-1"></i> Rendelések</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ route('global-charges.index') }}"><i class="fa-solid fa-coins me-1"></i> Globális díjak</a></li>
+        <li><a class="dropdown-item" href="{{ route('global-charges.create') }}"><i class="fa-solid fa-plus me-1"></i> Új díj</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ route('admin.tables.index') }}"><i class="fa-solid fa-table me-1"></i> Asztalok</a></li>
+        <li><a class="dropdown-item" href="{{ route('admin.tables.create') }}"><i class="fa-solid fa-plus me-1"></i> Új asztal</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ route('admin.feedbacks') }}"><i class="fa-solid fa-comment-dots me-1"></i> Visszajelzések</a></li>
+    </ul>
 </li>
-
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('admin.dishes.create') }}">
-        <i class="fa-solid fa-plus me-1"></i> Admin: Új étel
-    </a>
-</li>
-
-{{-- 📦 Admin: Rendelések --}}
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('admin.orders.index') }}">
-        <i class="fa-solid fa-clipboard-list me-1"></i> Admin: Rendelések
-    </a>
-</li>
-
-{{-- 💰 Admin: Globális díjak --}}
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('global-charges.index') }}">
-        <i class="fa-solid fa-coins me-1"></i> Admin: Globális díjak
-    </a>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('global-charges.create') }}">
-        <i class="fa-solid fa-plus me-1"></i> Admin: Új díj
-    </a>
-</li>
-
-{{-- 🪑 Admin: Asztalok --}}
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('admin.tables.index') }}">
-        <i class="fa-solid fa-table me-1"></i> Admin: Asztalok
-    </a>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('admin.tables.create') }}">
-        <i class="fa-solid fa-plus me-1"></i> Admin: Új asztal
-    </a>
-</li>
-
-{{-- 💬 Admin: Visszajelzések --}}
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('admin.feedbacks') }}">
-        <i class="fa-solid fa-comment-dots me-1"></i> Admin: Visszajelzések
-    </a>
-</li>
-
 @endif
 
-            {{-- 🔓 Kilépés gomb (POST metódus) --}}
+            {{-- Kilépés gomb (POST metódus) --}}
             <li class="nav-item d-flex align-items-center">
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
                     @csrf
@@ -233,12 +189,12 @@
     <small><i class="fa-solid fa-clock me-2"></i> Nyitvatartás: 7/24 Minden nap 00:00 – 24:00</small>
     </div>
 
-    {{-- 📦 Tartalom helye --}}
+    {{-- Tartalom helye --}}
     <main class="container py-4">
         @yield('content')
     </main>
 
-    {{-- 🔻 Lábléc --}}
+    {{-- Lábléc --}}
     <footer class="bg-dark text-light py-4 mt-5">
         <div class="container text-center">
             <p class="mb-1">&copy; {{ date('Y') }} Esszencia Étterem. Minden jog fenntartva.</p>
@@ -250,10 +206,10 @@
         </div>
     </footer>
 
-    {{-- 🔧 JS fájlok (helyi fájlokból) --}}
+    {{-- JS fájlok (helyi fájlokból) --}}
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 
-    {{-- 🎨 Téma-váltó működés --}}
+    {{-- Téma-váltó működés --}}
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         const themeOptions = document.querySelectorAll('.theme-option');

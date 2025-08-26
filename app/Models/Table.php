@@ -25,9 +25,4 @@ class Table extends Model
         'capacity' => 'integer',
     ];
 
-    // Ha később foglalások kapcsolódnak hozzá:
-    // public function bookings()
-    // {
-    //     return $this->hasMany(Booking::class, 'tables_id');
-    // }
 }

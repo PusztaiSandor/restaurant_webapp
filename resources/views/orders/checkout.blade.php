@@ -4,7 +4,7 @@
 <div class="container">
     <h2 class="mb-4 text-center">Rendelés véglegesítése</h2>
 
-    {{-- 💬 Visszajelzések --}}
+    {{-- Visszajelzések --}}
     @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
@@ -21,7 +21,7 @@
 
 
 
-        {{-- 🚚 Átvételi mód --}}
+        {{-- Átvételi mód --}}
         <div class="mb-3">
             <label for="delivery_method" class="form-label">Átvételi mód</label>
             <select name="delivery_method" id="delivery_method" class="form-select" required>
@@ -39,7 +39,7 @@
     </label>
 </div>
 
-        {{-- 🧮 Kosár összesítése --}}
+        {{-- Kosár összesítése --}}
         <h5 class="mt-4">Rendelés összesítése</h5>
         <ul class="list-group mb-3">
             @foreach ($cart as $item)
@@ -55,14 +55,14 @@
             @endforeach
         </ul>
 
-        {{-- 💸 Globális díjak --}}
+        {{-- Globális díjak --}}
 @php
     $deliveryMethod = old('delivery_method', 'delivery');
     $cutleryRequested = old('cutlery_requested');
     $baseTotal = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
 @endphp
 
-{{-- 🍽️ Ételek ára összesen --}}
+{{-- Ételek ára összesen --}}
 <div class="d-flex justify-content-between align-items-center mb-2">
     <strong>Ételek ára összesen:</strong>
     <span>{{ number_format($baseTotal, 0, ',', ' ') }} Ft</span>
@@ -108,13 +108,13 @@
     </ul>
 @endif
 
-        {{-- 🧾 Végösszeg --}}
+        {{-- Végösszeg --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
             <strong>Végösszeg:</strong>
             <span id="final-total">{{ number_format($totalWithCharges, 0, ',', ' ') }} Ft</span>
         </div>
 
-        {{-- ✅ Megrendelés gomb --}}
+        {{-- Megrendelés gomb --}}
         <div class="text-end">
     @auth
         <button type="submit" class="btn btn-success">Megrendelés elküldése</button>

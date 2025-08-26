@@ -26,8 +26,8 @@ class BookingController extends Controller
     $request->validate([
         'orders_id' => 'required|exists:orders,orders_id',
         'seats' => 'required|integer|min:1',
-        'table_code' => 'required|array|min:1', // ✅ Tömbként érkezik
-        'table_code.*' => 'string|exists:tables,table_code', // ✅ Minden elem valid
+        'table_code' => 'required|array|min:1', // Tömbként érkezik
+        'table_code.*' => 'string|exists:tables,table_code', // Minden elem valid
     ]);
 
     $order = Order::findOrFail($request->orders_id);
@@ -37,10 +37,10 @@ class BookingController extends Controller
     $booking->orders_id = $order->orders_id;
     $booking->seats = $request->seats;
 
-    // 🔗 Több asztalkód összefűzése vesszővel
+    // Több asztalkód összefűzése vesszővel
     $booking->table_code = implode(',', $request->table_code);
 
-    // 🕒 Foglalási idő = rendelés időpont + 2 óra
+    // Foglalási idő = rendelés időpont + 2 óra
     $booking->booking_time = Carbon::parse($order->created_at)->addHours(2);
     $booking->status = 'uj';
     $booking->save();
@@ -64,7 +64,7 @@ class BookingController extends Controller
 
     public function updateStatus(Request $request, Booking $booking)
 {
-    // 🛡️ Csak admin végezheti
+    // Csak admin végezheti
     if (Auth::user()->role !== 'admin') {
         abort(403);
     }
@@ -73,7 +73,7 @@ class BookingController extends Controller
         'status' => 'required|in:teljesitve,elutasitva',
     ]);
 
-    // ✅ Csak akkor módosítható, ha még 'uj' státuszban van
+    // Csak akkor módosítható, ha még 'uj' státuszban van
     if ($booking->status === 'uj') {
         $booking->status = $request->status;
         $booking->save();

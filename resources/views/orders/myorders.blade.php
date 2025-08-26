@@ -35,7 +35,7 @@
     </a>
 @endif
 
-                    {{-- 🧮 Részletes díjak --}}
+                    {{-- Részletes díjak --}}
 <ul class="list-group mb-3">
     <li class="list-group-item d-flex justify-content-between">
         <span>Ételek ára összesen</span>
@@ -91,7 +91,7 @@
                         @endforeach
                     </ul>
 
-{{-- ⭐ Rendelés értékelése – csak fizetett rendelés esetén --}}
+{{-- Rendelés értékelése – csak fizetett rendelés esetén --}}
 @if ($order->is_paid && is_null($order->rating_star))
     <div class="mt-3 p-3 border rounded bg-light">
         <h5 class="mb-2">Rendelés értékelése</h5>
@@ -109,7 +109,7 @@
         <form method="POST" action="{{ route('order.rate', $order->orders_id) }}">
             @csrf
 
-            {{-- ⭐ Csillagok --}}
+            {{-- Csillagok --}}
             <div class="mb-2">
                 <label for="rating_star" class="form-label">Értékelés (1–5 csillag):</label>
                 <select name="rating_star" id="rating_star" class="form-select" required>
@@ -120,7 +120,7 @@
                 </select>
             </div>
 
-            {{-- 💬 Megjegyzés --}}
+            {{-- Megjegyzés --}}
             <div class="mb-2">
                 <label for="rating_comment" class="form-label">Megjegyzés (opcionális):</label>
                 <textarea name="rating_comment" id="rating_comment"
@@ -146,7 +146,7 @@
     </div>
 @endif
 
-{{-- 🪑 Asztalfoglalás blokk --}}
+{{-- Asztalfoglalás blokk --}}
 @if ($order->delivery_method === 'dine-in')
     <div class="mt-3 p-3 border rounded bg-light">
         <h5 class="mb-2">Asztalfoglalás</h5>
@@ -158,7 +158,7 @@
             <p><strong>Fő:</strong> {{ $order->booking->seats }}</p>
             <p><strong>Asztalok:</strong> {{ $order->booking->table_code }}</p>
 
-            {{-- 🔴 Lemondás lehetősége --}}
+            {{-- Lemondás lehetősége --}}
             @if (
                 in_array($order->status, ['uj','keszul','atvetelre_kesz']) &&
                 !in_array($order->booking->status, ['elutasitva', 'torolve'])
@@ -169,7 +169,7 @@
                 </form>
             @endif
         @else
-            {{-- 🟢 Foglalás indítása csak akkor, ha még nincs foglalás és státusz engedélyezett --}}
+            {{-- Foglalás indítása csak akkor, ha még nincs foglalás és státusz engedélyezett --}}
             @if (in_array($order->status, ['uj','keszul','atvetelre_kesz']))
                 <form method="GET" action="{{ route('bookings.create', $order->orders_id) }}">
                     <button class="btn btn-outline-primary btn-sm">Asztalfoglalás indítása</button>
@@ -180,7 +180,7 @@
 @endif
 
 
-{{-- 🔴 Rendelés törlése csak 'uj', 'keszul', 'atvetelre_kesz' státusz esetén --}}
+{{-- Rendelés törlése csak 'uj', 'keszul', 'atvetelre_kesz' státusz esetén --}}
 @if (in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) && !$order->is_paid)
     <form method="POST" action="{{ route('order.cancel', $order->orders_id) }}" class="mt-2" onsubmit="return confirm('Biztosan törölni szeretnéd ezt a rendelést?');">
         @csrf
@@ -188,7 +188,7 @@
     </form>
 @endif
 
-{{-- 🟢 Fizetés szimulálása, ha még nincs fizetve és státusz engedélyezett --}}
+{{-- Fizetés szimulálása, ha még nincs fizetve és státusz engedélyezett --}}
 @if (in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) && !$order->is_paid)
     <form method="GET" action="{{ route('order.pay', $order->orders_id) }}" class="mt-2">
         <button class="btn btn-success">Fizetés szimulálása</button>

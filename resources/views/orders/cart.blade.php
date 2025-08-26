@@ -4,7 +4,7 @@
 <div class="container">
     <h2 class="mb-4 text-center">Kosár tartalma</h2>
 
-    {{-- 💬 Visszajelzések --}}
+    {{-- Visszajelzések --}}
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -42,7 +42,7 @@
                         <small class="text-muted">Egységár: {{ number_format($item['price'], 0, ',', ' ') }} Ft</small><br>
                         <small class="d-block mt-1">Mennyiség: {{ $item['quantity'] }}</small>
 
-                        {{-- ➕➖🗑️ Műveletek --}}
+                        {{-- Műveletek --}}
                         <form method="POST" action="{{ route('order.increase', ['key' => $key]) }}" class="d-inline me-2">
                             @csrf
                             <button class="btn btn-sm btn-outline-primary">+</button>
@@ -66,7 +66,7 @@
             @endforeach
         </ul>
 
-        {{-- 💰 Összesítés --}}
+        {{-- Összesítés --}}
         @php
             $total = 0;
             foreach ($cart as $item) {
@@ -77,14 +77,14 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <p class="mb-0"><strong>Összesen:</strong> {{ number_format($total, 2, ',', ' ') }} Ft</p>
 
-            {{-- 🧹 Kosár ürítése --}}
+            {{-- Kosár ürítése --}}
             <form method="POST" action="{{ route('order.clear') }}">
                 @csrf
                 <button class="btn btn-outline-danger">Kosár ürítése</button>
             </form>
         </div>
 
-        {{-- ✅ Rendelés véglegesítése --}}
+        {{-- Rendelés véglegesítése --}}
         <div class="text-end">
             <a href="{{ route('order.checkout') }}" class="btn btn-primary">Rendelés véglegesítése</a>
         </div>

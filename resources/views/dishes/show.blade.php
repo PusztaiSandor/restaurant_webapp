@@ -8,7 +8,7 @@
         @csrf
 
         <div class="row g-4">
-            {{-- 🖼️ Bal oldal --}}
+            {{-- Bal oldal --}}
             <div class="col-md-5">
                 @if ($dish->image)
                     <img src="{{ asset('assets/images/termekek/' . $dish->image) }}" class="img-fluid rounded shadow-sm mb-3" alt="{{ $dish->name }}">
@@ -31,9 +31,9 @@
                 </ul>
             </div>
 
-            {{-- 💰 Jobb oldal --}}
+            {{-- Jobb oldal --}}
             <div class="col-md-7">
-                {{-- 📐 Méretválasztó --}}
+                {{-- Méretválasztó --}}
 
 @if($dish->size_options)
     @php $sizes = $dish->size_options; @endphp
@@ -53,12 +53,11 @@
 @endif
 
 
-                {{-- ➕ Extra hozzávalók --}}
+                {{-- Extra hozzávalók --}}
                 @if($dish->extra_ingredients)
     @php
         $extras = $dish->extra_ingredients;
         $modifiers = $dish->ingredient_modifiers;
-        // $taxRate = ($dish->tax_percent ?? 27) / 100;
     @endphp
                     <div class="mb-3">
                         <label class="form-label">Extra hozzávalók:</label>
@@ -80,7 +79,7 @@
                     </div>
                 @endif
 
-                {{-- ❌ Kizárandó összetevők --}}
+                {{-- Kizárandó összetevők --}}
                 @if($dish->base_ingredients)
     @php $ingredients = $dish->base_ingredients; @endphp
     <div class="mb-3">
@@ -103,13 +102,13 @@
                     </div>
                 @endif
 
-                {{-- 🔢 Mennyiség --}}
+                {{-- Mennyiség --}}
                 <div class="mb-3">
                     <label for="quantity" class="form-label">Mennyiség:</label>
                     <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1" max="{{ $dish->stock }}">
                 </div>
 
-                {{-- 💰 Ármegjelölés --}}
+                {{-- Ármegjelölés --}}
                 <div class="mb-3">
                     <strong>Árak:</strong><br>
                     <span id="price" class="fw-bold text-dark">– Ft</span><br>
@@ -118,10 +117,10 @@
                     @endif
                 </div>
 
-                {{-- 🛒 Kosárba helyezés --}}
+                {{-- Kosárba helyezés --}}
                 <button type="submit" class="btn btn-success w-100 mb-2">Kosárba helyezés</button>
 
-                {{-- ↩️ Vissza az étlapra --}}
+                {{-- Vissza az étlapra --}}
                 <div class="text-center">
                     <a href="{{ route('menu') }}" class="btn btn-outline-secondary">← Vissza az étlapra</a>
                 </div>
@@ -130,7 +129,7 @@
     </div>
 </form>
 
-{{-- 💳 JavaScript: dinamikus árkalkuláció --}}
+{{-- JavaScript: dinamikus árkalkuláció --}}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const basePrice = {{ $dish->gross_price }};

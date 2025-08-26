@@ -10,7 +10,7 @@
 
     <h2 class="mb-4 text-center">Étlap</h2>
 
-    {{-- 🔍 Szűrési lehetőségek --}}
+    {{-- Szűrési lehetőségek --}}
     <form method="GET" class="row mb-4">
         <div class="col-md-3">
             <label for="category" class="form-label">Kategória:</label>
@@ -84,7 +84,7 @@
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ $dish->name }}</h5>
 
-                        {{-- 💰 Ár megjelenítése --}}
+                        {{-- Ár megjelenítése --}}
 <div class="mb-3">
     @php
     // A lenyílóban használt alapértelmezett méret
@@ -99,7 +99,7 @@
     {{ number_format($finalPrice, 0, ',', ' ') }} Ft
 </span><br>
 
-    {{-- 🎯 Kedvezményes ár megjelenítése, ha van akció --}}
+    {{-- Kedvezményes ár megjelenítése, ha van akció --}}
     @if ($dish->on_sale && $dish->discount_percent > 0)
     <small id="discount_{{ $dish->dishes_id }}" class="text-muted d-block mt-1">
         Eredeti ár: <del id="original_{{ $dish->dishes_id }}">
@@ -139,48 +139,48 @@
     </div>
 </div>
 
-{{-- ⚙️ JavaScript: dinamikus árfrissítés méretváltáskor --}}
+{{-- JavaScript: dinamikus árfrissítés méretváltáskor --}}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 🧮 Segédfüggvény: formázza az árakat magyar formátumban, Ft végződéssel
+    // Segédfüggvény: formázza az árakat magyar formátumban, Ft végződéssel
     const formatPrice = val => Math.round(val).toLocaleString('hu-HU') + ' Ft';
 
-    // 🍽️ Végigmegyünk az összes ételen, amit a Blade sablonban kapunk
+    // Végigmegyünk az összes ételen, amit a Blade sablonban kapunk
     @foreach($dishes as $dish)
         const dishId = {{ $dish->dishes_id }}; // Az étel egyedi azonosítója
 
-        // 🔎 DOM elemek lekérése, ahová az árakat írjuk
+        // DOM elemek lekérése, ahová az árakat írjuk
         const priceDisplay = document.getElementById(`price_${dishId}`);         // Aktuális ár megjelenítése
         const originalDisplay = document.getElementById(`original_${dishId}`);   // Eredeti ár (kedvezmény előtt)
         const discountDisplay = document.getElementById(`discount_${dishId}`);   // Kedvezmény szöveg
 
-        // 💰 Alapár lekérése a szerverről (bruttó ár)
+        // Alapár lekérése a szerverről (bruttó ár)
         const basePrice = {{ $dish->gross_price }};
 
-        // 🎯 Kedvezmény százalék lekérése, ha van akció
+        // Kedvezmény százalék lekérése, ha van akció
         const discountPercent = {{ $dish->on_sale ? $dish->discount_percent : 0 }};
 
-        // 📏 Mivel nincs méretválasztás, mindig a „Normál” méretet használjuk, szorzó = 1.0
+        // Mivel nincs méretválasztás, mindig a „Normál” méretet használjuk, szorzó = 1.0
         const multiplier = 1.0;
 
-        // 💸 Teljes ár kiszámítása (alapár × szorzó)
+        // Teljes ár kiszámítása (alapár × szorzó)
         const gross = basePrice * multiplier;
 
-        // 🎁 Kedvezmény kiszámítása, ha van
+        // Kedvezmény kiszámítása, ha van
         const discount = discountPercent > 0 ? gross * (discountPercent / 100) : 0;
 
-        // 🧾 Végső ár: eredeti ár mínusz kedvezmény
+        // Végső ár: eredeti ár mínusz kedvezmény
         const finalPrice = gross - discount;
 
-        // 🖥️ Megjelenítjük a végső árat a megfelelő HTML elemben
+        // Megjelenítjük a végső árat a megfelelő HTML elemben
         if (priceDisplay) priceDisplay.textContent = formatPrice(finalPrice);
 
-        // 📉 Ha van kedvezmény, megjelenítjük az eredeti árat és a kedvezmény mértékét
+        // Ha van kedvezmény, megjelenítjük az eredeti árat és a kedvezmény mértékét
         if (discountPercent > 0 && originalDisplay && discountDisplay) {
             originalDisplay.textContent = formatPrice(gross);
             discountDisplay.innerHTML = `Eredeti ár: <del id="original_${dishId}">${formatPrice(gross)}</del> • Kedvezmény: –${discountPercent}%`;
         }
-        // ❌ Ha nincs kedvezmény, töröljük a kedvezmény szöveget
+        // Ha nincs kedvezmény, töröljük a kedvezmény szöveget
         else if (discountDisplay) {
             discountDisplay.textContent = '';
         }

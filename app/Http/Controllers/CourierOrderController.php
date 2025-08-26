@@ -9,7 +9,7 @@ use App\Models\Order;
 class CourierOrderController extends Controller
 {
     /**
-     * 📦 Futárhoz rendelt kiszállítási rendelések listázása
+     * Futárhoz rendelt kiszállítási rendelések listázása
      */
     public function index()
     {
@@ -25,7 +25,7 @@ class CourierOrderController extends Controller
     }
 
     /**
-     * 🚚 Rendelés státuszának módosítása „kiszállítva” értékre
+     * Rendelés státuszának módosítása „kiszállítva” értékre
      */
     public function markDelivered($orderId)
     {

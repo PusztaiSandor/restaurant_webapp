@@ -15,7 +15,7 @@ class GlobalCharge extends Model
         'charge_type',
         'delivery_method',
         'is_active',
-        'is_optional', // Ez kell!
+        'is_optional',
         'is_percentage',
         'value',
         'description',
@@ -23,7 +23,7 @@ class GlobalCharge extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-         'is_optional' => 'boolean', // Ez kell!
+         'is_optional' => 'boolean',
         'is_percentage' => 'boolean',
         'value' => 'float',
     ];

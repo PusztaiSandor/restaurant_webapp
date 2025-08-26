@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="container py-4">
-    {{-- 🧾 Regisztrációs fejléc --}}
+    {{-- Regisztrációs fejléc --}}
     <h2 class="text-center mb-4">Regisztráció</h2>
 
-    {{-- ⚠️ Hibák megjelenítése --}}
+    {{-- Hibák megjelenítése --}}
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
@@ -16,39 +16,53 @@
         </div>
     @endif
 
-    {{-- 📤 Regisztrációs űrlap --}}
+    {{-- Regisztrációs űrlap --}}
     <form method="POST" action="{{ route('register.submit') }}">
         @csrf
 
-        {{-- 👤 Alapadatok --}}
-        {{-- 👤 Név --}}
+        {{-- Alapadatok --}}
+        {{-- Név --}}
 <div class="mb-3">
     <label for="name" class="form-label">Név</label>
-    <input type="text" class="form-control @error('name') is-invalid @enderror"
-           id="name" name="name" value="{{ old('name') }}" required
-           placeholder="Pl. Teszt User">
-    <small class="form-text text-muted">
-        Csak betűk, szóköz és pont. Minimum 2, maximum 50 karakter.
-    </small>
+    <input type="text"
+       class="form-control @error('name') is-invalid @enderror"
+       id="name"
+       name="name"
+       value="{{ old('name') }}"
+       required
+       minlength="2"
+       maxlength="50"
+       pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű. \-]+$"
+       placeholder="Pl. Kiss-Kovács János">
+<small class="form-text text-muted">
+    Csak betűk, szóköz, pont és kötőjel. Minimum 2, maximum 50 karakter.
+</small>
     @error('name')
         <div class="invalid-feedback">{{ $message }}</div>
     @enderror
 </div>
 
-        {{-- 📧 E-mail cím --}}
+        {{-- E-mail cím --}}
 <div class="mb-3">
     <label for="email" class="form-label">E-mail cím</label>
-    <input type="email" class="form-control @error('email') is-invalid @enderror"
-           id="email" name="email" value="{{ old('email') }}" required
-           placeholder="Pl. tesztuser@example.com">
-    <small class="form-text text-muted">
-        Legalább 5, legfeljebb 60 karakter. Csak betűk, számok, pont és @ karakter engedélyezett.
-    </small>
+    <input type="email"
+       class="form-control @error('email') is-invalid @enderror"
+       id="email"
+       name="email"
+       value="{{ old('email') }}"
+       required
+       minlength="5"
+       maxlength="60"
+       pattern="^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"
+       placeholder="Pl. kiss_auto@example.hu">
+<small class="form-text text-muted">
+    Betűk, számok, pont, kötőjel és aláhúzás engedélyezett. Minimum 5, maximum 60 karakter.
+</small>
     @error('email')
         <div class="invalid-feedback">{{ $message }}</div>
     @enderror
 </div>
-{{-- 📧 Telefonszám --}}
+{{-- Telefonszám --}}
         <div class="mb-3">
     <label for="phone" class="form-label">Telefonszám (opcionális)</label>
     <input type="text" name="phone" id="phone"
@@ -63,7 +77,7 @@
     @enderror
 </div>
 
-        {{-- 🔐 Jelszó --}}
+        {{-- Jelszó --}}
 <div class="mb-3">
     <label for="password" class="form-label">Jelszó</label>
     <input type="password" class="form-control @error('password') is-invalid @enderror"
@@ -76,14 +90,14 @@
     @enderror
 </div>
 
-        {{-- 🔐 Jelszó megerősítése --}}
+        {{-- Jelszó megerősítése --}}
 <div class="mb-3">
     <label for="password_confirmation" class="form-label">Jelszó megerősítése</label>
     <input type="password" class="form-control" id="password_confirmation"
            name="password_confirmation" required>
 </div>
 
-        {{-- 🎭 Szerepkör választás – csak teszteléshez --}}
+        {{-- Szerepkör választás – csak teszteléshez --}}
         <hr>
         <h5 class="mt-4">Szerepkör választás (teszteléshez)</h5>
 
@@ -100,7 +114,7 @@
             </div>
         </div>
 
-        {{-- 🏡 Címadatok (opcionális) --}}
+        {{-- Címadatok (opcionális) --}}
         <hr>
         <h5 class="mt-4">Cím kiszállításhoz (opcionális)</h5>
         {{-- Irányítószám --}}
@@ -143,7 +157,7 @@
         <div class="invalid-feedback">{{ $message }}</div>
     @enderror
 </div>
-{{-- Közterület neve --}}
+{{-- Házszám --}}
         <div class="mb-3">
     <label for="street_number" class="form-label">Házszám</label>
     <input type="text" class="form-control @error('street_number') is-invalid @enderror"
@@ -157,7 +171,7 @@
     @enderror
 </div>
 
-        {{-- ✅ Küldés gomb --}}
+        {{-- Küldés gomb --}}
         <button type="submit" class="btn btn-success w-100">Fiók létrehozása</button>
     </form>
 </div>
