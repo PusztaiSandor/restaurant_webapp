@@ -17,10 +17,10 @@
 
     <div class="d-flex justify-content-between mb-4">
     <a href="{{ route('cart.index') }}" class="btn btn-outline-secondary">
-        ← Vissza a kosárhoz
+        ⬅️Vissza a kosárhoz
     </a>
     <a href="{{ route('menu') }}" class="btn btn-outline-primary">
-        ← Vissza az étlapra
+        ⬅️Vissza az étlapra
     </a>
     </div>
 

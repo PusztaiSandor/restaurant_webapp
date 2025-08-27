@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Dish extends Model
 {
     use HasFactory;
-
+// Elsődleges kulcs megadása
     protected $primaryKey = 'dishes_id';
-
+// Tömegesen kitölthető mezők
     protected $fillable = [
         'name',
         'description',
@@ -32,6 +32,7 @@ class Dish extends Model
         'active',
     ];
 
+    // Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'vegetarian' => 'boolean',
         'on_sale' => 'boolean',
@@ -54,17 +55,17 @@ class Dish extends Model
         return $this->hasMany(Order::class, 'dishes_id');
     }
 
-     /**
-     * Végső ár kiszámítása méret és extrák alapján
-     */
+
+    // Végső ár kiszámítása méret és extrák alapján
+
     public function getFinalPrice(string $sizeLabel = 'Normál', array $extras = []): float
 {
     $basePrice = $this->gross_price;
 
-    // Méret szorzó
+     // Méret szorzó lekérése
     $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
 
-    // Extra hozzávalók ármódosítói (csak ha nem üres a tömb)
+    // Extra hozzávalók árának összegzése (csak ha nem üres a tömb)
     $extraCost = 0;
     if (!empty($extras)) {
         foreach ($extras as $extra) {
@@ -81,12 +82,8 @@ class Dish extends Model
     return round($finalPrice, 0);
 }
 
-/**
- * Méretarányos ár kiszámítása extrák nélkül, kedvezménnyel
- *
- * @param string $sizeLabel - Méret neve (pl. "Normál", "Nagy")
- * @return float - Kedvezményes ár az adott méretre
- */
+
+// Méretarányos ár kiszámítása extrák nélkül, kedvezménnyel
 
 public function getDiscountedSizePrice(string $sizeLabel = 'Normál'): float
 {
@@ -101,7 +98,7 @@ public function getDiscountedSizePrice(string $sizeLabel = 'Normál'): float
         $multiplier = $this->size_options[$sizeLabel]['multiplier'];
     }
 
-    // Kedvezmény faktor kiszámítása (pl. 10% → 0.9)
+    // Kedvezmény faktor kiszámítása
     $discountFactor = $this->on_sale ? (1 - ($this->discount_percent / 100)) : 1;
 
     // Végső ár = (alapár × szorzó) × kedvezmény
@@ -111,9 +108,9 @@ public function getDiscountedSizePrice(string $sizeLabel = 'Normál'): float
 }
 
 
-/**
- * Eredeti ár kiszámítása méret alapján (extrák nélkül, kedvezmény nélkül)
- */
+
+// Eredeti ár kiszámítása méret alapján (extrák nélkül, kedvezmény nélkül)
+
 public function getOriginalPrice(string $sizeLabel = 'Normál'): float
 {
     $basePrice = $this->gross_price;

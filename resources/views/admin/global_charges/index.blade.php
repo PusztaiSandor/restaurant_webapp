@@ -4,10 +4,6 @@
 <div class="container py-4">
     <h2 class="mb-4">Globális díjak</h2>
 
-    {{-- @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif --}}
-
     <a href="{{ route('global-charges.create') }}" class="btn btn-primary mb-3">
         <i class="fa-solid fa-plus me-1"></i> Új díj hozzáadása
     </a>

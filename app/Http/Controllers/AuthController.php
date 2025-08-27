@@ -10,26 +10,27 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    /**
-     * Regisztrációs űrlap megjelenítése
-     *
-     * Ez a metódus visszaadja a regisztrációs nézetet.
-     * A felhasználó itt tudja megadni az adatait.
-     */
+
+
+
+    // A regisztrációs űrlap megjelenítése.
+     // A felhasználó itt tudja megadni az adatait.
+
     public function showRegistrationForm()
     {
         return view('auth.register');
     }
 
-    /**
-     * Regisztrációs adatok feldolgozása
-     *
-     * Validálja a beküldött adatokat, létrehozza az új felhasználót,
-     * majd automatikusan bejelentkezteti és irányítja a szerepkör szerint.
-     */
+
+    // Regisztrációs adatok feldolgozása
+
+    // Validálja a beküldött adatokat, létrehozza az új felhasználót,
+    // automatikusan bejelentkezteti és irányítja a szerepkör szerint.
+
     public function register(Request $request)
 {
-    // Adatok validálása
+
+    // Beküldött adatok ellenőrzése.
     $validated = $request->validate([
         'name' => [
             'required',
@@ -86,6 +87,7 @@ class AuthController extends Controller
         ],
     ], [
         // Magyar hibaüzenetek
+        // Ezek jelennek meg, ha a felhasználó hibás adatot ad meg.
         'name.required' => 'A név megadása kötelező.',
         'name.min' => 'A név legalább 2 karakter hosszú legyen.',
         'name.max' => 'A név legfeljebb 50 karakter lehet.',
@@ -108,7 +110,8 @@ class AuthController extends Controller
         'street_number.regex' => 'A házszám csak számokat, betűket, kötőjelet és perjelet tartalmazhat. Példa: 15/A vagy 13–15',
     ]);
 
-    // Új felhasználó létrehozása
+    // Új felhasználó létrehozása az adatbázisban.
+        // A jelszót titkosítjuk, az aktív státuszt alapból igazra állítjuk.
     $user = User::create([
         'name' => $validated['name'],
         'email' => $validated['email'],
@@ -122,31 +125,33 @@ class AuthController extends Controller
         'active' => 1,
     ]);
 
-    // Automatikus bejelentkeztetés
+    // Automatikus bejelentkeztetés a sikeres regisztráció után.
     Auth::login($user);
+
+    // Bejelentkezés időpontjának mentése.
     $user->last_login_at = now();
     $user->save();
 
-    // 🧭 Irányítás szerepkör szerint
+    // Irányítás szerepkör szerint
     return $this->redirectBasedOnRole($user)->with('success', 'Sikeres regisztráció!');
 }
 
-    /**
-     * Bejelentkezési űrlap megjelenítése
-     *
-     * Visszaadja a login nézetet, ahol a felhasználó megadhatja az e-mailt és jelszót.
-     */
+
+    // Bejelentkezési űrlap megjelenítése
+
+    // Visszaadja a login nézetet, ahol a felhasználó megadhatja az e-mailt és jelszót.
+
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    /**
-     * Bejelentkezési adatok feldolgozása
-     *
-     * Ellenőrzi az e-mail és jelszó párost, majd irányítja a felhasználót
-     * a szerepkörének megfelelő oldalra.
-     */
+
+    // Bejelentkezési adatok feldolgozása
+
+    // Ellenőrzi az e-mail és jelszó párost, majd irányítja a felhasználót
+    // a szerepkörének megfelelő oldalra.
+
     public function login(Request $request)
 {
     // Beviteli adatok validálása
@@ -180,9 +185,11 @@ class AuthController extends Controller
 ]);
 
     // Felhasználó lekérése az e-mail alapján
+    // Megkeressük az adatbázisban, hogy létezik-e ilyen e-mail című felhasználó.
     $user = User::where('email', $request->email)->first();
 
     // Ha nincs ilyen felhasználó vagy nem aktív
+    // Visszairányítjuk a login oldalra hibaüzenettel, és visszatöltjük az űrlapba az adatokat.
     if (!$user || !$user->active) {
         return back()->with('error', 'A fiókod jelenleg nem aktív. Kérjük, vedd fel a kapcsolatot az Adminnal.')
                      ->withInput(); // 🔁 Visszatöltés a formba
@@ -198,9 +205,10 @@ class AuthController extends Controller
     if ($successful) {
         $user = Auth::user();
 
-        // 🕒 Bejelentkezési idő mentése
+// Bejelentkezési idő mentése
         $user->last_login_at = now();
         $user->save();
+
 
         // Kötelező jelszó/email módosítás ellenőrzése
         if ($user->must_change_password) {
@@ -216,11 +224,11 @@ class AuthController extends Controller
     return back()->with('error', 'Hibás e-mail vagy jelszó!')->withInput();
 }
 
-    /**
-     * Irányítás szerepkör szerint
-     *
-     * A bejelentkezett felhasználót a szerepkörének megfelelő oldalra irányítja.
-     */
+
+    // Irányítás szerepkör szerint
+
+    // A bejelentkezett felhasználót a szerepkörének megfelelő oldalra irányítja.
+
     protected function redirectBasedOnRole(User $user)
     {
         switch ($user->role) {
@@ -233,13 +241,13 @@ class AuthController extends Controller
         }
     }
 
-    /**
- * Jelszóemlékeztető szimuláció
- *
- * Ellenőrzi, hogy létezik-e a megadott e-mail, és hogy a fiók aktív-e.
- * Ha aktív, megjeleníti a szimulált e-mail nézetet.
- * Ha nem aktív, visszairányítja a bejelentkezési felületre hibaüzenettel.
- */
+
+// Jelszóemlékeztető szimuláció
+
+// Ellenőrzi, hogy létezik-e a megadott e-mail, és hogy a fiók aktív-e.
+// Ha aktív, megjeleníti a szimulált e-mail nézetet.
+// Ha nem aktív, visszairányítja a bejelentkezési felületre hibaüzenettel.
+
 public function simulateReset(Request $request)
 {
     // E-mail mező validálása
@@ -279,23 +287,25 @@ public function simulateReset(Request $request)
     return view('auth.simulated_email', ['email' => $request->email]);
 }
 
-    /**
-     * Jelszóemlékeztető űrlap megjelenítése
-     *
-     * A felhasználó itt tud új jelszót megadni a korábban megadott e-mail alapján.
-     */
+
+    // Jelszóemlékeztető űrlap megjelenítése
+
+    // A felhasználó itt tud új jelszót megadni a korábban megadott e-mail alapján.
+
     public function showResetForm($email)
     {
         return view('auth.reset', ['email' => $email]);
     }
 
-    /**
-     * Jelszó frissítése
-     *
-     * A megadott e-mail címhez tartozó felhasználó jelszavát frissíti.
-     */
+
+      // Jelszó frissítése
+
+    // A megadott e-mail címhez tartozó felhasználó jelszavát frissíti.
+
     public function updatePassword(Request $request, $email)
     {
+
+        // Új jelszó validálása
         $request->validate([
     'password' => [
         'required',
@@ -313,9 +323,10 @@ public function simulateReset(Request $request)
     'password.regex' => 'A jelszónak tartalmaznia kell betűt és számot, és csak betűket és számokat tartalmazhat.',
     'password.confirmed' => 'A jelszó megerősítése nem egyezik.',
 ]);
-
+// Felhasználó lekérése az e-mail alapján
         $user = User::where('email', $email)->first();
 
+        // Ha nincs ilyen felhasználó
         if (!$user) {
             return redirect('/login')->withErrors(['email' => 'Nem található felhasználó.']);
         }
@@ -325,17 +336,19 @@ public function simulateReset(Request $request)
         return back()->withErrors(['password' => 'Az új jelszó nem lehet azonos a jelenlegi jelszóval.']);
     }
 
+    // Jelszó frissítése és mentése
         $user->password = Hash::make($request->password);
         $user->save();
 
+        // Visszairányítás a login oldalra sikeres üzenettel
         return redirect('/login')->with('success', 'A jelszavad sikeresen módosítva lett!');
     }
 
-    /**
-     * Elfelejtett jelszó nézet
-     *
-     * A felhasználó itt tudja megadni az e-mail címét jelszóemlékeztető céljából.
-     */
+
+    // Elfelejtett jelszó nézet
+
+    // A felhasználó itt tudja megadni az e-mail címét jelszóemlékeztető céljából.
+
     public function showForgotForm()
     {
         return view('auth.forgot');
@@ -346,7 +359,7 @@ public function simulateReset(Request $request)
 {
     Auth::logout(); // Felhasználó kijelentkeztetése
 
-    // Session ürítése (opcionális)
+    // Session ürítése
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 

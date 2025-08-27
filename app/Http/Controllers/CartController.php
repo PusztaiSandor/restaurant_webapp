@@ -9,15 +9,17 @@ class CartController extends Controller
 {
     public function index()
     {
-        // Kosár lekérése sessionből
+        // Kosár tartalmának megjelenítése.
+    // A session-ből lekérjük a 'cart' nevű tömböt, ha nincs, akkor üres tömböt adunk vissza.
         $cart = session()->get('cart', []);
 
         return view('orders.cart', compact('cart'));
     }
-
+// Gyors hozzáadás a kosárhoz.
+    // Egy adott ételt (dish) adunk hozzá a kosárhoz, méret és mennyiség alapján.
     public function quickAdd(Request $request, $dishId)
 {
-    // Étel lekérése adatbázisból
+    // Étel lekérése adatbázisból id alapján.
     $dish = Dish::findOrFail($dishId);
 
     // Méret lekérése (alapértelmezett: 'Normál')
@@ -29,7 +31,7 @@ class CartController extends Controller
         $size = isset($sizeOptions['Normál']) ? 'Normál' : array_key_first($sizeOptions);
     }
 
-    // Mennyiség lekérése
+    // Mennyiség lekérése, minimum 1 db
     $quantity = max(1, (int) $request->input('quantity', 1));
 
     // Ár kiszámítása a kiválasztott méret alapján
@@ -38,13 +40,16 @@ class CartController extends Controller
     // Kosár lekérése a session-ből
     $cart = session()->get('cart', []);
 
-    // Egyedi kulcs generálása (étel ID + méret)
+    // Egyedi kulcs generálása (étel id + méret)
     $key = $dish->dishes_id . '_' . $size;
+
 
     // Ha már van ilyen tétel, növeljük a mennyiséget
     if (isset($cart[$key])) {
         $cart[$key]['quantity'] += $quantity;
     } else {
+
+        // Ha még nincs ilyen tétel, újként adjuk hozzá.
         $cart[$key] = [
             'dishes_id' => $dish->dishes_id,
             'name' => $dish->name,
@@ -60,6 +65,8 @@ class CartController extends Controller
     // Visszairányítás sikerüzenettel
     return redirect()->route('menu')->with('success', 'A termék sikeresen a kosárba került!');
 }
+// Mennyiség növelése egy adott kosár tételnél.
+    // A kulcs alapján megtaláljuk a tételt, és növeljük a darabszámot.
 
 public function increase($key)
 {
@@ -70,7 +77,8 @@ public function increase($key)
     }
     return redirect()->route('cart.index');
 }
-
+//Mennyiség csökkentése egy adott kosár tételnél.
+    // Ha a mennyiség 0 vagy kevesebb lesz, akkor eltávolítjuk a tételt.
 public function decrease($key)
 {
     $cart = session()->get('cart', []);
@@ -83,7 +91,8 @@ public function decrease($key)
     }
     return redirect()->route('cart.index');
 }
-
+// Tétel eltávolítása a kosárból.
+    // A megadott kulcs alapján töröljük a tételt.
 public function remove($key)
 {
     $cart = session()->get('cart', []);
@@ -93,53 +102,66 @@ public function remove($key)
     }
     return redirect()->route('cart.index');
 }
-
+// Teljes kosár kiürítése.
+    // A 'cart' nevű session kulcsot töröljük.
 public function clear()
 {
     session()->forget('cart');
     return redirect()->route('cart.index')->with('success', 'A kosár sikeresen kiürítve.');
 }
-
+// Kosár véglegesítése – fizetés előtti összesítés.
+// Összesítjük a kosárban lévő tételek árát, és megjelenítjük a fizetési nézetet.
 public function checkout()
 {
+    // Kosár lekérése a session-ből. Ha nincs, üres tömböt adunk vissza.
     $cart = session()->get('cart', []);
     $total = 0;
+
+    // Végösszeg kiszámítása: minden tétel ára × mennyiség
 
     foreach ($cart as $item) {
         $total += $item['price'] * $item['quantity'];
     }
-
+// Átadjuk a kosár és végösszeg adatokat a nézetnek
     return view('orders.checkout', compact('cart', 'total'));
 }
 
+// Termék hozzáadása a kosárhoz – részletes beállításokkal.
+// Méret, extrák, kizárások, mennyiség és ár alapján történik a hozzáadás.
+
 public function add(Request $request, $dishId)
 {
+    // Étel lekérése az adatbázisból az id alapján
     $dish = Dish::findOrFail($dishId);
 
-    // Méret
+    // Méret lekérése az űrlapból. Alapértelmezett: 'Normál'
     $size = $request->input('size', 'Normál');
     $sizeOptions = $dish->size_options ?? [];
+
+    // Ha a megadott méret nem létezik, az első elérhető méretet használjuk
     if (!isset($sizeOptions[$size])) {
         $size = array_key_first($sizeOptions);
     }
-    // Méret szorzó kiszámítása
+    // Méret szorzó lekérése
 $sizeMultiplier = $sizeOptions[$size]['multiplier'] ?? 1.00;
 
-    // Mennyiség
+    // Mennyiség lekérése és minimum érték biztosítása
     $quantity = max(1, (int) $request->input('quantity', 1));
 
 
 // Mennyiség validálása
+    // Nem lehet nulla vagy negatív
 if ($quantity < 1) {
     return back()->with('error', 'A mennyiség nem lehet nulla vagy negatív.');
 }
 
+// Nem haladhatja meg a készletet
 if ($quantity > $dish->stock) {
     return back()->with('error', 'A rendelni kívánt mennyiség meghaladja a készletet.');
 }
 
 
-    // Extrák
+    // Extrák és kizárások lekérése az űrlapból
     $extraIngredients = $request->input('extra_ingredients', []);
     $excludedIngredients = $request->input('excluded_ingredients', []);
     $modifiers = $dish->ingredient_modifiers ?? [];
@@ -159,10 +181,11 @@ if ($quantity > $dish->stock) {
         $excludedTotal += $modifiers[$excluded] ?? 0;
     }
 
-    // Végső ár
+    // Végső ár kiszámítása: alapár + extrák + kizárások
     $finalPrice = ($basePrice + $extraTotal + $excludedTotal);
 
-    // Egyedi kulcs generálása
+    // Egyedi kulcs generálása a tételhez (étel ID + méret + extrák + kizárások)
+    // Ez biztosítja, hogy különböző kombinációk külön tételként kerüljenek a kosárba
     $keyData = [
         'dishes_id' => $dish->dishes_id,
         'size' => $size,
@@ -171,11 +194,15 @@ if ($quantity > $dish->stock) {
     ];
     $key = md5(json_encode($keyData));
 
-    // Kosár frissítése
+    // Kosár lekérése a session-ből
     $cart = session()->get('cart', []);
+
+// Ha már van ilyen tétel, növeljük a mennyiséget
     if (isset($cart[$key])) {
         $cart[$key]['quantity'] += $quantity;
     } else {
+
+        // Új tétel hozzáadása a kosárhoz
         $cart[$key] = [
            'dishes_id' => $dish->dishes_id,
             'name' => $dish->name,
@@ -189,10 +216,10 @@ if ($quantity > $dish->stock) {
             'price' => $finalPrice,
         ];
     }
-
+// Kosár visszamentése a session-be
     session()->put('cart', $cart);
 
-    // Visszairányítás sikerüzenettel
+    // Visszairányítás az étlapra, sikeres üzenettel
     return redirect()->route('menu')->with('success', 'A termék sikeresen a kosárba került!');
 }
 

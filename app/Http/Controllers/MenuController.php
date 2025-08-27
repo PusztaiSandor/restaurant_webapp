@@ -8,12 +8,14 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class MenuController extends Controller
 {
-    /**
-     * PDF letöltése az étlapról.
-     */
+
+    // PDF letöltése az étlapról.
+    // Az aktív ételeket lekérjük, kategória és típus szerint csoportosítjuk,
+    // majd egy előre definiált nézet alapján PDF-et generálunk és letöltünk.
+
     public function downloadPdf()
     {
-        // Aktív ételek lekérése és csoportosítása kategória + típus szerint
+// Aktív ételek lekérése az adatbázisból
         $dishes = Dish::where('active', true)->get()->groupBy([
             'category',
             function ($dish) {
@@ -21,7 +23,8 @@ class MenuController extends Controller
             }
         ]);
 
-        // PDF generálása a nézet alapján
+        // PDF generálása a 'pdf.menu' nézet alapján
+        // A nézet megkapja a csoportosított ételeket, étterem nevét, szlogent és láblécet
         $pdf = Pdf::loadView('pdf.menu', [
             'dishesGrouped' => $dishes,
             'restaurantName' => 'Esszencia Étterem',
@@ -29,7 +32,7 @@ class MenuController extends Controller
             'footer' => '© 2025 Esszencia Étterem. Minden jog fenntartva. Budapest, Magyarország | +36 1 234 5678 | info@esszencia.hu'
         ]);
 
-        // Letöltés
+        // PDF fájl letöltése a felhasználó gépére
         return $pdf->download('etlap.pdf');
     }
 }

@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Booking extends Model
 {
     use HasFactory;
-
+// Elsődleges kulcs megadása
     protected $primaryKey = 'bookings_id';
 
+    // Tömegesen kitölthető mezők
     protected $fillable = [
         'users_id',
         'orders_id',
@@ -19,7 +20,7 @@ class Booking extends Model
         'booking_time',
         'status',
     ];
-
+// Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'seats' => 'integer',
         'booking_time' => 'datetime',
@@ -38,11 +39,13 @@ class Booking extends Model
     }
 
     // Asztalok lekérdezése egyedi módon
+    // A 'table_code' mezőben több asztalkód is lehet vesszővel elválasztva
     public function tables()
     {
-        // Segédfüggvény
+        // Segédfüggvény, Szétválasztjuk a kódokat tömbbé
         $codes = explode(',', $this->table_code);
 
+// Lekérdezzük az összes asztalt, amelynek kódja szerepel a tömbben
         return \App\Models\Table::whereIn('table_code', $codes)->get();
     }
 
@@ -55,7 +58,7 @@ class Booking extends Model
             'teljesitve' => 'Teljesítve',
             'elutasitva' => 'Elutasítva',
             'torolve' => 'Törölve',
-            default => ucfirst($this->status),
+            default => ucfirst($this->status), // Ha ismeretlen, akkor nagy kezdőbetűs változat
         };
     }
 }

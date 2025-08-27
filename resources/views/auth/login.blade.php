@@ -5,20 +5,6 @@
     {{-- 🧾 Oldalcím --}}
     <h2 class="text-center mb-4">Belépés</h2>
 
-    {{-- ⚠️ Hibás bejelentkezés esetén megjelenő hibaüzenet --}}
-    {{-- @if (session('error'))
-        <div class="alert alert-danger text-center">
-            {{ session('error') }}
-        </div>
-    @endif --}}
-
-    {{-- ✅ Sikeres regisztráció vagy jelszócsere után megjelenő üzenet --}}
-    {{-- @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif --}}
-
     {{-- Bejelentkezési űrlap --}}
     <form method="POST" action="{{ route('login.submit') }}">
         @csrf {{-- 🛡️ Laravel CSRF token a biztonságos POST kéréshez --}}
@@ -44,7 +30,7 @@
     @enderror
 </div>
 
-        {{-- 🔑 Jelszó mező --}}
+        {{-- Jelszó mező --}}
         <div class="mb-3">
     <label for="password" class="form-label">Jelszó</label>
     <input type="password" name="password" id="password"
@@ -61,13 +47,13 @@
     </div>
 </div>
 
-        {{-- 🧠 „Emlékezzen rám” opció --}}
+        {{-- „Emlékezzen rám” opció --}}
         <div class="form-check mb-3">
             <input type="checkbox" name="remember" id="remember" class="form-check-input">
             <label for="remember" class="form-check-label">Emlékezzen rám</label>
         </div>
 
-        {{-- 🚪 Belépés gomb --}}
+        {{-- Belépés gomb --}}
         <button type="submit" class="btn btn-primary w-100">Belépés</button>
     </form>
 </div>

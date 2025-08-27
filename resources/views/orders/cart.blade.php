@@ -14,7 +14,7 @@
 
     <div class="text-start mb-3">
         <a href="{{ route('menu') }}" class="btn btn-secondary">
-            ← Vissza az étlapra
+            ⬅️Vissza az étlapra
         </a>
     </div>
 

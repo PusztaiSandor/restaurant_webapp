@@ -8,6 +8,9 @@ use App\Models\Feedback;
 
 class ContactController extends Controller
 {
+
+    // Visszajelzés küldése (üzenet vagy értékelés).
+    // Csak bejelentkezett 'user' szerepkörű felhasználó küldhet visszajelzést.
     public function send(Request $request)
 {
     // Csak bejelentkezett user szerepkörű felhasználó küldhet visszajelzést
@@ -36,7 +39,7 @@ class ContactController extends Controller
     'content.regex' => 'Az üzenet nem tartalmazhat nem engedélyezett karaktereket.',
 ]);
 
-    // Mentés
+    // Visszajelzés mentése az adatbázisba.
     Feedback::create([
         'users_id' => Auth::id(),
         'type' => $request->type,
@@ -45,24 +48,32 @@ class ContactController extends Controller
         'content' => $request->content,
     ]);
 
+// Visszairányítás az előző oldalra, sikeres üzenettel.
     return redirect()->back()->with('success', 'Köszönjük a visszajelzésed!');
 }
 
+// Kapcsolat oldal megjelenítése.
+    // Itt található az üzenetküldő vagy értékelő űrlap.
     public function index()
 {
     return view('contact');
 }
 
+// Általános felhasználási feltételek oldal megjelenítése.
 public function terms()
 {
     return view('terms');
 }
+// Admin visszajelzések listázása.
+    // Csak admin szerepkörű felhasználó érheti el.
+    // Lehetőség van szűrésre és rendezésre.
 
 public function adminFeedbacks(Request $request)
 {
     if (!auth()->check() || auth()->user()->role !== 'admin') {
         abort(403);
     }
+    // Lekérdezzük a visszajelzéseket, betöltve a kapcsolódó felhasználót is.
 
     $query = \App\Models\Feedback::with('user');
 
@@ -71,7 +82,7 @@ public function adminFeedbacks(Request $request)
         $query->where('type', $request->type);
     }
 
-    // Rendezés
+    // Rendezés a kiválasztott szempont szerint
     if ($request->sort === 'date_asc') {
         $query->orderBy('created_at', 'asc');
     } elseif ($request->sort === 'date_desc') {
@@ -83,7 +94,7 @@ public function adminFeedbacks(Request $request)
     } else {
         $query->latest(); // alapértelmezett: legfrissebb elöl
     }
-
+// Lekérdezett visszajelzések átadása a nézetnek
     $feedbacks = $query->get();
 
     return view('admin.feedbacks', compact('feedbacks'));

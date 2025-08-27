@@ -14,33 +14,38 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
-    /**
-     * Rendelés véglegesítése – űrlap megjelenítése
-     */
+
+    // Rendelés véglegesítése – űrlap megjelenítése.
+// Ez a metódus előkészíti a fizetési oldalt: kiszámítja az árakat, alkalmazza a díjakat,
+// és megjeleníti az összesítést a felhasználónak.
+
     public function checkout()
 {
+    // Kosár lekérése a session-ből.
+    // Ha nincs kosár vagy üres, visszairányítjuk a felhasználót hibaüzenettel.
     $cart = session()->get('cart', []);
 
     if (empty($cart)) {
         return redirect()->route('cart.index')->with('error', 'A kosár üres.');
     }
 
-    // Kosár összegzés
+    // Kosár összegzés: minden tétel ára × mennyiség
     $subtotal = 0;
     foreach ($cart as $item) {
         $subtotal += $item['price'] * $item['quantity'];
     }
 
-    // Átvételi mód
+    // Átvételi mód lekérése az űrlapból (alapértelmezett: 'delivery')
     $deliveryMethod = request()->input('delivery_method', 'delivery');
 
-    // Globális díjak
+    // Globális díjak lekérése az adatbázisból (csak az aktívak)
     $charges = GlobalCharge::where('is_active', 1)->get();
 
-    // Díjak alkalmazása
+    // Végösszeg kiszámítása a díjak figyelembevételével
     $totalWithCharges = $subtotal;
-
+// Minden díj típusát külön vizsgáljuk, hogy alkalmazható-e
     foreach ($charges as $charge) {
+        // Feltételvizsgálat: mikor alkalmazzuk az adott díjat
         $apply = match ($charge->charge_type) {
             'delivery_fee' => $deliveryMethod === 'delivery',
             'service_fee' => $deliveryMethod === 'dine-in',
@@ -48,25 +53,28 @@ class OrderController extends Controller
             'cutlery' => request()->boolean('cutlery_requested'),
             default => false,
         };
-
+// Ha a díj alkalmazható, kiszámítjuk az összegét
         if ($apply) {
             $amount = $charge->is_percentage
-                ? round($subtotal * ($charge->value / 100), 2)
-                : $charge->value;
+                ? round($subtotal * ($charge->value / 100), 2) // százalékos díj
+                : $charge->value; // fix összeg
+
+             // Ha kedvezmény, akkor kivonjuk az összegből
 
             if ($charge->charge_type === 'order_discount') {
                 $totalWithCharges -= $amount;
             } else {
+                // Egyéb díjak hozzáadása
                 $totalWithCharges += $amount;
             }
         }
     }
-
+// Biztonsági ellenőrzés: a végösszeg ne legyen negatív
     $totalWithCharges = max(0, $totalWithCharges);
 
-    // Díjak mentése a session-be a submit() metódus számára
+    // Díjak mentése a session-be, hogy a következő lépésben (submit) is elérhetők legyenek
         session()->put('charges', $charges->toArray());
-
+// Nézet megjelenítése, ahol a felhasználó látja a kosár tartalmát, díjakat és végösszeget
     return view('orders.checkout', [
         'cart' => $cart,
         'charges' => $charges,
@@ -75,35 +83,41 @@ class OrderController extends Controller
     ]);
 }
 
-    /**
-     * Rendelés mentése
-     */
+
+    // Rendelés mentése.
+// Ez a metódus véglegesíti a rendelést: ellenőrzi a kosár tartalmát,
+// kiszámítja az árakat és díjakat, majd menti az adatbázisba.
+
     public function submit(Request $request)
 {
 
-    // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+    // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve.
+    // Ha nem, visszairányítjuk a bejelentkezési oldalra.
     if (!Auth::check()) {
         return redirect()->route('login')->with('error', 'A rendeléshez be kell jelentkezni.');
     }
 
-    // Szállítási mód validálása
+    // Szállítási mód validálása: csak a három megengedett érték lehet.
     $request->validate([
         'delivery_method' => 'required|in:delivery,pickup,dine-in',
     ]);
 
-    // Felhasználói azonosító lekérése
+    // Bejelentkezett felhasználó azonosítója.
     $userId = Auth::id();
 
-    // Kosár és extra díjak lekérése a sessionből
+    // Kosár és extra díjak lekérése a sessionből.
     $cart = session('cart', []);
     $charges = session('charges', []);
 
 
-// Mennyiség validálása minden kosár elemre
+// Mennyiség validálása minden kosár elemre.
+    // Ellenőrizzük, hogy minden tétel mennyisége legalább 1, és nem haladja meg a készletet.
 foreach ($cart as $item) {
     if (!isset($item['quantity']) || !is_numeric($item['quantity']) || $item['quantity'] < 1) {
         return back()->with('error', 'A mennyiség nem lehet nulla vagy negatív.');
     }
+
+    //Lekérdezzük az ételt az adatbázisból, összehasonlítjuk a rendelni kívánt mennyiséget a készlettel
 
     $dish = \App\Models\Dish::find($item['dishes_id']);
     if ($item['quantity'] > $dish->stock) {
@@ -207,21 +221,25 @@ foreach ($cart as $item) {
         $taxRate = ($dish->tax_percent ?? 27) / 100;
         $orderItem->tax_amount = round($finalUnitPrice * $taxRate, 2);
 
-        // Végösszeg kiszámítása (ÁFA már benne van az egységárban)
+        // Végösszeg kiszámítása (mennyiség × egységár).
         $orderItem->subtotal = round($finalUnitPrice * $item['quantity'], 2);
 
         $orderItem->save();
     }
 
-    // Kosár ürítése és visszairányítás
+    // Kosár ürítése és visszairányítás a saját rendeléseim oldalra.
     session()->forget('cart');
     return redirect()->route('orders.myorders')->with('success', 'A rendelés sikeresen elküldve!');
 }
 
+// Saját rendelések megjelenítése szűrőkkel.
+// A bejelentkezett felhasználó rendeléseit listázzuk, opcionális szűrési lehetőségekkel.
 public function myOrders(Request $request)
 {
+    // Bejelentkezett felhasználó azonosítója
     $userId = Auth::id();
-
+// Alap lekérdezés: csak a saját rendeléseket kérjük le
+    // Betöltjük a kapcsolódó tételeket és foglalást is
     $query = Order::with(['items.dish', 'booking'])
         ->where('users_id', $userId);
 
@@ -257,13 +275,14 @@ public function myOrders(Request $request)
     } else {
         $query->orderBy('created_at', 'desc');
     }
-
+// Lekérdezett rendelések átadása a nézetnek
     $orders = $query->get();
 
     return view('orders.myorders', compact('orders'));
 }
 
-
+// Rendelés törlése a felhasználó által.
+// Csak saját, még aktív és fizetetlen rendelés törölhető.
 
 public function cancel($orderId)
 {
@@ -284,7 +303,8 @@ public function cancel($orderId)
     $order->status = 'torolve';
     $order->save();
 
-    // Kapcsolódó asztalfoglalás kezelése
+    // Kapcsolódó asztalfoglalás kezelése:
+    // Ha van foglalás, és az még aktív, akkor azt is töröljük
     if (
         $order->booking && // van foglalás
         !in_array($order->booking->status, ['teljesitve', 'elutasitva', 'torolve']) // még aktív
@@ -296,7 +316,8 @@ public function cancel($orderId)
     // Visszajelzés a felhasználónak
     return back()->with('success', 'A rendelés és az esetleges foglalás törölve lett.');
 }
-
+// Fizetési űrlap megjelenítése.
+// Csak aktív, még nem fizetett rendelés esetén engedélyezett.
 public function showPaymentForm(Order $order)
 {
     if (!in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) || $order->is_paid) {
@@ -305,9 +326,11 @@ public function showPaymentForm(Order $order)
 
     return view('orders.pay', compact('order'));
 }
-
+// Fizetés szimulálása (bankkártya, SZÉP kártya, készpénz).
+// Validálja az adatokat, frissíti a rendelés fizetési állapotát.
 public function simulatePayment(Request $request, Order $order)
 {
+    // Fizetési adatok ellenőrzése
     $request->validate([
         'payment_method' => 'required|in:bankkartya,keszpenz,szepkartya',
         'card_name' => 'nullable|string|max:255',
@@ -318,7 +341,7 @@ public function simulatePayment(Request $request, Order $order)
     ]);
 
     $total = (int) round($order->total_price);
-
+// Készpénzes fizetés kezelése
     if ($request->payment_method === 'keszpenz') {
 
 // Készpénzes fizetés csak „atvetelre_kesz” státuszban engedélyezett
@@ -328,14 +351,16 @@ public function simulatePayment(Request $request, Order $order)
 
         $cash = (int) $request->cash_given;
 
+     // Ellenőrzés: elegendő-e az átadott összeg
         if ($cash < $total) {
             return back()->with('error', 'Az átadott összeg nem elegendő a fizetéshez.');
         }
-
+// Magyarországi szabály: csak 5 Ft-tal osztható összeget fogadunk el
         if ($cash % 5 !== 0) {
             return back()->with('error', 'Az átadott összegnek oszthatónak kell lennie 5-tel.');
         }
 
+        // Visszajáró kiszámítása
         $change = $cash - $total;
 
 // Magyarországi 2 Ft-os szabály: kerekítés 5 Ft-ra
@@ -345,7 +370,7 @@ $changeRounded = round($change / 5) * 5;
 if ($changeRounded < $change && ($change - $changeRounded) <= 2) {
     $changeRounded += 5;
 }
-
+// Rendelés frissítése fizetett státuszra
 $order->is_paid = true;
 $order->payment_method = 'keszpenz';
 $order->payment_time = now();
@@ -362,7 +387,8 @@ return redirect()->route('orders.myorders')->with('success', "Fizetés sikeres. 
 
     return redirect()->route('orders.myorders')->with('success', 'A rendelés fizetése sikeres.');
 }
-
+// Rendelés értékelése.
+// Csak saját, fizetett, még nem értékelt rendelés értékelhető.
 public function rate(Request $request, Order $order)
 {
     // Csak saját rendelés értékelhető
@@ -379,7 +405,7 @@ public function rate(Request $request, Order $order)
     if (!is_null($order->rating_star)) {
         return back()->with('error', 'Ez a rendelés már értékelve lett.');
     }
-
+// Értékelés validálása
     $request->validate([
     'rating_star' => 'required|integer|min:1|max:5',
     'rating_comment' => 'nullable|string|max:300|regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .,!?()@\\-\\n\\r]*$/u',
@@ -391,30 +417,32 @@ public function rate(Request $request, Order $order)
     'rating_comment.max' => 'A megjegyzés legfeljebb 300 karakter lehet.',
     'rating_comment.regex' => 'A megjegyzés csak betűket, számokat és írásjeleket tartalmazhat.',
 ]);
-
+// Értékelés mentése
     $order->rating_star = $request->rating_star;
     $order->rating_comment = $request->rating_comment;
     $order->save();
 
     return back()->with('success', 'Köszönjük az értékelést!');
 }
-
+// Számla letöltése PDF formátumban.
+// Csak saját, fizetett rendeléshez engedélyezett.
 public function downloadInvoice(Order $order)
 {
     // Csak saját, fizetett rendeléshez engedélyezett
     if ($order->users_id !== auth()->id()) {
         abort(403);
     }
-
+// Csak akkor engedélyezett, ha a rendelés fizetve van
     if (!$order->is_paid) {
         return back()->with('error', 'Csak fizetett rendeléshez tölthető le számla.');
     }
-
+// Kapcsolódó tételek betöltése
     $order->load(['items.dish']);
 
+// PDF generálása a 'pdf.invoice' nézet alapján
     $pdf = Pdf::loadView('pdf.invoice', compact('order'))
         ->setOptions(['defaultFont' => 'DejaVu Sans']);
-
+// PDF fájl letöltése
     return $pdf->download('szamla_rendeles_' . $order->orders_id . '.pdf');
 }
 
