@@ -5,7 +5,7 @@
 
 <div class="mb-3 text-start">
     <a href="{{ route('menu') }}" class="btn btn-outline-secondary">
-        ⬅️ Vissza az étlapra
+        ← Vissza az étlapra
     </a>
 </div>
 

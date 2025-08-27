@@ -35,7 +35,7 @@
        pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű. \-]+$"
        placeholder="Pl. Kiss-Kovács János">
 <small class="form-text text-muted">
-    Csak betűk, szóköz, pont és kötőjel. Minimum 2, maximum 50 karakter.
+    Közelező, csak betűk, szóköz, pont és kötőjel. Minimum 2, maximum 50 karakter.
 </small>
     @error('name')
         <div class="invalid-feedback">{{ $message }}</div>
@@ -56,7 +56,7 @@
        pattern="^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"
        placeholder="Pl. kiss_auto@example.hu">
 <small class="form-text text-muted">
-    Betűk, számok, pont, kötőjel és aláhúzás engedélyezett. Minimum 5, maximum 60 karakter.
+    Kötelező, betűk, számok, pont, kötőjel és aláhúzás engedélyezett. Minimum 5, maximum 60 karakter.
 </small>
     @error('email')
         <div class="invalid-feedback">{{ $message }}</div>
@@ -83,7 +83,7 @@
     <input type="password" class="form-control @error('password') is-invalid @enderror"
            id="password" name="password" required>
     <small class="form-text text-muted">
-        Legalább 8, legfeljebb 36 karakter. Csak kis- és nagybetűk, valamint számok. Példa: Teszt123
+        Kötelező, legalább 8, legfeljebb 36 karakter. Csak kis- és nagybetűk, valamint számok. Példa: Teszt123
     </small>
     @error('password')
         <div class="invalid-feedback">{{ $message }}</div>
@@ -95,6 +95,9 @@
     <label for="password_confirmation" class="form-label">Jelszó megerősítése</label>
     <input type="password" class="form-control" id="password_confirmation"
            name="password_confirmation" required>
+           <small class="form-text text-muted">
+             Kötelező, jelszó egyezés szükséges.
+           </small>
 </div>
 
         {{-- Szerepkör választás – csak teszteléshez --}}

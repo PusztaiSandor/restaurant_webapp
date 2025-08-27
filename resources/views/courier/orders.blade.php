@@ -4,6 +4,47 @@
 <div class="container">
     <h2 class="mb-4">Saját kiszállítási rendeléseim</h2>
 
+    {{-- Szűrés és rendezés (Futár) --}}
+<form method="GET" action="{{ route('courier.orders.index') }}" class="row g-3 mb-4">
+
+    {{-- Rendelés státusz --}}
+    <div class="col-md-3">
+        <label for="status" class="form-label">Rendelés státusz</label>
+        <select name="status" id="status" class="form-select">
+            <option value="" {{ request('status') === '' ? 'selected' : '' }}>Mind</option>
+            {{-- <option value="uj" {{ request('status') === 'uj' ? 'selected' : '' }}>Új</option>
+            <option value="keszul" {{ request('status') === 'keszul' ? 'selected' : '' }}>Készül</option> --}}
+            <option value="atvetelre_kesz" {{ request('status') === 'atvetelre_kesz' ? 'selected' : '' }}>Átvételre kész</option>
+            <option value="kiszallitva" {{ request('status') === 'kiszallitva' ? 'selected' : '' }}>Kiszállítva</option>
+            <option value="lezarva" {{ request('status') === 'lezarva' ? 'selected' : '' }}>Lezárva</option>
+            <option value="torolve" {{ request('status') === 'torolve' ? 'selected' : '' }}>Törölve</option>
+        </select>
+    </div>
+
+    {{-- Fizetési állapot --}}
+    <div class="col-md-3">
+        <label for="payment_status" class="form-label">Fizetési állapot</label>
+        <select name="payment_status" id="payment_status" class="form-select">
+            <option value="" {{ request('payment_status') === '' ? 'selected' : '' }}>Mind</option>
+            <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Fizetve</option>
+            <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>Nincs fizetve</option>
+        </select>
+    </div>
+
+    {{-- Rendezés --}}
+    <div class="col-md-3">
+        <label for="sort" class="form-label">Rendezés</label>
+        <select name="sort" id="sort" class="form-select">
+            <option value="date_desc" {{ request('sort') === 'date_desc' ? 'selected' : '' }}>Idő szerint ↓</option>
+            <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>Idő szerint ↑</option>
+        </select>
+    </div>
+
+    <div class="col-12 text-end">
+        <button type="submit" class="btn btn-dark">Szűrés</button>
+    </div>
+</form>
+
     @if ($orders->isEmpty())
         <p>Nincs hozzád rendelt kiszállítási rendelés.</p>
     @else
@@ -18,7 +59,7 @@
                     </div>
 
                     {{-- Státuszváltás – csak „atvetelre_kesz” esetén jelenik meg --}}
-                    @if ($order->status === 'atvetelre_kesz' && $order->is_paid)
+                    {{-- @if ($order->status === 'atvetelre_kesz' && $order->is_paid)
                         <form method="POST" action="{{ route('courier.orders.markDelivered', $order->orders_id) }}">
                             @csrf
                             <div class="input-group input-group-sm" style="width: 250px;">
@@ -32,7 +73,28 @@
                         <div class="text-success fw-bold">Kiszállítva – admin lezárásra vár</div>
                     @elseif ($order->status === 'lezarva')
                         <div class="text-muted">Lezárva</div>
-                    @endif
+                    @endif --}}
+
+                    @if ($order->status === 'atvetelre_kesz')
+    @if ($order->is_paid)
+        <form method="POST" action="{{ route('courier.orders.markDelivered', $order->orders_id) }}">
+            @csrf
+            <div class="input-group input-group-sm" style="width: 250px;">
+                <select class="form-select" disabled>
+                    <option selected>Kiszállítva</option>
+                </select>
+                <button class="btn btn-outline-success" type="submit">Mentés</button>
+            </div>
+        </form>
+    @else
+        <div class="text-danger fw-bold">Rendelés fizetésre vár</div>
+    @endif
+@elseif ($order->status === 'kiszallitva')
+    <div class="text-success fw-bold">Kiszállítva – admin lezárásra vár</div>
+@elseif ($order->status === 'lezarva')
+    <div class="text-muted">Lezárva</div>
+@endif
+
                 </div>
 
                 {{-- Rendelés részletei --}}

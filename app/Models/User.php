@@ -60,4 +60,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'courier_id');
     }
+
+    public function getRoleLabel(): string
+{
+    return match ($this->role) {
+        'user' => 'Felhasználó',
+        'courier' => 'Futár',
+        'admin' => 'Admin',
+        default => ucfirst($this->role),
+    };
+}
 }

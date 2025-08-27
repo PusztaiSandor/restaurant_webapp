@@ -12,13 +12,57 @@ class AdminOrderController extends Controller
     /**
      * Összes rendelés listázása
      */
-    public function index()
-    {
-        $couriers = \App\Models\User::where('role', 'courier')->get();
-        $orders = Order::with(['user', 'items.dish'])->orderByDesc('created_at')->get();
+    // public function index()
+    // {
+    //     $couriers = \App\Models\User::where('role', 'courier')->get();
+    //     $orders = Order::with(['user', 'items.dish'])->orderByDesc('created_at')->get();
 
-        return view('admin.orders.index', compact('orders', 'couriers'));
+    //     return view('admin.orders.index', compact('orders', 'couriers'));
+    // }
+
+    public function index(Request $request)
+{
+    $couriers = \App\Models\User::where('role', 'courier')->get();
+
+    $query = Order::with(['user', 'items.dish', 'booking']);
+
+    // Rendelés státusz szűrés
+    if ($request->filled('status') && $request->status !== 'mind') {
+        $query->where('status', $request->status);
     }
+
+    // Átvételi mód szűrés
+    if ($request->filled('delivery_method') && $request->delivery_method !== 'mind') {
+        $query->where('delivery_method', $request->delivery_method);
+    }
+
+    // Fizetési állapot szűrés
+    if ($request->filled('payment_status')) {
+        if ($request->payment_status === 'paid') {
+            $query->where('is_paid', true);
+        } elseif ($request->payment_status === 'unpaid') {
+            $query->where('is_paid', false);
+        }
+    }
+
+    // Asztalfoglalás státusz szűrés
+    if ($request->filled('booking_status') && $request->booking_status !== 'mind') {
+        $query->whereHas('booking', function ($q) use ($request) {
+            $q->where('status', $request->booking_status);
+        });
+    }
+
+    // Rendezés
+    if ($request->filled('sort') && $request->sort === 'date_asc') {
+        $query->orderBy('created_at', 'asc');
+    } else {
+        $query->orderBy('created_at', 'desc');
+    }
+
+    $orders = $query->get();
+
+    return view('admin.orders.index', compact('orders', 'couriers'));
+}
 
     /**
      * Egy rendelés részleteinek megtekintése

@@ -54,9 +54,10 @@
        minlength="2"
        maxlength="50"
        pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$"
-       placeholder="Pl. Kiss-Kovács János">
+       placeholder="Pl. Kiss-Kovács János"
+       readonly>
 <small class="form-text text-muted">
-    Csak betűk, szóköz, pont és kötőjel. Minimum 2, maximum 50 karakter.
+    A név csak a felhasználó saját profiljában módosítható.
 </small>
         </div>
 
@@ -80,8 +81,7 @@
             @if($hasTemporaryAccess)
                 <div class="alert alert-warning d-inline-block py-2 px-3 mt-2">
                     <strong>IDEIGLENES hozzáférés aktív</strong>
-                    <i class="fa-solid fa-key text-dark ms-1" title="Ideiglenes hozzáférés"></i>
-                    <span class="ms-2">Javasolt email és jelszó frissítés</span>
+        <span class="ms-2">Javasolt email és jelszó frissítés</span>
                 </div>
             @endif
         </div>
@@ -92,7 +92,7 @@
             <select name="role" id="role" class="form-select">
                 @foreach(['courier', 'admin'] as $role)
                     <option value="{{ $role }}" @selected($user->role === $role)>
-                        {{ ucfirst($role) }}
+                        {{ (new \App\Models\User(['role' => $role]))->getRoleLabel() }}
                     </option>
                 @endforeach
             </select>
@@ -114,7 +114,7 @@
         <form method="POST" action="{{ route('admin.users.regeneratePassword', $user->users_id) }}" class="mt-4">
             @csrf
             <button type="submit" class="btn btn-outline-danger">
-                <i class="fa-solid fa-key me-1"></i> Új ideiglenes jelszó és email generálása
+                Új ideiglenes jelszó és email generálása
             </button>
         </form>
     @endif

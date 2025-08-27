@@ -311,7 +311,7 @@ public function simulatePayment(Request $request, Order $order)
     $request->validate([
         'payment_method' => 'required|in:bankkartya,keszpenz,szepkartya',
         'card_name' => 'nullable|string|max:255',
-        'card_number' => 'nullable|string|max:19',
+        'card_number' => 'nullable|string|max:20',
         'card_expiry' => 'nullable|string|max:5',
         'card_cvc' => 'nullable|string|max:4',
         'cash_given' => 'nullable|integer|min:0',
@@ -320,6 +320,12 @@ public function simulatePayment(Request $request, Order $order)
     $total = (int) round($order->total_price);
 
     if ($request->payment_method === 'keszpenz') {
+
+// Készpénzes fizetés csak „atvetelre_kesz” státuszban engedélyezett
+        if ($order->status !== 'atvetelre_kesz') {
+            return back()->with('error', 'Készpénzes fizetés csak átvételre kész rendelés esetén lehetséges.');
+        }
+
         $cash = (int) $request->cash_given;
 
         if ($cash < $total) {

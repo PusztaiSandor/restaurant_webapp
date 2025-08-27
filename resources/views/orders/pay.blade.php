@@ -20,14 +20,16 @@
                 <option value="" disabled selected>– Válassz –</option>
                 <option value="bankkartya">Bankkártya</option>
                 <option value="szepkartya">SZÉP kártya</option>
+                @if ($order->status === 'atvetelre_kesz')
                 <option value="keszpenz">Készpénz</option>
+                @endif
             </select>
         </div>
 
         {{-- Bankkártya / SZÉP kártya mezők (szimuláció) --}}
         <div id="card-fields" style="display: none;">
             <div class="alert alert-info">
-                Ez csak <strong>szimulációs fizetés</strong>. Az adatok nem kerülnek mentésre.
+                <strong>Szimulációs fizetés</strong>. Az adatok nem kerülnek mentésre.
             </div>
 
             <div class="mb-2">

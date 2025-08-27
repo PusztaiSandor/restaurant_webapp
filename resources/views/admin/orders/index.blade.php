@@ -4,6 +4,71 @@
 <div class="container">
     <h2 class="mb-4">Összes rendelés (Admin)</h2>
 
+    {{-- Szűrés és rendezés (Admin) --}}
+<form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3 mb-4">
+
+    {{-- Rendelés státusz --}}
+    <div class="col-md-3">
+        <label for="status" class="form-label">Rendelés státusz</label>
+        <select name="status" id="status" class="form-select">
+            <option value="" {{ request('status') === '' ? 'selected' : '' }}>Mind</option>
+            <option value="uj" {{ request('status') === 'uj' ? 'selected' : '' }}>Új</option>
+            <option value="keszul" {{ request('status') === 'keszul' ? 'selected' : '' }}>Készül</option>
+            <option value="atvetelre_kesz" {{ request('status') === 'atvetelre_kesz' ? 'selected' : '' }}>Átvételre kész</option>
+            <option value="atvetel_megtortent" {{ request('status') === 'atvetel_megtortent' ? 'selected' : '' }}>Átvétel megtörtént</option>
+            <option value="kiszallitva" {{ request('status') === 'kiszallitva' ? 'selected' : '' }}>Kiszállítva</option>
+            <option value="lezarva" {{ request('status') === 'lezarva' ? 'selected' : '' }}>Lezárva</option>
+            <option value="torolve" {{ request('status') === 'torolve' ? 'selected' : '' }}>Törölve</option>
+        </select>
+    </div>
+
+    {{-- Átvételi mód --}}
+    <div class="col-md-3">
+        <label for="delivery_method" class="form-label">Átvételi mód</label>
+        <select name="delivery_method" id="delivery_method" class="form-select">
+            <option value="" {{ request('delivery_method') === '' ? 'selected' : '' }}>Mind</option>
+            <option value="delivery" {{ request('delivery_method') === 'delivery' ? 'selected' : '' }}>Kiszállítás</option>
+            <option value="dine-in" {{ request('delivery_method') === 'dine-in' ? 'selected' : '' }}>Helyben fogyasztás</option>
+            <option value="pickup" {{ request('delivery_method') === 'pickup' ? 'selected' : '' }}>Személyes átvétel</option>
+        </select>
+    </div>
+
+    {{-- Fizetési állapot --}}
+    <div class="col-md-3">
+        <label for="payment_status" class="form-label">Fizetési állapot</label>
+        <select name="payment_status" id="payment_status" class="form-select">
+            <option value="" {{ request('payment_status') === '' ? 'selected' : '' }}>Mind</option>
+            <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Fizetve</option>
+            <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>Nincs fizetve</option>
+        </select>
+    </div>
+
+    {{-- Asztalfoglalás státusz --}}
+    <div class="col-md-3">
+        <label for="booking_status" class="form-label">Foglalás státusz</label>
+        <select name="booking_status" id="booking_status" class="form-select">
+            <option value="" {{ request('booking_status') === '' ? 'selected' : '' }}>Mind</option>
+            <option value="uj" {{ request('booking_status') === 'uj' ? 'selected' : '' }}>Új</option>
+            <option value="teljesitve" {{ request('booking_status') === 'teljesitve' ? 'selected' : '' }}>Teljesítve</option>
+            <option value="elutasitva" {{ request('booking_status') === 'elutasitva' ? 'selected' : '' }}>Elutasítva</option>
+            <option value="torolve" {{ request('booking_status') === 'torolve' ? 'selected' : '' }}>Törölve</option>
+        </select>
+    </div>
+
+    {{-- Rendezés --}}
+    <div class="col-md-3">
+        <label for="sort" class="form-label">Rendezés</label>
+        <select name="sort" id="sort" class="form-select">
+            <option value="date_desc" {{ request('sort') === 'date_desc' ? 'selected' : '' }}>Idő szerint ↓</option>
+            <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>Idő szerint ↑</option>
+        </select>
+    </div>
+
+    <div class="col-12 text-end">
+        <button type="submit" class="btn btn-dark">Szűrés</button>
+    </div>
+</form>
+
     @if ($orders->isEmpty())
         <p>Nincs még rendelés az adatbázisban.</p>
     @else
@@ -109,7 +174,8 @@
                                 <select name="status" class="form-select">
                                     @foreach ($statusOptions as $status)
                                         <option value="{{ $status }}">
-                                            {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                            {{-- {{ ucfirst(str_replace('_', ' ', $status)) }} --}}
+                                            {{ \App\Models\Order::make(['status' => $status])->status_label }}
                                         </option>
                                     @endforeach
                                 </select>

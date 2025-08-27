@@ -3,13 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
-        h1, h2 { color: #333; }
-        .section { margin-bottom: 30px; }
-        .footer { margin-top: 50px; font-size: 10px; text-align: center; color: #666; }
-        .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .table th, .table td { border-bottom: 1px solid #ccc; padding: 6px; text-align: left; }
-    </style>
+    body {
+        font-family: DejaVu Sans, sans-serif;
+        font-size: 12px;
+        color: #222;
+        line-height: 1.5;
+    }
+    h1 {
+        font-size: 22px;
+        margin-bottom: 5px;
+        color: #2c3e50;
+    }
+    h3 {
+        font-size: 14px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        color: #34495e;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 4px;
+    }
+    .section {
+        margin-bottom: 30px;
+    }
+    .footer {
+        margin-top: 50px;
+        font-size: 10px;
+        text-align: center;
+        color: #666;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 11.5px;
+    }
+    .table th {
+        background-color: #f9f9f9;
+        text-align: left;
+        padding: 6px;
+        border-bottom: 2px solid #bbb;
+    }
+    .table td {
+        padding: 6px;
+        border-bottom: 1px solid #ddd;
+    }
+    .table tbody tr:nth-child(even) {
+        background-color: #f6f6f6;
+    }
+    strong {
+        color: #2c3e50;
+    }
+</style>
 </head>
 <body>
     <h1>Esszencia Étterem – Számla</h1>

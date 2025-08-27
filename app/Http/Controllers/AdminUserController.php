@@ -90,7 +90,7 @@ class AdminUserController extends Controller
         $hasTemporaryAccess = Str::endsWith($user->email, '@esszencia.local') && $user->must_change_password;
 
         if (! $hasTemporaryAccess) {
-            return redirect()->route('admin.users.edit', $user->id)
+            return redirect()->route('admin.users.edit', $user->users_id)
                 ->with('error', 'Ez a felhasználó már nem rendelkezik ideiglenes hozzáféréssel.');
         }
 
@@ -110,7 +110,7 @@ class AdminUserController extends Controller
             'must_change_password' => true,
         ]);
 
-        return redirect()->route('admin.users.edit', $user->id)
+        return redirect()->route('admin.users.edit', $user->users_id)
             ->with('success_password', "Új ideiglenes jelszó generálva: {$newEmail} • jelszó: {$rawPassword}");
     }
 
@@ -132,13 +132,13 @@ class AdminUserController extends Controller
         }
 
         $validated = $request->validate([
-    'name' => [
-        'required',
-        'string',
-        'min:2',
-        'max:50',
-        'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$/u'
-    ],
+    // 'name' => [
+    //     'required',
+    //     'string',
+    //     'min:2',
+    //     'max:50',
+    //     'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$/u'
+    // ],
     'email' => [
         'required',
         'string',
@@ -150,7 +150,7 @@ class AdminUserController extends Controller
     ],
     'role' => 'required|in:courier,admin',
 ], [
-    'name.required' => 'A név megadása kötelező.',
+    // 'name.required' => 'A név megadása kötelező.',
     'name.min' => 'A név legalább 2 karakter hosszú legyen.',
     'name.max' => 'A név legfeljebb 50 karakter lehet.',
     'name.regex' => 'A név csak betűket, szóközt, pontot és kötőjelet tartalmazhat. Példa: Kiss-Kovács János',
@@ -163,7 +163,7 @@ class AdminUserController extends Controller
 ]);
 
         $user->update([
-    'name' => $validated['name'],
+    // 'name' => $validated['name'],
     'email' => $validated['email'],
     'role' => $validated['role'],
     'active' => $request->has('active'),

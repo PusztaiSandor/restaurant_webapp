@@ -64,7 +64,7 @@
                 <i class="fa-solid fa-brush me-1"></i> Témák
             </a>
             <ul class="dropdown-menu dropdown-menu-dark">
-                @foreach(['basis','brite','darkly','vapor','solar','minty','flatly','morph','united','zephyr'] as $theme)
+                @foreach(['basis','brite','darkly','flatly','united'] as $theme)
                     <li>
                         <a class="dropdown-item theme-option" href="javascript:void(0)" data-theme="{{ $theme }}">
                             {{ ucfirst($theme) }}

@@ -43,12 +43,11 @@
                         {{ $user->email }}
                         @if($hasTemporaryAccess)
                             <span class="badge bg-warning text-dark ms-1">IDEIGLENES</span>
-                            <i class="fa-solid fa-key text-danger ms-1" title="Ideiglenes hozzáférés"></i>
                         @endif
                     </td>
 
                     {{-- Szerepkör (pl. admin, user) --}}
-                    <td>{{ ucfirst($user->role) }}</td>
+                    <td>{{ $user->getRoleLabel() }}</td>
 
                     {{-- Aktív / Inaktív állapot badge --}}
                     <td>
