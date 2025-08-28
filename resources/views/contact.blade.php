@@ -130,7 +130,7 @@
                 @endfor
             </select>
             <small class="form-text text-muted">
-            Csak egész szám választható 1 és 5 között. Az értékelés csak akkor kötelező, ha értékelést küldesz.
+            Választható 1 és 5 között. Az értékelés csak akkor kötelező, ha értékelést küldesz.
             </small>
         </div>
 

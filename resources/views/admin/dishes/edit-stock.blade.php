@@ -36,7 +36,7 @@
                 </div>
 
                 {{-- Mentés gomb --}}
-                <button type="submit" class="btn btn-primary w-100">💾 Készlet mentése</button>
+                <button type="submit" class="btn btn-primary w-100">Készlet mentése</button>
             </form>
 
             {{-- Visszalépés az étlaphoz --}}

@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Table extends Model
 {
     use HasFactory;
-
+// Elsődleges kulcs megadása
     protected $primaryKey = 'tables_id';
-
+// Tömegesen kitölthető mezők
     protected $fillable = [
         'table_code',
         'location',
@@ -19,7 +19,7 @@ class Table extends Model
         'is_reservable',
         'notes',
     ];
-
+// Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'is_reservable' => 'boolean',
         'capacity' => 'integer',

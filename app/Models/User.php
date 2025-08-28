@@ -10,9 +10,9 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-
-    protected $primaryKey = 'users_id'; // Egyedi kulcs
-
+// Elsődleges kulcs megadása
+    protected $primaryKey = 'users_id';
+// Tömegesen kitölthető mezők
     protected $fillable = [
         'name',
         'email',
@@ -28,39 +28,43 @@ class User extends Authenticatable
         'must_change_password',
         'last_login_at',
     ];
-
+// Elrejtett mezők
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', // Jelszó sosem jelenik meg
+        'remember_token', // Laravel automatikus token mező
     ];
 
+    // Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'active' => 'boolean',
         'must_change_password' => 'boolean',
         'last_login_at' => 'datetime',
     ];
 
-    // Kapcsolatok (ha már vannak más modellek)
+    // Kapcsolat a felhasználó rendeléseivel
     public function orders()
     {
         return $this->hasMany(Order::class, 'users_id');
     }
 
+    // Kapcsolat a felhasználó asztalfoglalásaival
     public function bookings()
     {
         return $this->hasMany(Booking::class, 'users_id');
     }
-
+// Kapcsolat a felhasználó által beküldött visszajelzésekkel
     public function feedbacks()
     {
         return $this->hasMany(Feedback::class, 'users_id');
     }
 
+    // Kapcsolat a futárként teljesített kiszállításokkal
     public function deliveries()
     {
         return $this->hasMany(Order::class, 'courier_id');
     }
 
+    //Segédfüggvény a szerepkörök magyar nyelvű megjelenítéséhez
     public function getRoleLabel(): string
 {
     return match ($this->role) {

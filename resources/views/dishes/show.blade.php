@@ -122,7 +122,7 @@
 
                 {{-- Vissza az étlapra --}}
                 <div class="text-center">
-                    <a href="{{ route('menu') }}" class="btn btn-outline-secondary">← Vissza az étlapra</a>
+                    <a href="{{ route('menu') }}" class="btn btn-outline-secondary">⬅️Vissza az étlapra</a>
                 </div>
             </div>
         </div>

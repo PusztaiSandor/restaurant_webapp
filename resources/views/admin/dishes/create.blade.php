@@ -3,7 +3,7 @@
 @section('content')
 <div class="container py-4">
     {{-- Oldalcím --}}
-    <h2 class="mb-4 text-center">🍽️ Új étel felvétele</h2>
+    <h2 class="mb-4 text-center">Új étel felvétele</h2>
 
     {{-- Validációs hibák megjelenítése --}}
     @if ($errors->any())
@@ -79,6 +79,7 @@
             </div>
         </div>
 
+        {{-- Akciós állapot kiválasztása --}}
         <div class="mb-3">
             <label class="form-label d-block">Akciós:</label>
             <div class="form-check form-check-inline">
@@ -92,7 +93,7 @@
         </div>
 
         {{-- Méretprofil táblázat --}}
-        <h5 class="mt-4">➕ Méretprofil beállítása</h5>
+        <h5 class="mt-4">Méretprofil beállítása</h5>
         @php
             $defaultSizes = ['Kicsi', 'Normál', 'Nagy'];
         @endphp
@@ -188,12 +189,12 @@
         </div>
 
         {{-- Mentés gomb --}}
-        <button type="submit" class="btn btn-success w-100">➕ Étel felvétele</button>
+        <button type="submit" class="btn btn-success w-100">Étel felvétele</button>
 
         {{-- Vissza az étlaphoz --}}
         <div class="text-center mt-3">
             <a href="{{ route('admin.dishes.index') }}" class="btn btn-outline-secondary">
-                Vissza az étlaphoz
+                ⬅️Vissza az étlaphoz
             </a>
         </div>
     </form>

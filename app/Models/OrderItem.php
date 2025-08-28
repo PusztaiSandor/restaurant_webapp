@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class OrderItem extends Model
 {
     use HasFactory;
-
+// Elsődleges kulcs megadása
     protected $primaryKey = 'order_items_id';
 
+    // Tömegesen kitölthető mezők
     protected $fillable = [
         'orders_id',
         'dishes_id',
@@ -26,6 +27,7 @@ class OrderItem extends Model
         'subtotal',
     ];
 
+    // Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'size_multiplier' => 'float',
         'quantity' => 'integer',
@@ -38,12 +40,13 @@ class OrderItem extends Model
         'subtotal' => 'float',
     ];
 
-    // Kapcsolatok
+    // Kapcsolat a rendeléshez
     public function order()
     {
         return $this->belongsTo(Order::class, 'orders_id');
     }
 
+    // Kapcsolat az ételhez
     public function dish()
     {
         return $this->belongsTo(Dish::class, 'dishes_id');

@@ -2,9 +2,10 @@
 
 @section('content')
 <div class="container py-4">
-    <h2 class="mb-4 text-center">📝 Étel szerkesztése</h2>
 
-    {{-- Hibák megjelenítése --}}
+    <h2 class="mb-4 text-center">Étel szerkesztése</h2>
+
+    {{-- Validáció hibák megjelenítése --}}
     @if ($errors->any())
         <div class="alert alert-danger text-center">
             @foreach ($errors->all() as $error)
@@ -87,7 +88,7 @@
             </div>
 
         </div>
-
+{{-- Akciós állapot kiválasztása --}}
         <div class="row mb-3">
             <div class="col-md-4">
                 <label class="form-label d-block">Akciós:</label>
@@ -102,14 +103,16 @@
                     <label class="form-check-label">Nem</label>
                 </div>
             </div>
+            {{-- Akciós kedvezmény megadása --}}
             <div class="col-md-8">
                 <label for="discount_percent" class="form-label">Akciós kedvezmény (%):</label>
                 <input type="number" name="discount_percent" id="discount_percent" class="form-control" min="0" max="100" step="0.01"
                     value="{{ old('discount_percent', $dish->discount_percent) }}">
             </div>
         </div>
+
         {{-- Méretprofil beállítása --}}
-        <h5 class="mt-4">➕ Méretprofil módosítása</h5>
+        <h5 class="mt-4">Méretprofil módosítása</h5>
         @php
             $sizeOptions = old('size_options', $dish->size_options ?? []);
         @endphp
@@ -209,12 +212,12 @@
             </div>
         </div>
 
-        {{-- Gombok --}}
-        <button type="submit" class="btn btn-primary w-100">💾 Változások mentése</button>
+        {{-- Mentés és visszalépés --}}
+        <button type="submit" class="btn btn-primary w-100">Változások mentése</button>
 
         <div class="text-center mt-3">
             <a href="{{ route('admin.dishes.index') }}" class="btn btn-outline-secondary">
-                Vissza az étlaphoz
+                ⬅️Vissza az étlaphoz
             </a>
         </div>
     </form>

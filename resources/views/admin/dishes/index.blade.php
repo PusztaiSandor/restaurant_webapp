@@ -3,21 +3,16 @@
 @section('content')
 <div class="container py-4">
     {{-- Oldalcím --}}
-    <h2 class="text-center mb-4">🍽️ Étlap</h2>
+    <h2 class="text-center mb-4">Admin Étlap</h2>
 
     {{-- Új étel hozzáadása csak admin számára --}}
     @if(auth()->user()?->role === 'admin')
         <div class="mb-4 text-end">
             <a href="{{ route('admin.dishes.create') }}" class="btn btn-outline-success">
-                ➕ Új étel hozzáadása
+                Új étel hozzáadása
             </a>
         </div>
     @endif
-
-    {{-- Sikeres művelet visszajelzése --}}
-    {{-- @if(session('success'))
-        <div class="alert alert-success text-center">{{ session('success') }}</div>
-    @endif --}}
 
     {{-- Aktív ételek táblázata --}}
     <table class="table table-bordered table-hover">
@@ -49,13 +44,13 @@
                             {{-- Szerkesztés --}}
                             <a href="{{ route('admin.dishes.edit', $dish->dishes_id) }}"
                                class="btn btn-sm btn-outline-secondary me-1">
-                                ✏️ Étel szerkesztése
+                                Étel szerkesztése
                             </a>
 
                             {{-- Készlet módosítása --}}
                             <a href="{{ route('admin.dishes.editStock', $dish->dishes_id) }}"
                                class="btn btn-sm btn-outline-primary">
-                                📦 Készlet módosítása
+                                Készlet módosítása
                             </a>
 
                             {{-- Archiválás (inaktiválás) --}}
@@ -65,7 +60,7 @@
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    🗑️ Archiválás
+                                    Archiválás
                                 </button>
                             </form>
                         </td>
@@ -83,7 +78,7 @@
     </table>
 
     {{-- Archivált ételek szekció --}}
-    <h3 class="mt-5 mb-3 text-center">🗃️ Archivált ételek</h3>
+    <h3 class="mt-5 mb-3 text-center">Archivált ételek</h3>
 
     <table class="table table-bordered table-hover table-secondary">
         <thead class="table-light">
@@ -108,7 +103,7 @@
                             @csrf
                             @method('PUT')
                             <button type="submit" class="btn btn-sm btn-outline-success">
-                                🔄 Visszaállítás
+                                Visszaállítás
                             </button>
                         </form>
                     </td>

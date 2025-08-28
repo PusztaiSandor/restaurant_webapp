@@ -2,11 +2,6 @@
 
 @section('content')
 <div class="container">
-    {{-- @if (session('success'))
-        <div class="alert alert-success text-center">
-            {{ session('success') }}
-        </div>
-    @endif --}}
 
     <h2 class="mb-4 text-center">Étlap</h2>
 
