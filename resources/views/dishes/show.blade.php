@@ -18,16 +18,16 @@
 
                 <ul class="list-unstyled mb-3">
                     @if($dish->base_ingredients)
-                        <li><strong>🧂 Összetevők:</strong> {{ implode(', ', $dish->base_ingredients) }}</li>
+                        <li><strong>Összetevők:</strong> {{ implode(', ', $dish->base_ingredients) }}</li>
                     @endif
                     @if($dish->calories)
-                        <li><strong>🔥 Kalóriatartalom:</strong> {{ $dish->calories }} kcal</li>
+                        <li><strong>Kalóriatartalom:</strong> {{ $dish->calories }} kcal</li>
                     @endif
-                    <li><strong>🌱 Vegetáriánus:</strong> {{ $dish->vegetarian ? 'Igen' : 'Nem' }}</li>
+                    <li><strong>Vegetáriánus:</strong> {{ $dish->vegetarian ? 'Igen' : 'Nem' }}</li>
                     @if($dish->allergens)
-    <li><strong>⚠️ Allergének:</strong> {{ implode(', ', $dish->allergens) }}</li>
+    <li><strong>Allergének:</strong> {{ implode(', ', $dish->allergens) }}</li>
 @endif
-                    <li><strong>📦 Elérhető darabszám:</strong> {{ $dish->stock }} db</li>
+                    <li><strong>Elérhető darabszám:</strong> {{ $dish->stock }} db</li>
                 </ul>
             </div>
 

@@ -28,4 +28,28 @@ class GlobalCharge extends Model
         'is_percentage' => 'boolean',
         'value' => 'float',
     ];
+
+    // Segédfüggvény az átvételi módok magyar nyelvű megjelenítéshez
+    public function getChargeTypeLabelAttribute()
+{
+    return match ($this->charge_type) {
+        'delivery_fee' => 'Kiszállítási díj',
+        'service_fee' => 'Szervízdíj',
+        'order_discount' => 'Rendelési kedvezmény',
+        'cutlery' => 'Evőeszköz díj',
+        default => ucfirst(str_replace('_', ' ', $this->charge_type)),
+    };
+}
+
+// Segédfüggvény szállítási módra, magyar nyelvű megjelenítéshez
+public function getDeliveryMethodLabelAttribute()
+{
+    return match($this->delivery_method) {
+        'delivery' => 'Kiszállítás',
+        'pickup' => 'Személyes átvétel',
+        'dine-in' => 'Helyben fogyasztás',
+        default => ucfirst($this->delivery_method),
+    };
+}
+
 }

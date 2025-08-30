@@ -25,8 +25,8 @@
         <tbody>
             @forelse ($charges as $charge)
                 <tr>
-                    <td>{{ ucfirst(str_replace('_', ' ', $charge->charge_type)) }}</td>
-                    <td>{{ ucfirst($charge->delivery_method) }}</td>
+                    <td>{{ $charge->charge_type_label }}</td>
+                    <td>{{ $charge->delivery_method_label }}</td>
                     <td>{{ $charge->value }} {{ $charge->is_percentage ? '%' : 'Ft' }}</td>
                     <td>{{ $charge->is_percentage ? 'Igen' : 'Nem' }}</td>
                     <td>{{ $charge->is_active ? 'Igen' : 'Nem' }}</td>

@@ -51,14 +51,14 @@
 
         {{-- Szerepkör megjelenítése --}}
         <li class="list-group-item">
-            <strong>Szerepkör:</strong> {{ $user->role }}
+            <strong>Szerepkör:</strong> {{ $user->getRoleLabel() }}
         </li>
     </ul>
 
     {{-- Profil szerkesztése gomb --}}
 <div class="mt-4">
     <a href="{{ route('profile.mypage.edit') }}" class="btn btn-sm btn-secondary">
-        <i class="fa-solid fa-user-pen me-1"></i> Profil szerkesztése
+        Profil szerkesztése
     </a>
 </div>
 </div>

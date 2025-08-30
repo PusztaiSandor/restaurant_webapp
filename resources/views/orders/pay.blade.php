@@ -65,6 +65,7 @@
 
         {{-- Szimulált fizetés gomb --}}
         <div class="text-end mt-4">
+            <a href="{{ route('orders.myorders') }}" class="btn btn-secondary">⬅️Vissza a Rendeléseimhez</a>
             <button type="submit" class="btn btn-success">Fizetés indítása</button>
         </div>
     </form>

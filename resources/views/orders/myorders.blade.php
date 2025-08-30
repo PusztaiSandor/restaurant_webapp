@@ -92,7 +92,7 @@
                     <p>
     <strong>Fizetési állapot:</strong>
     @if ($order->is_paid)
-        <span class="text-success">Fizetve ({{ ucfirst($order->payment_method) }})</span>
+        <span class="text-success">Fizetve ({{ $order->payment_method_label }})</span>
     @else
         <span class="text-danger">Még nincs fizetve</span>
     @endif

@@ -44,8 +44,8 @@
     </div>
 
     <div class="mt-5">
-        <a href="{{ route('contact') }}" class="btn btn-outline-secondary">
-            ⬅️Vissza a Kapcsolat oldalra
+        <a href="{{ route('menu') }}" class="btn btn-outline-secondary">
+            Tovább az Étlapra➡️
         </a>
     </div>
 </section>

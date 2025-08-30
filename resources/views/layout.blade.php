@@ -64,13 +64,32 @@
                 <i class="fa-solid fa-brush me-1"></i> Témák
             </a>
             <ul class="dropdown-menu dropdown-menu-dark">
-                @foreach(['basis','brite','darkly','flatly','united'] as $theme)
+                {{-- @foreach(['basis','brite','darkly','flatly','united'] as $theme)
                     <li>
                         <a class="dropdown-item theme-option" href="javascript:void(0)" data-theme="{{ $theme }}">
                             {{ ucfirst($theme) }}
                         </a>
                     </li>
-                @endforeach
+                @endforeach --}}
+
+@php
+    $themes = [
+        'basis' => 'Alap',
+        'brite' => 'Sötét',
+        'darkly' => 'Letisztult',
+        'flatly' => 'Lágy',
+        'united' => 'Modern'
+    ];
+@endphp
+
+@foreach($themes as $key => $label)
+    <li>
+        <a class="dropdown-item theme-option" href="javascript:void(0)" data-theme="{{ $key }}">
+            {{ $label }}
+        </a>
+    </li>
+@endforeach
+
             </ul>
         </li>
 
@@ -215,6 +234,11 @@
                 <i class="fa-solid fa-phone me-1"></i> +36 1 234 5678 |
                 <i class="fa-solid fa-envelope me-1"></i> info@esszencia.hu
             </p>
+            <p class="mt-3">
+  <a href="{{ route('terms') }}" class="text-light hover:underline text-sm">
+    Általános Felhasználási Feltételek megtekintése
+  </a>
+</p>
         </div>
     </footer>
 

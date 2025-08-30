@@ -16,7 +16,7 @@
   <section class="container mx-auto px-4 py-8 text-center">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Elérhetőség</h2>
     <p class="text-lg text-gray-700">Budapesti Műszaki Szakképzési Centrum Verebély László Technikum</p>
-    <p class="text-lg text-gray-700 mb-6">1139 Budapest, Üteg utca 13–15.</p>
+    <p class="text-lg text-gray-700 mb-6">1139 Budapest, Üteg utca 13-15.</p>
     <div class="w-full max-w-4xl mx-auto mb-8">
       <iframe src="https://www.google.com/maps?q=1139+Budapest,+Üteg+utca+13-15&output=embed"
               width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
@@ -55,7 +55,7 @@
       <tbody class="text-gray-700">
         <tr>
           <td class="px-4 py-2 font-semibold">Baranyi Péter</td>
-          <td class="px-4 py-2">Informatikai és távközlési alapok I–II., IKT projektmunka I., Adatbázis-kezelés I., Szoftvertesztelés</td>
+          <td class="px-4 py-2">Informatikai és távközlési alapok I-II., IKT projektmunka I., Adatbázis-kezelés I., Szoftvertesztelés</td>
         </tr>
         <tr>
           <td class="px-4 py-2 font-semibold">Faludi Anita</td>
@@ -82,19 +82,15 @@
   </div>
 </section>
 
-  <!-- Általános Felhasználási Feltételek -->
-  <section class="container mx-auto px-4 py-8 mt-20 my-20 text-center">
-    <a href="{{ route('terms') }}" class="text-amber-700 hover:underline text-lg">Általános Felhasználási Feltételek megtekintése</a>
-  </section>
-
-  <!-- Üzenetküldés és értékelés -->
-<section class="container mx-auto px-4 py-12">
-  <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Értékelés és visszajelzés</h2>
 
 
+@if(!auth()->check() || auth()->user()->role === 'user')
+  <section class="container mx-auto px-4 py-12">
+    <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">Értékelés és visszajelzés</h2>
 
-  @if(auth()->check() && auth()->user()->role === 'user')
-    <form method="POST" action="{{ route('contact.send') }}" class="mx-auto" style="max-width:600px;">
+    @if(auth()->check() && auth()->user()->role === 'user')
+      {{-- Értékelési űrlap --}}
+      <form method="POST" action="{{ route('contact.send') }}" class="mx-auto" style="max-width:600px;">
 
 @if ($errors->any())
     <div class="alert alert-danger">
@@ -111,7 +107,7 @@
         <div class="mb-3">
             <label for="type" class="form-label">Visszajelzés típusa</label>
             <select name="type" id="type" class="form-select" required>
-                <option value="" disabled selected>– Válassz –</option>
+                <option value="" disabled selected>- Válassz -</option>
                 <option value="message">Üzenet az étteremnek</option>
                 <option value="rating">Étterem értékelése</option>
             </select>
@@ -122,9 +118,9 @@
 
         {{-- Csillagos értékelés – csak ha type = rating --}}
         <div class="mb-3" id="rating-block" style="display:none;">
-            <label for="rating" class="form-label">Értékelés (1–5 csillag)</label>
+            <label for="rating" class="form-label">Értékelés (1-5 csillag)</label>
             <select name="rating" id="rating" class="form-select">
-                <option value="" disabled selected>– Válassz –</option>
+                <option value="" disabled selected>- Válassz -</option>
                 @for ($i = 1; $i <= 5; $i++)
                     <option value="{{ $i }}">{{ $i }} csillag</option>
                 @endfor
@@ -136,7 +132,7 @@
 
         {{-- Tárgy --}}
         <div class="mb-3">
-            <label for="subject" class="form-label">Tárgy (opcionális)</label>
+            <label for="subject" class="form-label">Tárgy</label>
             <input type="text" id="subject" name="subject" class="form-control" placeholder="Pl. Kérdés, javaslat, dicséret" maxlength="150">
             <small class="form-text text-muted">
             Opcionális. Maximum 150 karakter. Csak betűk, számok és írásjelek engedélyezettek.
@@ -156,19 +152,23 @@
     </form>
 
     {{-- Dinamikus megjelenítés JS --}}
-    <script>
+      <script>
         document.getElementById('type').addEventListener('change', function () {
-            const ratingBlock = document.getElementById('rating-block');
-            ratingBlock.style.display = this.value === 'rating' ? 'block' : 'none';
+          const ratingBlock = document.getElementById('rating-block');
+          ratingBlock.style.display = this.value === 'rating' ? 'block' : 'none';
         });
-    </script>
-@else
-    <p class="text-center text-gray-700">
+      </script>
+    @else
+      {{-- Bejelentkezés nélküli felhívás --}}
+      <p class="text-center text-gray-700">
         Az értékeléshez és visszajelzéshez kérlek
         <a href="{{ route('login') }}" class="text-amber-700 hover:underline">jelentkezz be</a>.
-    </p>
+      </p>
+    @endif
+  </section>
 @endif
 
 
 </section>
+
 @endsection

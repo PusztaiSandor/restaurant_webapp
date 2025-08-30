@@ -152,7 +152,7 @@ public function show($id)
 
         // Étel mentése az adatbázisba
         Dish::create($validated);
-// Étel mentése az adatbázisba
+
         return redirect()->route('admin.dishes.index')
             ->with('success', 'Új étel sikeresen felvéve: „' . $validated['name'] . '”');
     }

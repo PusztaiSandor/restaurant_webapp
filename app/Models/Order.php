@@ -79,7 +79,7 @@ public function getDeliveryMethodLabelAttribute()
     };
 }
 
-// Segédfüggvény ételrendelési státuszra, magyar nyelvű megjelenítéshez
+// Segédfüggvény ételrendelési státuszok magyar nyelvű megjelenítéshez
 public function getStatusLabelAttribute()
 {
     return match($this->status) {
@@ -91,6 +91,17 @@ public function getStatusLabelAttribute()
         'lezarva' => 'Lezárva',
         'torolve' => 'Törölve',
         default => ucfirst($this->status), //Első karakter nagy betűs lesz
+    };
+}
+
+// Segédfüggvény a fizetési módok magyar nyelvű megjelenítéshez
+public function getPaymentMethodLabelAttribute()
+{
+    return match ($this->payment_method) {
+        'bankkartya' => 'Bankkártya',
+        'keszpenz' => 'Készpénz',
+        'szepkartya' => 'SZÉP kártya',
+        default => ucfirst($this->payment_method),
     };
 }
 
