@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\GlobalCharge;
+use Illuminate\Http\Request;
 
 class GlobalChargeController extends Controller
 {
@@ -12,6 +12,7 @@ class GlobalChargeController extends Controller
     public function index()
     {
         $charges = GlobalCharge::orderBy('created_at', 'desc')->get();
+
         return view('admin.global_charges.index', compact('charges'));
     }
 
@@ -35,7 +36,7 @@ class GlobalChargeController extends Controller
             'is_optional' => 'required|boolean',
             'description' => 'nullable|string',
         ]);
-// Új díj létrehozása
+        // Új díj létrehozása
         GlobalCharge::create($validated);
 
         // Visszairányítás a díjak listájához, sikeres üzenettel
@@ -47,6 +48,7 @@ class GlobalChargeController extends Controller
     public function edit($id)
     {
         $charge = GlobalCharge::findOrFail($id);
+
         return view('admin.global_charges.edit', compact('charge'));
     }
 
@@ -63,7 +65,6 @@ class GlobalChargeController extends Controller
             'is_optional' => 'required|boolean',
             'description' => 'nullable|string',
         ]);
-
 
         $charge = GlobalCharge::findOrFail($id);
         $charge->update($validated);

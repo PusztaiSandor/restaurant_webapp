@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class OrderItem extends Model
 {
     use HasFactory;
-// Elsődleges kulcs megadása
+
+    // Elsődleges kulcs megadása
     protected $primaryKey = 'order_items_id';
 
     // Tömegesen kitölthető mezők

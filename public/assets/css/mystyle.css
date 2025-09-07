@@ -24,6 +24,28 @@
     flex-wrap: wrap;
 }
 
+cart-img {
+  max-width: 800px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .cart-img  {
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-img  {
+    max-width: 300px;
+  }
+}
+
+
 
 
 

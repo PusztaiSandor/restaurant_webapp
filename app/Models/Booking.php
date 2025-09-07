@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
     use HasFactory;
-// Elsődleges kulcs megadása
+
+    // Elsődleges kulcs megadása
     protected $primaryKey = 'bookings_id';
 
     // Tömegesen kitölthető mezők
@@ -20,7 +21,8 @@ class Booking extends Model
         'booking_time',
         'status',
     ];
-// Típuskonverziók: automatikusan átalakítja a mezőket
+
+    // Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'seats' => 'integer',
         'booking_time' => 'datetime',
@@ -45,7 +47,7 @@ class Booking extends Model
         // Segédfüggvény, Szétválasztjuk a kódokat tömbbé
         $codes = explode(',', $this->table_code);
 
-// Lekérdezzük az összes asztalt, amelynek kódja szerepel a tömbben
+        // Lekérdezzük az összes asztalt, amelynek kódja szerepel a tömbben
         return \App\Models\Table::whereIn('table_code', $codes)->get();
     }
 
@@ -53,7 +55,7 @@ class Booking extends Model
 
     public function getStatusLabelAttribute()
     {
-        return match($this->status) {
+        return match ($this->status) {
             'uj' => 'Új',
             'teljesitve' => 'Teljesítve',
             'elutasitva' => 'Elutasítva',

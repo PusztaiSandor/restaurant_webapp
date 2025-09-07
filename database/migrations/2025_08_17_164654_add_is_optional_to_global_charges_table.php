@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::table('global_charges', function (Blueprint $table) {
             $table->boolean('is_optional')
-                  ->default(false)
-                  ->after('is_active')
-                  ->comment('1 = választható a felhasználó által, 0 = automatikusan alkalmazandó');
+                ->default(false)
+                ->after('is_active')
+                ->comment('1 = választható a felhasználó által, 0 = automatikusan alkalmazandó');
         });
     }
 

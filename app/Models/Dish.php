@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Dish extends Model
 {
     use HasFactory;
-// Elsődleges kulcs megadása
+
+    // Elsődleges kulcs megadása
     protected $primaryKey = 'dishes_id';
-// Tömegesen kitölthető mezők
+
+    // Tömegesen kitölthető mezők
     protected $fillable = [
         'name',
         'description',
@@ -55,74 +57,68 @@ class Dish extends Model
         return $this->hasMany(Order::class, 'dishes_id');
     }
 
-
     // Végső ár kiszámítása méret és extrák alapján
 
     public function getFinalPrice(string $sizeLabel = 'Normál', array $extras = []): float
-{
-    $basePrice = $this->gross_price;
+    {
+        $basePrice = $this->gross_price;
 
-     // Méret szorzó lekérése
-    $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
+        // Méret szorzó lekérése
+        $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
 
-    // Extra hozzávalók árának összegzése (csak ha nem üres a tömb)
-    $extraCost = 0;
-    if (!empty($extras)) {
-        foreach ($extras as $extra) {
-            $extraCost += $this->ingredient_modifiers[$extra] ?? 0;
+        // Extra hozzávalók árának összegzése (csak ha nem üres a tömb)
+        $extraCost = 0;
+        if (! empty($extras)) {
+            foreach ($extras as $extra) {
+                $extraCost += $this->ingredient_modifiers[$extra] ?? 0;
+            }
         }
+
+        // Akciós ár
+        $discountFactor = $this->on_sale ? (1 - ($this->discount_percent / 100)) : 1;
+
+        // Végső ár kiszámítása
+        $finalPrice = ($basePrice * $multiplier + $extraCost) * $discountFactor;
+
+        return round($finalPrice, 0);
     }
 
-    // Akciós ár
-    $discountFactor = $this->on_sale ? (1 - ($this->discount_percent / 100)) : 1;
+    // Méretarányos ár kiszámítása extrák nélkül, kedvezménnyel
 
-    // Végső ár kiszámítása
-    $finalPrice = ($basePrice * $multiplier + $extraCost) * $discountFactor;
+    public function getDiscountedSizePrice(string $sizeLabel = 'Normál'): float
+    {
+        // Alap bruttó ár az adatbázisból
+        $basePrice = $this->gross_price;
 
-    return round($finalPrice, 0);
-}
+        // Alapértelmezett szorzó
+        $multiplier = 1.0;
 
+        // Ha van size_options tömb és benne a keresett méret, akkor használjuk annak szorzóját
+        if (is_array($this->size_options) && isset($this->size_options[$sizeLabel]['multiplier'])) {
+            $multiplier = $this->size_options[$sizeLabel]['multiplier'];
+        }
 
-// Méretarányos ár kiszámítása extrák nélkül, kedvezménnyel
+        // Kedvezmény faktor kiszámítása
+        $discountFactor = $this->on_sale ? (1 - ($this->discount_percent / 100)) : 1;
 
-public function getDiscountedSizePrice(string $sizeLabel = 'Normál'): float
-{
-    // Alap bruttó ár az adatbázisból
-    $basePrice = $this->gross_price;
+        // Végső ár = (alapár × szorzó) × kedvezmény
+        $discountedSizePrice = ($basePrice * $multiplier) * $discountFactor;
 
-    // Alapértelmezett szorzó
-    $multiplier = 1.0;
-
-    // Ha van size_options tömb és benne a keresett méret, akkor használjuk annak szorzóját
-    if (is_array($this->size_options) && isset($this->size_options[$sizeLabel]['multiplier'])) {
-        $multiplier = $this->size_options[$sizeLabel]['multiplier'];
+        return round($discountedSizePrice, 0); // Kerekítés egész Ft-ra
     }
 
-    // Kedvezmény faktor kiszámítása
-    $discountFactor = $this->on_sale ? (1 - ($this->discount_percent / 100)) : 1;
+    // Eredeti ár kiszámítása méret alapján (extrák nélkül, kedvezmény nélkül)
 
-    // Végső ár = (alapár × szorzó) × kedvezmény
-    $discountedSizePrice = ($basePrice * $multiplier) * $discountFactor;
+    public function getOriginalPrice(string $sizeLabel = 'Normál'): float
+    {
+        $basePrice = $this->gross_price;
 
-    return round($discountedSizePrice, 0); // Kerekítés egész Ft-ra
+        // Méret szorzó
+        $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
+
+        // Eredeti ár (kedvezmény nélkül, extrák nélkül)
+        $originalPrice = $basePrice * $multiplier;
+
+        return round($originalPrice, 0);
+    }
 }
-
-
-
-// Eredeti ár kiszámítása méret alapján (extrák nélkül, kedvezmény nélkül)
-
-public function getOriginalPrice(string $sizeLabel = 'Normál'): float
-{
-    $basePrice = $this->gross_price;
-
-    // Méret szorzó
-    $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
-
-    // Eredeti ár (kedvezmény nélkül, extrák nélkül)
-    $originalPrice = $basePrice * $multiplier;
-
-    return round($originalPrice, 0);
-}
-
-}
-

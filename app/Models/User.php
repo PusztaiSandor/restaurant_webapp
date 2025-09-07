@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,9 +9,11 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-// Elsődleges kulcs megadása
+
+    // Elsődleges kulcs megadása
     protected $primaryKey = 'users_id';
-// Tömegesen kitölthető mezők
+
+    // Tömegesen kitölthető mezők
     protected $fillable = [
         'name',
         'email',
@@ -28,7 +29,8 @@ class User extends Authenticatable
         'must_change_password',
         'last_login_at',
     ];
-// Elrejtett mezők
+
+    // Elrejtett mezők
     protected $hidden = [
         'password', // Jelszó sosem jelenik meg
         'remember_token', // Laravel automatikus token mező
@@ -52,7 +54,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class, 'users_id');
     }
-// Kapcsolat a felhasználó által beküldött visszajelzésekkel
+
+    // Kapcsolat a felhasználó által beküldött visszajelzésekkel
     public function feedbacks()
     {
         return $this->hasMany(Feedback::class, 'users_id');
@@ -64,14 +67,14 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'courier_id');
     }
 
-    //Segédfüggvény a szerepkörök magyar nyelvű megjelenítéséhez
+    // Segédfüggvény a szerepkörök magyar nyelvű megjelenítéséhez
     public function getRoleLabel(): string
-{
-    return match ($this->role) {
-        'user' => 'Felhasználó',
-        'courier' => 'Futár',
-        'admin' => 'Admin',
-        default => ucfirst($this->role),
-    };
-}
+    {
+        return match ($this->role) {
+            'user' => 'Felhasználó',
+            'courier' => 'Futár',
+            'admin' => 'Admin',
+            default => ucfirst($this->role),
+        };
+    }
 }

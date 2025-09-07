@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
     use HasFactory;
-// Elsődleges kulcs megadása
+
+    // Elsődleges kulcs megadása
     protected $primaryKey = 'orders_id';
 
     protected $fillable = [
@@ -30,7 +31,8 @@ class Order extends Model
         'rating_star',
         'rating_comment',
     ];
-// Típuskonverziók: automatikusan átalakítja a mezőket
+
+    // Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'is_paid' => 'boolean',
         'payment_time' => 'datetime',
@@ -50,7 +52,8 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'users_id');
     }
-// Kapcsolat a futárral
+
+    // Kapcsolat a futárral
     public function courier()
     {
         return $this->belongsTo(User::class, 'courier_id');
@@ -58,51 +61,50 @@ class Order extends Model
 
     // Kapcsolat a rendeléshez tartozó tételekkel
     public function items()
-{
-    return $this->hasMany(OrderItem::class, 'orders_id');
-}
+    {
+        return $this->hasMany(OrderItem::class, 'orders_id');
+    }
 
-// Kapcsolat az asztalfoglalással
-public function booking()
-{
-    return $this->hasOne(Booking::class, 'orders_id');
-}
+    // Kapcsolat az asztalfoglalással
+    public function booking()
+    {
+        return $this->hasOne(Booking::class, 'orders_id');
+    }
 
-// Segédfüggvény szállítási módra, magyar nyelvű megjelenítéshez
-public function getDeliveryMethodLabelAttribute()
-{
-    return match($this->delivery_method) {
-        'delivery' => 'Kiszállítás',
-        'pickup' => 'Személyes átvétel',
-        'dine-in' => 'Helyben fogyasztás',
-        default => ucfirst($this->delivery_method),
-    };
-}
+    // Segédfüggvény szállítási módra, magyar nyelvű megjelenítéshez
+    public function getDeliveryMethodLabelAttribute()
+    {
+        return match ($this->delivery_method) {
+            'delivery' => 'Kiszállítás',
+            'pickup' => 'Személyes átvétel',
+            'dine-in' => 'Helyben fogyasztás',
+            default => ucfirst($this->delivery_method),
+        };
+    }
 
-// Segédfüggvény ételrendelési státuszok magyar nyelvű megjelenítéshez
-public function getStatusLabelAttribute()
-{
-    return match($this->status) {
-        'uj' => 'Új',
-        'keszul' => 'Készül',
-        'atvetelre_kesz' => 'Átvételre kész',
-        'atvetel_megtortent' => 'Átvétel megtörtént',
-        'kiszallitva' => 'Kiszállítva',
-        'lezarva' => 'Lezárva',
-        'torolve' => 'Törölve',
-        default => ucfirst($this->status), //Első karakter nagy betűs lesz
-    };
-}
+    // Segédfüggvény ételrendelési státuszok magyar nyelvű megjelenítéshez
+    public function getStatusLabelAttribute()
+    {
+        return match ($this->status) {
+            'uj' => 'Új',
+            'keszul' => 'Készül',
+            'atvetelre_kesz' => 'Átvételre kész',
+            'atvetel_megtortent' => 'Átvétel megtörtént',
+            'kiszallitva' => 'Kiszállítva',
+            'lezarva' => 'Lezárva',
+            'torolve' => 'Törölve',
+            default => ucfirst($this->status), // Első karakter nagy betűs lesz
+        };
+    }
 
-// Segédfüggvény a fizetési módok magyar nyelvű megjelenítéshez
-public function getPaymentMethodLabelAttribute()
-{
-    return match ($this->payment_method) {
-        'bankkartya' => 'Bankkártya',
-        'keszpenz' => 'Készpénz',
-        'szepkartya' => 'SZÉP kártya',
-        default => ucfirst($this->payment_method),
-    };
-}
-
+    // Segédfüggvény a fizetési módok magyar nyelvű megjelenítéshez
+    public function getPaymentMethodLabelAttribute()
+    {
+        return match ($this->payment_method) {
+            'bankkartya' => 'Bankkártya',
+            'keszpenz' => 'Készpénz',
+            'szepkartya' => 'SZÉP kártya',
+            default => ucfirst($this->payment_method),
+        };
+    }
 }

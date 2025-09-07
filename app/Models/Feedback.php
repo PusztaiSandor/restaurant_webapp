@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Feedback extends Model
 {
@@ -20,7 +20,8 @@ class Feedback extends Model
         'subject',
         'content',
     ];
-// Típuskonverziók: automatikusan átalakítja a mezőket
+
+    // Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'rating' => 'integer', // A 'rating' mező mindig egész szám legyen
     ];

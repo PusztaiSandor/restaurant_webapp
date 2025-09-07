@@ -1,21 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\AdminTableController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CourierOrderController;
 use App\Http\Controllers\DishController;
 use App\Http\Controllers\GlobalChargeController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\AdminOrderController;
-use App\Http\Controllers\CourierOrderController;
-use App\Http\Controllers\AdminTableController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\MenuController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // Kezdőlap – welcome.blade.php nézet
 Route::get('/', [HomeController::class, 'welcome'])->name('home');
@@ -42,11 +42,6 @@ Route::get('/reset-password/{email}', [AuthController::class, 'showResetForm'])-
 Route::post('/reset-password/{email}', [AuthController::class, 'updatePassword'])->name('confirm-reset.post');
 
 // Kilépés – POST metódus, visszairányítással
-// Route::post('/logout', function () {
-//     Auth::logout(); // Felhasználó kijelentkeztetése
-//     return redirect()->route('login')->with('success', 'Sikeresen kiléptél.');
-// })->name('logout');
-
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Profil főoldal – teljes szerkesztés és jelszómódosítás
@@ -86,17 +81,21 @@ Route::patch('/admin/users/{user}/toggle', [AdminUserController::class, 'toggleS
 // Ideiglenes jelszó és email újragenerálása
 Route::post('/admin/users/{user}/regenerate-password', [AdminUserController::class, 'regeneratePassword'])->name('admin.users.regeneratePassword');
 
+
 // Publikus étlap megtekintése
 Route::get('/menu', [DishController::class, 'menu'])->name('menu');
 
-// PDF generálása az étlapból
-Route::get('/menu/pdf', [DishController::class, 'generateMenuPdf'])->name('menu.pdf');
+// Étlap megjelenítése
+Route::get('/menu', [DishController::class, 'menu'])->name('menu');
 
 // Egy adott étel részletes nézete
 Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show');
 
-// Admin ételkezelés – csak admin jogosultsággal
+// Egy adott étel részleteinek megjelenítése
+Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show');
 
+
+// Admin ételkezelés – csak admin jogosultsággal
 // Ételek listázása (aktív + archivált)
 Route::get('/admin/dishes', [DishController::class, 'index'])->name('admin.dishes.index');
 
@@ -124,48 +123,62 @@ Route::get('/admin/dishes/{dish}/stock', [DishController::class, 'editStock'])->
 // Készlet frissítése
 Route::put('/admin/dishes/{dish}/stock', [DishController::class, 'updateStock'])->name('admin.dishes.stock.update');
 
-// Étlap
-Route::get('/menu', [DishController::class, 'menu'])->name('menu');
-
-// Étlap PDF export
-Route::get('/menu/pdf', [DishController::class, 'exportPdf'])->name('menu.pdf');
-
-// Egy adott étel részletei
-Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show');
-
-// Gyors kosárba helyezés
-Route::post('/cart/quick-add/{id}', [App\Http\Controllers\CartController::class, 'quickAdd'])->name('cart.quickAdd');
 
 // Globális díjak admin útvonalai
+// Megjeleníti az összes aktív és inaktív díjtételt (pl. kiszállítási díj, szervízdíj)
 Route::get('admin/global-charges', [GlobalChargeController::class, 'index'])->name('global-charges.index');
+// Új globális díjtétel létrehozása
 Route::get('admin/global-charges/create', [GlobalChargeController::class, 'create'])->name('global-charges.create');
+// Új díjtétel mentése az adatbázisba
 Route::post('admin/global-charges', [GlobalChargeController::class, 'store'])->name('global-charges.store');
+// Meglévő díjtétel szerkesztése
 Route::get('admin/global-charges/{id}/edit', [GlobalChargeController::class, 'edit'])->name('global-charges.edit');
+// Díjtétel frissítése
 Route::put('admin/global-charges/{id}', [GlobalChargeController::class, 'update'])->name('global-charges.update');
+// Díjtétel törlése
 Route::delete('admin/global-charges/{id}', [GlobalChargeController::class, 'destroy'])->name('global-charges.destroy');
 
-Route::get('orders/cart', [CartController::class, 'index'])->name('cart.index');
+
+
+// Gyors kosárba helyezés
+Route::post('/cart/quick-add/{id}', [CartController::class, 'quickAdd'])->name('cart.quickAdd');
+// Ételt gyorsan kosárba helyezni (duplikált útvonal, egységesítés javasolt)
 Route::post('/cart/quick-add/{dish}', [CartController::class, 'quickAdd'])->name('cart.quickAdd');
 
+// Ételt kosárhoz adni (méret, extrák alapján)
 Route::post('/order/add/{dish}', [CartController::class, 'add'])->name('order.add');
 
-Route::post('/cart/increase/{key}', [CartController::class, 'increase'])->name('order.increase');
-Route::post('/cart/decrease/{key}', [CartController::class, 'decrease'])->name('order.decrease');
-Route::post('/cart/remove/{key}', [CartController::class, 'remove'])->name('order.remove');
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/order/clear', [CartController::class, 'clear'])->name('order.clear');
+// Kosár megtekintése
+Route::get('orders/cart', [CartController::class, 'index'])->name('cart.index');
 
+// Kosárban lévő tétel mennyiségének növelése
+Route::post('/cart/increase/{key}', [CartController::class, 'increase'])->name('order.increase');
+// Kosárban lévő tétel mennyiségének csökkentése
+Route::post('/cart/decrease/{key}', [CartController::class, 'decrease'])->name('order.decrease');
+// Tétel eltávolítása a kosárból
+Route::post('/cart/remove/{key}', [CartController::class, 'remove'])->name('order.remove');
+// Kosár tartalmának megtekintése
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+// Kosár teljes kiürítése
+Route::post('/order/clear', [CartController::class, 'clear'])->name('order.clear');
+// Fizetési oldal megjelenítése
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('order.checkout');
+// Rendelés véglegesítése
 Route::post('/submit-order', [OrderController::class, 'submit'])->name('order.submit');
 
+
+
+
 // Saját rendelések megtekintése
-Route::get('/orders/myorders', [App\Http\Controllers\OrderController::class, 'myOrders'])->name('orders.myorders');
+Route::get('/orders/myorders', [OrderController::class, 'myOrders'])->name('orders.myorders');
+// Rendelés lemondása
+Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
 
-Route::post('/orders/{order}/cancel', [App\Http\Controllers\OrderController::class, 'cancel'])->name('order.cancel');
-
-Route::get('/admin/orders', [App\Http\Controllers\AdminOrderController::class, 'index'])->name('admin.orders.index');
+// Admin felület: rendelések listázása
+Route::get('/admin/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+// Admin: rendelés státuszának frissítése
 Route::post('/admin/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.updatestatus');
-
+// Admin: futár hozzárendelése rendeléshez
 Route::post('/admin/orders/{order}/assign-courier', [AdminOrderController::class, 'assignCourier'])->name('admin.orders.assignCourier');
 
 // Futár rendelései listázása
@@ -174,38 +187,53 @@ Route::get('/courier/orders', [CourierOrderController::class, 'index'])->name('c
 // Futár státuszváltása „kiszállítva” értékre
 Route::post('/courier/orders/{order}/delivered', [CourierOrderController::class, 'markDelivered'])->name('courier.orders.markDelivered');
 
+
+// Fizetési felület megjelenítése adott rendeléshez
 Route::get('/orders/{order}/pay', [OrderController::class, 'showPaymentForm'])->name('order.pay');
+// Fizetés szimulálása (pl. teszteléshez)
 Route::post('/orders/{order}/pay', [OrderController::class, 'simulatePayment'])->name('order.pay.submit');
 
+
+// Admin: asztalok listázása
 Route::get('/admin/tables', [AdminTableController::class, 'index'])->name('admin.tables.index');
+// Admin: új asztal létrehozása
 Route::get('/admin/tables/create', [AdminTableController::class, 'create'])->name('admin.tables.create');
+// Admin: új asztal mentése
 Route::post('/admin/tables/store', [AdminTableController::class, 'store'])->name('admin.tables.store');
+// Admin: asztal szerkesztése
 Route::get('/admin/tables/{table}/edit', [AdminTableController::class, 'edit'])->name('admin.tables.edit');
+// Admin: asztal frissítése
 Route::put('/admin/tables/{table}', [AdminTableController::class, 'update'])->name('admin.tables.update');
 
+// Foglalás létrehozása rendeléshez
 Route::get('/bookings/create/{order}', [BookingController::class, 'create'])->name('bookings.create');
+// Foglalás mentése
 Route::post('/bookings/store', [BookingController::class, 'store'])->name('bookings.store');
+// Foglalás lemondása
 Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
-
+// Admin: foglalás státuszának frissítése
 Route::post('/admin/bookings/{booking}/updatestatus', [BookingController::class, 'updateStatus'])->name('admin.bookings.updatestatus');
 
+
+// Rendelés értékelése (csillag + szöveg)
 Route::post('/orders/{order}/rate', [OrderController::class, 'rate'])->name('order.rate');
-
+// Kapcsolatfelvételi űrlap elküldése
 Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
+// Kapcsolatfelvételi oldal megjelenítése
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
-
+// Általános felhasználási feltételek megjelenítése
 Route::get('/terms', [ContactController::class, 'terms'])->name('terms');
+
+// Étlap PDF exportálása
+Route::get('/menu/pdf', [DishController::class, 'exportPdf'])->name('menu.pdf');
+// PDF generálása az étlapból
+Route::get('/menu/pdf', [DishController::class, 'generateMenuPdf'])->name('menu.pdf');
 
 // PDF letöltés útvonala
 Route::get('/menu/pdf', [MenuController::class, 'downloadPdf'])->name('menu.pdf');
 
+// Rendeléshez tartozó számla letöltése PDF-ben
 Route::get('/orders/{order}/invoice', [OrderController::class, 'downloadInvoice'])->name('order.invoice');
 
+// Admin: visszajelzések megtekintése
 Route::get('/admin/feedbacks', [ContactController::class, 'adminFeedbacks'])->name('admin.feedbacks');
-
-
-
-
-
-
-

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AdminUserController extends Controller
 {
@@ -20,13 +20,13 @@ class AdminUserController extends Controller
 
         // Felhasználók név szerint rendezve
         $users = User::orderBy('name')->get();
+
         return view('admin.users.index', compact('users'));
 
     }
 
-
-// Új felhasználó létrehozása – az űrlap megjelenítése.
-// Csak admin jogosultsággal érhető el.
+    // Új felhasználó létrehozása – az űrlap megjelenítése.
+    // Csak admin jogosultsággal érhető el.
     public function create()
     {
         if (Auth::user()->role !== 'admin') {
@@ -44,23 +44,22 @@ class AdminUserController extends Controller
             abort(403);
         }
 
-
-         // Beküldött adatok ellenőrzése.
+        // Beküldött adatok ellenőrzése.
         $validated = $request->validate([
-        'name' => [
-            'required',
-            'string',
-            'min:2',
-            'max:50',
-            'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$/u'
-        ],
-        'role' => 'required|in:admin,courier',
-    ], [
-    'name.required' => 'A név megadása kötelező.',
-    'name.min' => 'A név legalább 2 karakter hosszú legyen.',
-    'name.max' => 'A név legfeljebb 50 karakter lehet.',
-    'name.regex' => 'A név csak betűket, szóközt, pontot és kötőjelet tartalmazhat. Példa: Kiss-Kovács János',
-    ]);
+            'name' => [
+                'required',
+                'string',
+                'min:2',
+                'max:50',
+                'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű.\- ]+$/u',
+            ],
+            'role' => 'required|in:admin,courier',
+        ], [
+            'name.required' => 'A név megadása kötelező.',
+            'name.min' => 'A név legalább 2 karakter hosszú legyen.',
+            'name.max' => 'A név legfeljebb 50 karakter lehet.',
+            'name.regex' => 'A név csak betűket, szóközt, pontot és kötőjelet tartalmazhat. Példa: Kiss-Kovács János',
+        ]);
 
         // Email generálása a névből + véletlenszerű szám.
         $baseEmail = Str::slug($validated['name'], '.');
@@ -68,7 +67,7 @@ class AdminUserController extends Controller
         $email = "{$baseEmail}.{$suffix}@esszencia.local";
 
         // Jelszó generálása és titkosítása.
-        $rawPassword = 'Esszencia2025' . $suffix;
+        $rawPassword = 'Esszencia2025'.$suffix;
         $hashedPassword = Hash::make($rawPassword);
         $hintHash = Hash::make($rawPassword); // opcionális jelszóemlékeztető
 
@@ -83,7 +82,7 @@ class AdminUserController extends Controller
             'active' => $request->has('active'),
         ]);
 
-// Visszairányítás a felhasználólistához, sikeres üzenettel.
+        // Visszairányítás a felhasználólistához, sikeres üzenettel.
         return redirect()->route('admin.users.index')
             ->with('success', "Felhasználó létrehozva • email: {$email} • jelszó: {$rawPassword}");
     }
@@ -103,7 +102,7 @@ class AdminUserController extends Controller
 
         // Új jelszó és email generálása
         $suffix = rand(1000, 9999);
-        $rawPassword = 'Esszencia2025' . $suffix;
+        $rawPassword = 'Esszencia2025'.$suffix;
         $hashed = Hash::make($rawPassword);
         $hintHash = Hash::make($rawPassword);
 
@@ -145,36 +144,36 @@ class AdminUserController extends Controller
         }
 
         $validated = $request->validate([
-    'email' => [
-        'required',
-        'string',
-        'email',
-        'min:5',
-        'max:60',
-        'unique:users,email,' . $user->users_id . ',users_id',
-        'regex:/^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/'
-    ],
-    'role' => 'required|in:courier,admin',
-], [
-    'name.min' => 'A név legalább 2 karakter hosszú legyen.',
-    'name.max' => 'A név legfeljebb 50 karakter lehet.',
-    'name.regex' => 'A név csak betűket, szóközt, pontot és kötőjelet tartalmazhat. Példa: Kiss-Kovács János',
-    'email.required' => 'Az e-mail cím megadása kötelező.',
-    'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
-    'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
-    'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
-    'email.unique' => 'Ez az e-mail cím már regisztrálva van.',
-    'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
-]);
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'min:5',
+                'max:60',
+                'unique:users,email,'.$user->users_id.',users_id',
+                'regex:/^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/',
+            ],
+            'role' => 'required|in:courier,admin',
+        ], [
+            'name.min' => 'A név legalább 2 karakter hosszú legyen.',
+            'name.max' => 'A név legfeljebb 50 karakter lehet.',
+            'name.regex' => 'A név csak betűket, szóközt, pontot és kötőjelet tartalmazhat. Példa: Kiss-Kovács János',
+            'email.required' => 'Az e-mail cím megadása kötelező.',
+            'email.email' => 'Az e-mail cím formátuma nem megfelelő.',
+            'email.min' => 'Az e-mail cím legalább 5 karakter hosszú legyen.',
+            'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
+            'email.unique' => 'Ez az e-mail cím már regisztrálva van.',
+            'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
+        ]);
 
-// Felhasználó adatainak frissítése.
+        // Felhasználó adatainak frissítése.
         $user->update([
-    'email' => $validated['email'],
-    'role' => $validated['role'],
-    'active' => $request->has('active'),
-]);
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+            'active' => $request->has('active'),
+        ]);
 
-// Visszairányítás a felhasználólistához, sikeres üzenettel.
+        // Visszairányítás a felhasználólistához, sikeres üzenettel.
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Felhasználó adatai sikeresen módosítva.');
@@ -188,7 +187,7 @@ class AdminUserController extends Controller
             abort(403);
         }
 
-        $user->active = !$user->active;
+        $user->active = ! $user->active;
         $user->save();
 
         $state = $user->active ? 'aktiválva' : 'inaktiválva';
