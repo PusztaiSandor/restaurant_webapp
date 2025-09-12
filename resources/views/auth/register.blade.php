@@ -17,7 +17,7 @@
     @endif
 
     {{-- Regisztrációs űrlap --}}
-    <form method="POST" action="{{ route('register.submit') }}">
+    <form method="POST" action="{{ route('register.submit') }}" novalidate>
       @csrf
 
       {{-- Alapadatok --}}
@@ -52,7 +52,7 @@
       <div class="mb-3">
         <label for="phone" class="form-label">Telefonszám (opcionális)</label>
         <input type="text" name="phone" id="phone" class="form-control @error('phone') is-invalid @enderror"
-          value="{{ old('phone') }}" placeholder="+36-30-123-4567">
+          value="{{ old('phone') }}" required placeholder="+36-30-123-4567">
         <small class="form-text text-muted">
           Csak magyar mobilszám formátum: +36-20|30|40|70-123-4567.
         </small>
@@ -84,7 +84,7 @@
       </div>
 
       {{-- Szerepkör választás – csak teszteléshez --}}
-      <hr>
+      {{-- <hr>
       <h5 class="mt-4">Szerepkör választás (teszteléshez)</h5>
 
       <div class="mb-3">
@@ -98,18 +98,18 @@
           <strong>❗ Figyelem:</strong> Ez a mező csak <strong>tesztelési célból</strong> érhető el.<br>
           Éles rendszerben automatikusan „Felhasználó” szerepkört kap minden regisztráló.
         </div>
-      </div>
+      </div> --}}
 
       {{-- Címadatok (opcionális) --}}
       <hr>
-      <h5 class="mt-4">Cím kiszállításhoz (opcionális)</h5>
+      <h5 class="mt-4">Szállítási cím</h5>
       {{-- Irányítószám --}}
       <div class="mb-3">
         <label for="postal_code" class="form-label">Irányítószám</label>
         <input type="text" class="form-control @error('postal_code') is-invalid @enderror" name="postal_code"
-          id="postal_code" value="{{ old('postal_code') }}" maxlength="4" placeholder="Pl. 1139">
+          id="postal_code" value="{{ old('postal_code') }}" required maxlength="4" placeholder="Pl. 1139">
         <small class="form-text text-muted">
-          Magyar irányítószám, pontosan 4 számjegy. Példa: 1139
+          Kötelező, magyar irányítószám, pontosan 4 számjegy. Példa: 1139
         </small>
         @error('postal_code')
           <div class="invalid-feedback">{{ $message }}</div>
@@ -120,9 +120,9 @@
       <div class="mb-3">
         <label for="city" class="form-label">Település</label>
         <input type="text" class="form-control @error('city') is-invalid @enderror" name="city" id="city"
-          value="{{ old('city') }}" maxlength="50" placeholder="Pl. Budapest">
+          value="{{ old('city') }}" required maxlength="50" placeholder="Pl. Budapest">
         <small class="form-text text-muted">
-          Csak betűk, szóköz és kötőjel engedélyezett. Maximum 50 karakter. Példa: Dunakeszi-Alag
+          Kötelező, csak betűk, szóköz és kötőjel engedélyezett. Maximum 50 karakter. Példa: Dunakeszi-Alag
         </small>
         @error('city')
           <div class="invalid-feedback">{{ $message }}</div>
@@ -132,9 +132,9 @@
       <div class="mb-3">
         <label for="street_name" class="form-label">Közterület neve</label>
         <input type="text" class="form-control @error('street_name') is-invalid @enderror" name="street_name"
-          id="street_name" value="{{ old('street_name') }}" maxlength="100" placeholder="Pl. 10. kerület">
+          id="street_name" value="{{ old('street_name') }}" required maxlength="100" placeholder="Pl. 10. kerület">
         <small class="form-text text-muted">
-          Betűk, számok, szóköz, pont és kötőjel engedélyezett. Maximum 100 karakter. Példa: 27. utca
+          Kötelező, betűk, számok, szóköz, pont és kötőjel engedélyezett. Maximum 100 karakter. Példa: 27. utca
         </small>
         @error('street_name')
           <div class="invalid-feedback">{{ $message }}</div>
@@ -144,9 +144,9 @@
       <div class="mb-3">
         <label for="street_number" class="form-label">Házszám</label>
         <input type="text" class="form-control @error('street_number') is-invalid @enderror" name="street_number"
-          id="street_number" value="{{ old('street_number') }}" maxlength="10" placeholder="Pl. 15/A">
+          id="street_number" value="{{ old('street_number') }}" required maxlength="10" placeholder="Pl. 15/A">
         <small class="form-text text-muted">
-          Szám, betű, kötőjel és perjel engedélyezett. Maximum 10 karakter. Példa: 13–15 vagy 27/b
+          Kötelező, szám, betű, kötőjel és perjel engedélyezett. Maximum 10 karakter. Példa: 13–15 vagy 27/b
         </small>
         @error('street_number')
           <div class="invalid-feedback">{{ $message }}</div>

@@ -77,7 +77,7 @@
         <select name="role" id="role" class="form-select">
           @foreach (['courier', 'admin'] as $role)
             <option value="{{ $role }}" @selected($user->role === $role)>
-              {{ new \App\Models\User(['role' => $role])->getRoleLabel() }}
+              {{ (new \App\Models\User(['role' => $role]))->getRoleLabel() }}
             </option>
           @endforeach
         </select>

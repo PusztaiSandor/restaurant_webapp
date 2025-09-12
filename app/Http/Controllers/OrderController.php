@@ -221,6 +221,10 @@ class OrderController extends Controller
             $orderItem->subtotal = round($finalUnitPrice * $item['quantity'], 2);
 
             $orderItem->save();
+
+            // Készlet frissítése
+            $dish->stock -= $item['quantity'];
+            $dish->save();
         }
 
         // Kosár ürítése és visszairányítás a saját rendeléseim oldalra.
@@ -299,6 +303,19 @@ class OrderController extends Controller
         // Rendelés státusz módosítása
         $order->status = 'torolve';
         $order->save();
+
+
+// Készlet visszaállítása a rendelés tételei alapján
+foreach ($order->items as $item) {
+    $dish = \App\Models\Dish::find($item->dishes_id);
+    if ($dish) {
+        $dish->stock += $item->quantity;
+        $dish->save();
+    }
+}
+
+
+
 
         // Kapcsolódó asztalfoglalás kezelése:
         // Ha van foglalás, és az még aktív, akkor azt is töröljük

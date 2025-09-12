@@ -51,31 +51,31 @@ class AuthController extends Controller
                 'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,36}$/',
                 'confirmed',
             ],
-            'role' => 'required|in:user,admin,courier', // Csak a teszt üzem miatt
+            // 'role' => 'required|in:user,admin,courier',
             'phone' => [
-                'nullable',
+                'required',
                 'string',
                 'regex:/^\+36-(20|30|40|70)-\d{3}-\d{4}$/',
             ],
             'postal_code' => [
-                'nullable',
+                'required',
                 'string',
                 'regex:/^\d{4}$/',
             ],
             'city' => [
-                'nullable',
+                'required',
                 'string',
                 'max:50',
                 'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű -]{1,50}$/u',
             ],
             'street_name' => [
-                'nullable',
+                'required',
                 'string',
                 'max:100',
                 'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .-]{1,100}$/u',
             ],
             'street_number' => [
-                'nullable',
+                'required',
                 'string',
                 'max:10',
                 'regex:/^[0-9A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\/\-]{1,10}$/u',
@@ -98,10 +98,15 @@ class AuthController extends Controller
             'password.max' => 'A jelszó legfeljebb 36 karakter lehet.',
             'password.regex' => 'A jelszónak tartalmaznia kell betűt és számot, és csak betűket és számokat tartalmazhat.',
             'password.confirmed' => 'A jelszó megerősítése nem egyezik.',
+            'phone.required' => 'A telefonszám megadása kötelező.',
             'phone.regex' => 'A telefonszám formátuma csak a következő lehet: +36-20|30|40|70-123-4567',
+            'postal_code.required' => 'Az irányítószám megadása kötelező.',
             'postal_code.regex' => 'Az irányítószámnak pontosan 4 számjegyből kell állnia. Példa: 1139',
+            'city.required' => 'A település név megadása kötelező.',
             'city.regex' => 'A település neve csak betűket, szóközt és kötőjelet tartalmazhat. Példa: Budapest vagy Dunakeszi-Alag',
+            'street_name.required' => 'A közterület név megadása kötelező.',
             'street_name.regex' => 'A közterület neve csak betűket, számokat, szóközt, pontot és kötőjelet tartalmazhat. Példa: 10. kerület vagy 27. utca',
+            'street_number.required' => 'A házszám megadása kötelező.',
             'street_number.regex' => 'A házszám csak számokat, betűket, kötőjelet és perjelet tartalmazhat. Példa: 15/A vagy 13–15',
         ]);
 
@@ -112,7 +117,8 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'],
-            'role' => $validated['role'], // Csak a teszt üzem miatt
+            // 'role' => $validated['role'],
+            'role' => 'user', // Fix szerepkör
             'postal_code' => $validated['postal_code'],
             'city' => $validated['city'],
             'street_name' => $validated['street_name'],
@@ -176,6 +182,7 @@ class AuthController extends Controller
             'password.max' => 'A jelszó legfeljebb 36 karakter lehet.',
             'password.regex' => 'A jelszónak tartalmaznia kell betűt és számot, és csak betűket és számokat tartalmazhat.',
         ]);
+
 
         // Felhasználó lekérése az e-mail alapján
         // Megkeressük az adatbázisban, hogy létezik-e ilyen e-mail című felhasználó.

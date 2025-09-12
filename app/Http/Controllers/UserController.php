@@ -63,29 +63,29 @@ class UserController extends Controller
                 'regex:/^[A-Za-z0-9._\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/',
             ],
             'phone' => [
-                'nullable',
+                'required',
                 'string',
                 'regex:/^\+36-(20|30|40|70)-\d{3}-\d{4}$/',
             ],
             'postal_code' => [
-                'nullable',
+                'required',
                 'string',
                 'regex:/^\d{4}$/',
             ],
             'city' => [
-                'nullable',
+                'required',
                 'string',
                 'max:50',
                 'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű -]{1,50}$/u',
             ],
             'street_name' => [
-                'nullable',
+                'required',
                 'string',
                 'max:100',
                 'regex:/^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .-]{1,100}$/u',
             ],
             'street_number' => [
-                'nullable',
+                'required',
                 'string',
                 'max:10',
                 'regex:/^[0-9A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\/\-]{1,10}$/u',
@@ -101,10 +101,15 @@ class UserController extends Controller
             'email.max' => 'Az e-mail cím legfeljebb 60 karakter lehet.',
             'email.unique' => 'Ez az e-mail cím már regisztrálva van.',
             'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
+            'phone.required' => 'A telefonszám megadása kötelező.',
             'phone.regex' => 'A telefonszám formátuma csak a következő lehet: +36-20|30|40|70-123-4567',
+            'postal_code.required' => 'Az irányítószám megadása kötelező.',
             'postal_code.regex' => 'Az irányítószámnak pontosan 4 számjegyből kell állnia. Példa: 1139',
+            'city.required' => 'A település név megadása kötelező.',
             'city.regex' => 'A település neve csak betűket, szóközt és kötőjelet tartalmazhat. Példa: Budapest vagy Dunakeszi-Alag',
+            'street_name.required' => 'A közterület név megadása kötelező.',
             'street_name.regex' => 'A közterület neve csak betűket, számokat, szóközt, pontot és kötőjelet tartalmazhat. Példa: 10. kerület vagy 27. utca',
+            'street_number.required' => 'A házszám megadása kötelező.',
             'street_number.regex' => 'A házszám csak számokat, betűket, kötőjelet és perjelet tartalmazhat. Példa: 15/A vagy 13–15',
         ]);
 
@@ -155,7 +160,7 @@ class UserController extends Controller
         $user->save();
 
         // Visszairányítás sikeres üzenettel
-        return back()->with('success_password', 'Jelszavad sikeresen frissítve!');
+        return back()->with('success_password', 'Jelszavad sikeresen módosítva!');
     }
 
     // E-mail és jelszó együttes frissítése.

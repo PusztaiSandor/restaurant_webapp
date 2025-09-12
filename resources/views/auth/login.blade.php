@@ -5,8 +5,9 @@
     {{-- 🧾 Oldalcím --}}
     <h2 class="text-center mb-4">Belépés</h2>
 
+
     {{-- Bejelentkezési űrlap --}}
-    <form method="POST" action="{{ route('login.submit') }}">
+    <form method="POST" action="{{ route('login.submit') }}" novalidate>
       @csrf {{-- 🛡️ Laravel CSRF token a biztonságos POST kéréshez --}}
 
       {{-- 📧 E-mail mező --}}

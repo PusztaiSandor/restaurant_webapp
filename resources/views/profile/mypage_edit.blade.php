@@ -11,7 +11,7 @@
     @endif --}}
 
     {{-- Profiladatok frissítése --}}
-    <form method="POST" action="{{ route('profile.update') }}">
+    <form method="POST" action="{{ route('profile.update') }}" novalidate>
       @csrf {{-- CSRF token --}}
 
       {{-- Név mező --}}
@@ -38,7 +38,7 @@
       <div class="mb-3">
         <label for="phone">Telefonszám</label>
         <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control"
-          pattern="^\+36-(20|30|40|70)-\d{3}-\d{4}$">
+          required pattern="^\+36-(20|30|40|70)-\d{3}-\d{4}$">
         <small class="form-text text-muted">
           Formátum: +36-30-123-4567
         </small>
@@ -52,7 +52,7 @@
       <div class="mb-3">
         <label for="postal_code">Irányítószám</label>
         <input type="text" name="postal_code" value="{{ old('postal_code', $user->postal_code) }}" class="form-control"
-          maxlength="4" pattern="^\d{4}$">
+          required maxlength="4" pattern="^\d{4}$">
         <small class="form-text text-muted">
           Pontosan 4 számjegy. Példa: 1139
         </small>
@@ -61,7 +61,7 @@
       {{-- Település --}}
       <div class="mb-3">
         <label for="city">Település</label>
-        <input type="text" name="city" value="{{ old('city', $user->city) }}" class="form-control" maxlength="50"
+        <input type="text" name="city" value="{{ old('city', $user->city) }}" class="form-control" required maxlength="50"
           pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű -]{1,50}$">
         <small class="form-text text-muted">
           Csak betűk, szóköz és kötőjel. Példa: Budapest vagy Dunakeszi-Alag
@@ -72,7 +72,7 @@
       <div class="mb-3">
         <label for="street_name">Közterület neve</label>
         <input type="text" name="street_name" value="{{ old('street_name', $user->street_name) }}" class="form-control"
-          maxlength="100" pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .-]{1,100}$">
+          required maxlength="100" pattern="^[A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű0-9 .-]{1,100}$">
         <small class="form-text text-muted">
           Betűk, számok, szóköz, pont és kötőjel. Példa: 10. kerület vagy 27. utca
         </small>
@@ -82,7 +82,7 @@
       <div class="mb-3">
         <label for="street_number">Házszám</label>
         <input type="text" name="street_number" value="{{ old('street_number', $user->street_number) }}"
-          class="form-control" maxlength="10" pattern="^[0-9A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\/\-]{1,10}$">
+          class="form-control" required maxlength="10" pattern="^[0-9A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\/\-]{1,10}$">
         <small class="form-text text-muted">
           Számok, betűk, perjel és kötőjel. Példa: 15/A vagy 13–15
         </small>

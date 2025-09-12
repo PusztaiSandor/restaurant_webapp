@@ -86,13 +86,13 @@ Route::post('/admin/users/{user}/regenerate-password', [AdminUserController::cla
 Route::get('/menu', [DishController::class, 'menu'])->name('menu');
 
 // Étlap megjelenítése
-Route::get('/menu', [DishController::class, 'menu'])->name('menu');
+// Route::get('/menu', [DishController::class, 'menu'])->name('menu');
 
 // Egy adott étel részletes nézete
 Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show');
 
 // Egy adott étel részleteinek megjelenítése
-Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show');
+// Route::get('/dishes/{dish}', [DishController::class, 'show'])->name('dishes.show');
 
 
 // Admin ételkezelés – csak admin jogosultsággal
@@ -137,8 +137,6 @@ Route::get('admin/global-charges/{id}/edit', [GlobalChargeController::class, 'ed
 Route::put('admin/global-charges/{id}', [GlobalChargeController::class, 'update'])->name('global-charges.update');
 // Díjtétel törlése
 Route::delete('admin/global-charges/{id}', [GlobalChargeController::class, 'destroy'])->name('global-charges.destroy');
-
-
 
 // Gyors kosárba helyezés
 Route::post('/cart/quick-add/{id}', [CartController::class, 'quickAdd'])->name('cart.quickAdd');
