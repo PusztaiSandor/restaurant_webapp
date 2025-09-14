@@ -5,7 +5,7 @@
 
     <h2 class="mb-4 text-center">Étlap</h2>
 
-    {{-- Szűrési lehetőségek --}}
+
     <form method="GET" class="row mb-4">
       <div class="col-md-3">
         <label for="category" class="form-label">Kategória:</label>
@@ -56,14 +56,14 @@
     <div class="row">
       @forelse ($dishes as $dish)
         @php
-          // Alapértelmezett méret kiválasztása
+            // Alapértelmezett méret kiválasztása
           $sizeOptions = $dish->size_options ?? [];
           $defaultSize = isset($sizeOptions['Normál']) ? 'Normál' : array_key_first($sizeOptions);
 
           // Végső ár (extrák nélkül, kedvezménnyel)
           $finalPrice = $dish->getDiscountedSizePrice($defaultSize);
 
-          // 🔧 Méretarányos árak előkészítése JS-hez (extrák nélkül)
+          //Méretarányos árak előkészítése JS-hez (extrák nélkül)
           $priceMap = [];
           foreach ($sizeOptions as $label => $option) {
               $priceMap[$label] = $dish->getDiscountedSizePrice($label);
@@ -152,7 +152,7 @@
           `original_${dishId}`); // Eredeti ár (kedvezmény előtt)
         const discountDisplay = document.getElementById(`discount_${dishId}`); // Kedvezmény szöveg
 
-        // Alapár lekérése a szerverről (bruttó ár)
+        // Alapár lekérése az adatbázisból (bruttó ár)
         const basePrice = {{ $dish->gross_price }};
 
         // Kedvezmény százalék lekérése, ha van akció
@@ -161,7 +161,7 @@
         // Mivel nincs méretválasztás, mindig a „Normál” méretet használjuk, szorzó = 1.0
         const multiplier = 1.0;
 
-        // Teljes ár kiszámítása (alapár × szorzó)
+        // Teljes ár kiszámítása (alapár * szorzó)
         const gross = basePrice * multiplier;
 
         // Kedvezmény kiszámítása, ha van

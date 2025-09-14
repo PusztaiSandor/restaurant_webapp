@@ -7,7 +7,6 @@
     {{-- Szűrés és rendezés (Admin) --}}
     <form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3 mb-4">
 
-      {{-- Rendelés státusz --}}
       <div class="col-md-3">
         <label for="status" class="form-label">Rendelés státusz</label>
         <select name="status" id="status" class="form-select">
@@ -25,7 +24,6 @@
         </select>
       </div>
 
-      {{-- Átvételi mód --}}
       <div class="col-md-3">
         <label for="delivery_method" class="form-label">Átvételi mód</label>
         <select name="delivery_method" id="delivery_method" class="form-select">
@@ -39,7 +37,6 @@
         </select>
       </div>
 
-      {{-- Fizetési állapot --}}
       <div class="col-md-3">
         <label for="payment_status" class="form-label">Fizetési állapot</label>
         <select name="payment_status" id="payment_status" class="form-select">
@@ -50,7 +47,6 @@
         </select>
       </div>
 
-      {{-- Asztalfoglalás státusz --}}
       <div class="col-md-3">
         <label for="booking_status" class="form-label">Foglalás státusz</label>
         <select name="booking_status" id="booking_status" class="form-select">
@@ -65,7 +61,6 @@
         </select>
       </div>
 
-      {{-- Rendezés --}}
       <div class="col-md-3">
         <label for="sort" class="form-label">Rendezés</label>
         <select name="sort" id="sort" class="form-select">
@@ -121,12 +116,12 @@
           </div>
 
           <div class="card-body">
-            {{-- Összefoglaló adatok --}}
+
             <p><strong>Felhasználó:</strong> {{ $order->user->name ?? 'N/A' }}</p>
             <p><strong>Átvételi mód:</strong> {{ $order->delivery_method_label }}</p>
             <p><strong>Fizetve:</strong> {{ $order->is_paid ? 'Igen' : 'Nem' }}</p>
 
-            {{-- Tételek --}}
+
             <ul class="list-group mb-3">
               @foreach ($order->items as $item)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -139,7 +134,7 @@
               @endforeach
             </ul>
 
-            {{-- Díjak --}}
+
             <ul class="list-group mb-3">
               <li class="list-group-item d-flex justify-content-between">
                 <span>Ételek ára összesen</span>
@@ -183,7 +178,6 @@
                   <select name="status" class="form-select">
                     @foreach ($statusOptions as $status)
                       <option value="{{ $status }}">
-                        {{-- {{ ucfirst(str_replace('_', ' ', $status)) }} --}}
                         {{ \App\Models\Order::make(['status' => $status])->status_label }}
                       </option>
                     @endforeach

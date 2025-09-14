@@ -5,7 +5,6 @@
 
     <h2 class="mb-4 text-center">Étel szerkesztése</h2>
 
-    {{-- Validáció hibák megjelenítése --}}
     @if ($errors->any())
       <div class="alert alert-danger text-center">
         @foreach ($errors->all() as $error)
@@ -14,12 +13,10 @@
       </div>
     @endif
 
-    {{-- Szerkesztő űrlap kezdete --}}
     <form method="POST" action="{{ route('admin.dishes.update', $dish) }}" enctype="multipart/form-data">
       @csrf
       @method('PUT')
 
-      {{-- Alapinformációk --}}
       <div class="mb-3">
         <label for="name" class="form-label">Étel neve:</label>
         <input type="text" name="name" id="name" class="form-control" required maxlength="100"
@@ -31,7 +28,6 @@
         <textarea name="description" id="description" class="form-control" rows="3">{{ old('description', $dish->description) }}</textarea>
       </div>
 
-      {{-- Képkezelés --}}
       <div class="mb-3">
         <label for="image" class="form-label">Kép fájlneve:</label>
         <input type="text" name="image" id="image" class="form-control" maxlength="255"
@@ -42,7 +38,6 @@
         @endif
       </div>
 
-      {{-- Kategória és típus --}}
       <div class="row mb-3">
         <div class="col-md-6">
           <label for="category" class="form-label">Kategória:</label>
@@ -97,7 +92,6 @@
         </div>
       </div>
 
-      {{-- Ár és akció --}}
       <div class="row mb-3">
         <div class="col-md-4">
           <label for="gross_price" class="form-label">Bruttó alapár (Ft):</label>
@@ -111,7 +105,7 @@
         </div>
 
       </div>
-      {{-- Akciós állapot kiválasztása --}}
+
       <div class="row mb-3">
         <div class="col-md-4">
           <label class="form-label d-block">Akciós:</label>
@@ -126,7 +120,7 @@
             <label class="form-check-label">Nem</label>
           </div>
         </div>
-        {{-- Akciós kedvezmény megadása --}}
+
         <div class="col-md-8">
           <label for="discount_percent" class="form-label">Akciós kedvezmény (%):</label>
           <input type="number" name="discount_percent" id="discount_percent" class="form-control" min="0"
@@ -134,7 +128,7 @@
         </div>
       </div>
 
-      {{-- Méretprofil beállítása --}}
+
       <h5 class="mt-4">Méretprofil módosítása</h5>
       @php
         $sizeOptions = old('size_options', $dish->size_options ?? []);
@@ -174,7 +168,7 @@
       <small class="text-muted">(Kicsi, Normál, Nagy) A nem kitöltött sorok figyelmen kívül lesznek hagyva
         mentéskor.</small>
 
-      {{-- Összetevők és árak --}}
+
       <div class="mb-3">
         <label for="base_ingredients" class="form-label">Alapösszetevők (vesszővel):</label>
         <input type="text" name="base_ingredients" id="base_ingredients" class="form-control"
@@ -199,7 +193,7 @@
           value="{{ old('allergens', is_array($dish->allergens) ? implode(',', $dish->allergens) : $dish->allergens) }}">
       </div>
 
-      {{-- Jellemzők --}}
+
       <div class="row mb-3">
         <div class="col-md-4">
           <label for="calories" class="form-label">Kalóriatartalom (kcal):</label>
@@ -226,7 +220,7 @@
         </div>
       </div>
 
-      {{-- Aktivitás --}}
+
       <div class="mb-3">
         <label class="form-label d-block">Aktív:</label>
         <div class="form-check form-check-inline">
@@ -241,12 +235,12 @@
         </div>
       </div>
 
-      {{-- Mentés és visszalépés --}}
+
       <button type="submit" class="btn btn-primary w-100">Változások mentése</button>
 
       <div class="text-center mt-3">
         <a href="{{ route('admin.dishes.index') }}" class="btn btn-outline-secondary">
-          ⬅️Vissza az étlaphoz
+          Vissza az étlaphoz
         </a>
       </div>
     </form>

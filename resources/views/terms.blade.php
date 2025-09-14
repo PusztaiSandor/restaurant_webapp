@@ -51,11 +51,13 @@
       </p>
     </div>
 
-    <div class="mt-5">
-      <a href="{{ route('menu') }}" class="btn btn-outline-secondary">
-        Tovább az Étlapra
-      </a>
-    </div>
+    @if (!auth()->check() || auth()->user()->role === 'user')
+        <div class="mt-5">
+            <a href="{{ route('menu') }}" class="btn btn-outline-secondary">
+                Tovább az Étlapra
+            </a>
+        </div>
+    @endif
   </section>
 @endsection
 

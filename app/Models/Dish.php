@@ -9,10 +9,9 @@ class Dish extends Model
 {
     use HasFactory;
 
-    // Elsődleges kulcs megadása
+
     protected $primaryKey = 'dishes_id';
 
-    // Tömegesen kitölthető mezők
     protected $fillable = [
         'name',
         'description',
@@ -34,7 +33,6 @@ class Dish extends Model
         'active',
     ];
 
-    // Típuskonverziók: automatikusan átalakítja a mezőket
     protected $casts = [
         'vegetarian' => 'boolean',
         'on_sale' => 'boolean',
@@ -51,7 +49,7 @@ class Dish extends Model
         'stock' => 'integer',
     ];
 
-    // Ha később rendeléshez kapcsolódik:
+
     public function orders()
     {
         return $this->hasMany(Order::class, 'dishes_id');
@@ -66,7 +64,7 @@ class Dish extends Model
         // Méret szorzó lekérése
         $multiplier = $this->size_options[$sizeLabel]['multiplier'] ?? 1.0;
 
-        // Extra hozzávalók árának összegzése (csak ha nem üres a tömb)
+        // Extra hozzávalók árának összegzése
         $extraCost = 0;
         if (! empty($extras)) {
             foreach ($extras as $extra) {
@@ -101,7 +99,7 @@ class Dish extends Model
         // Kedvezmény faktor kiszámítása
         $discountFactor = $this->on_sale ? (1 - ($this->discount_percent / 100)) : 1;
 
-        // Végső ár = (alapár × szorzó) × kedvezmény
+        // Végső ár = (alapár * szorzó) * kedvezmény
         $discountedSizePrice = ($basePrice * $multiplier) * $discountFactor;
 
         return round($discountedSizePrice, 0); // Kerekítés egész Ft-ra

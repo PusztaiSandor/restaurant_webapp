@@ -12,12 +12,10 @@ class ContactController extends Controller
     // Csak bejelentkezett 'user' szerepkörű felhasználó küldhet visszajelzést.
     public function send(Request $request)
     {
-        // Csak bejelentkezett user szerepkörű felhasználó küldhet visszajelzést
         if (! Auth::check() || Auth::user()->role !== 'user') {
             return redirect()->route('login')->with('error', 'A visszajelzéshez be kell jelentkezned user szerepkörben.');
         }
 
-        // Validáció
         $request->validate([
             'type' => 'required|in:message,rating',
             'rating' => 'nullable|required_if:type,rating|integer|min:1|max:5',
@@ -38,7 +36,6 @@ class ContactController extends Controller
             'content.regex' => 'Az üzenet nem tartalmazhat nem engedélyezett karaktereket.',
         ]);
 
-        // Visszajelzés mentése az adatbázisba.
         Feedback::create([
             'users_id' => Auth::id(),
             'type' => $request->type,
@@ -47,12 +44,11 @@ class ContactController extends Controller
             'content' => $request->content,
         ]);
 
-        // Visszairányítás az előző oldalra, sikeres üzenettel.
         return redirect()->back()->with('success', 'Köszönjük a visszajelzésed!');
     }
 
     // Kapcsolat oldal megjelenítése.
-    // Itt található az üzenetküldő vagy értékelő űrlap.
+
     public function index()
     {
         return view('contact');
@@ -64,24 +60,19 @@ class ContactController extends Controller
         return view('terms');
     }
     // Admin visszajelzések listázása.
-    // Csak admin szerepkörű felhasználó érheti el.
-    // Lehetőség van szűrésre és rendezésre.
 
     public function adminFeedbacks(Request $request)
     {
         if (! auth()->check() || auth()->user()->role !== 'admin') {
             abort(403);
         }
-        // Lekérdezzük a visszajelzéseket, betöltve a kapcsolódó felhasználót is.
 
         $query = \App\Models\Feedback::with('user');
 
-        // Szűrés típus szerint
         if ($request->filled('type') && in_array($request->type, ['message', 'rating'])) {
             $query->where('type', $request->type);
         }
 
-        // Rendezés a kiválasztott szempont szerint
         if ($request->sort === 'date_asc') {
             $query->orderBy('created_at', 'asc');
         } elseif ($request->sort === 'date_desc') {
@@ -93,7 +84,7 @@ class ContactController extends Controller
         } else {
             $query->latest(); // alapértelmezett: legfrissebb elöl
         }
-        // Lekérdezett visszajelzések átadása a nézetnek
+        
         $feedbacks = $query->get();
 
         return view('admin.feedbacks', compact('feedbacks'));

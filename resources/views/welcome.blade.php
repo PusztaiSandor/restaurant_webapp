@@ -2,7 +2,7 @@
 
 @section('content')
   <section class="text-center py-5">
-    {{-- Üdvözlő szöveg --}}
+
     <h1 class="display-5 mb-3">Üdvözlünk az Esszencia Étteremben!</h1>
     <p class="lead mb-4">Az ízek lényege - friss, fenntartható, barátságos.</p>
 
@@ -74,7 +74,6 @@
         </div>
       </section>
 
-      {{-- Étlap gomb – az étlapra mutat --}}
       <div class="mt-4">
         <a href="{{ route('menu') }}" class="btn btn-primary btn-lg">
           Nézd meg az étlapot
@@ -82,7 +81,6 @@
       </div>
     @endif
 
-    <!-- Rólunk írták – kiemelt értékelések -->
     <section class="container py-5">
       <h2 class="mb-4 text-center">Rólunk írták</h2>
 

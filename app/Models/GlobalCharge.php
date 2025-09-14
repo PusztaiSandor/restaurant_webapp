@@ -9,10 +9,10 @@ class GlobalCharge extends Model
 {
     use HasFactory;
 
-    // Elsődleges kulcs megadása
+
     protected $primaryKey = 'global_charges_id';
 
-    // Tömegesen kitölthető mezők
+
     protected $fillable = [
         'charge_type',
         'delivery_method',
@@ -23,7 +23,7 @@ class GlobalCharge extends Model
         'description',
     ];
 
-    // Típuskonverziók: automatikusan átalakítja a mezőket
+    
     protected $casts = [
         'is_active' => 'boolean',
         'is_optional' => 'boolean',

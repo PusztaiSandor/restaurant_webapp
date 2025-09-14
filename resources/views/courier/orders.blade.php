@@ -7,13 +7,11 @@
     {{-- Szűrés és rendezés (Futár) --}}
     <form method="GET" action="{{ route('courier.orders.index') }}" class="row g-3 mb-4">
 
-      {{-- Rendelés státusz --}}
+
       <div class="col-md-3">
         <label for="status" class="form-label">Rendelés státusz</label>
         <select name="status" id="status" class="form-select">
           <option value="" {{ request('status') === '' ? 'selected' : '' }}>Mind</option>
-          {{-- <option value="uj" {{ request('status') === 'uj' ? 'selected' : '' }}>Új</option>
-            <option value="keszul" {{ request('status') === 'keszul' ? 'selected' : '' }}>Készül</option> --}}
           <option value="atvetelre_kesz" {{ request('status') === 'atvetelre_kesz' ? 'selected' : '' }}>Átvételre
             kész</option>
           <option value="kiszallitva" {{ request('status') === 'kiszallitva' ? 'selected' : '' }}>Kiszállítva
@@ -23,7 +21,6 @@
         </select>
       </div>
 
-      {{-- Fizetési állapot --}}
       <div class="col-md-3">
         <label for="payment_status" class="form-label">Fizetési állapot</label>
         <select name="payment_status" id="payment_status" class="form-select">
@@ -34,7 +31,6 @@
         </select>
       </div>
 
-      {{-- Rendezés --}}
       <div class="col-md-3">
         <label for="sort" class="form-label">Rendezés</label>
         <select name="sort" id="sort" class="form-select">
@@ -53,15 +49,12 @@
     @else
       @foreach ($orders as $order)
         <div class="card mb-4">
-          {{-- Fejléc: Rendelés azonosító + státusz + időpont --}}
           <div class="card-header d-flex justify-content-between align-items-center">
             <div>
               <strong>Rendelés #{{ $order->orders_id }}</strong>
               <span class="badge bg-secondary ms-2">{{ $order->status_label }}</span>
               <span class="ms-3 text-muted">{{ $order->created_at->format('Y.m.d H:i') }}</span>
             </div>
-
-            {{-- Státuszváltás – csak „atvetelre_kesz” esetén jelenik meg --}}
 
             @if ($order->status === 'atvetelre_kesz')
               @if ($order->is_paid)
@@ -78,20 +71,18 @@
                 <div class="text-danger fw-bold">Rendelés fizetésre vár</div>
               @endif
             @elseif ($order->status === 'kiszallitva')
-              <div class="text-success fw-bold">Kiszállítva – admin lezárásra vár</div>
+              <div class="text-success fw-bold">Kiszállítva - admin lezárásra vár</div>
             @elseif ($order->status === 'lezarva')
               <div class="text-muted">Lezárva</div>
             @endif
 
           </div>
 
-          {{-- Rendelés részletei --}}
           <div class="card-body">
             <p><strong>Felhasználó:</strong> {{ $order->user->name ?? 'N/A' }}</p>
             <p><strong>Átvételi mód:</strong> {{ $order->delivery_method_label }}</p>
             <p><strong>Fizetve:</strong> {{ $order->is_paid ? 'Igen' : 'Nem' }}</p>
 
-            {{-- Tételek listája --}}
             <ul class="list-group mb-3">
               @foreach ($order->items as $item)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -104,7 +95,6 @@
               @endforeach
             </ul>
 
-            {{-- Díjak és végösszeg --}}
             <ul class="list-group mb-3">
               <li class="list-group-item d-flex justify-content-between">
                 <span>Ételek ára összesen</span>

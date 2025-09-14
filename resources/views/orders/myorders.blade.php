@@ -5,7 +5,7 @@
 
     <div class="mb-3 text-start">
       <a href="{{ route('menu') }}" class="btn btn-outline-secondary">
-        ⬅️Vissza az étlapra
+        Vissza az étlapra
       </a>
     </div>
 
@@ -14,7 +14,6 @@
     {{-- Szűrés és rendezés --}}
     <form method="GET" action="{{ route('orders.myorders') }}" class="row g-3 mb-4">
 
-      {{-- Rendelés státusz --}}
       <div class="col-md-3">
         <label for="status" class="form-label">Rendelés státusz</label>
         <select name="status" id="status" class="form-select">
@@ -32,7 +31,6 @@
         </select>
       </div>
 
-      {{-- Átvételi mód --}}
       <div class="col-md-3">
         <label for="delivery_method" class="form-label">Átvételi mód</label>
         <select name="delivery_method" id="delivery_method" class="form-select">
@@ -46,7 +44,6 @@
         </select>
       </div>
 
-      {{-- Fizetési állapot --}}
       <div class="col-md-3">
         <label for="payment_status" class="form-label">Fizetési állapot</label>
         <select name="payment_status" id="payment_status" class="form-select">
@@ -57,7 +54,6 @@
         </select>
       </div>
 
-      {{-- Asztalfoglalás státusz --}}
       <div class="col-md-3">
         <label for="booking_status" class="form-label">Foglalás státusz</label>
         <select name="booking_status" id="booking_status" class="form-select">
@@ -72,7 +68,6 @@
         </select>
       </div>
 
-      {{-- Rendezés --}}
       <div class="col-md-3">
         <label for="sort" class="form-label">Rendezés</label>
         <select name="sort" id="sort" class="form-select">
@@ -235,14 +230,12 @@
                 <h5 class="mb-2">Asztalfoglalás</h5>
 
                 @if ($order->booking)
-                  {{-- Foglalás adatai --}}
                   <p><strong>Státusz:</strong> {{ $order->booking->status_label }}</p>
                   <p><strong>Időpont:</strong> {{ $order->booking->booking_time->format('Y.m.d H:i') }}
                   </p>
                   <p><strong>Fő:</strong> {{ $order->booking->seats }}</p>
                   <p><strong>Asztalok:</strong> {{ $order->booking->table_code }}</p>
 
-                  {{-- Lemondás lehetősége --}}
                   @if (in_array($order->status, ['uj', 'keszul', 'atvetelre_kesz']) &&
                           !in_array($order->booking->status, ['elutasitva', 'torolve']) &&
                           !$order->is_paid)

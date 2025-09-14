@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class GlobalChargeController extends Controller
 {
     // Globális díjak listázása az admin felületen.
-    // A legfrissebb díjak kerülnek előre.
+
     public function index()
     {
         $charges = GlobalCharge::orderBy('created_at', 'desc')->get();
@@ -16,15 +16,13 @@ class GlobalChargeController extends Controller
         return view('admin.global_charges.index', compact('charges'));
     }
 
-    // Új díj létrehozása – az űrlap megjelenítése.
-    // Az admin itt tudja megadni a díj típusát, értékét, és egyéb tulajdonságait.
+    // Új díj létrehozása
+
     public function create()
     {
         return view('admin.global_charges.create');
     }
 
-    // Új díj mentése az adatbázisba.
-    // Validáljuk az adatokat, majd létrehozzuk a GlobalCharge rekordot.
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -36,15 +34,15 @@ class GlobalChargeController extends Controller
             'is_optional' => 'required|boolean',
             'description' => 'nullable|string',
         ]);
-        // Új díj létrehozása
+
         GlobalCharge::create($validated);
 
-        // Visszairányítás a díjak listájához, sikeres üzenettel
+
         return redirect()->route('global-charges.index')->with('success', 'Díj sikeresen létrehozva!');
     }
 
-    // Díj szerkesztő űrlap megjelenítése.
-    // Az admin itt tudja módosítani a díj adatait.
+    // Globális díjak szerkesztése
+
     public function edit($id)
     {
         $charge = GlobalCharge::findOrFail($id);
@@ -52,8 +50,7 @@ class GlobalChargeController extends Controller
         return view('admin.global_charges.edit', compact('charge'));
     }
 
-    // Díj frissítése az adatbázisban.
-    // Validáljuk az új adatokat, majd mentjük a módosításokat.
+
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -72,13 +69,4 @@ class GlobalChargeController extends Controller
         return redirect()->route('global-charges.index')->with('success', 'Díj frissítve!');
     }
 
-    // Díj törlése az adatbázisból.
-    // Véglegesen eltávolítja a kiválasztott díjat.
-    public function destroy($id)
-    {
-        $charge = GlobalCharge::findOrFail($id);
-        $charge->delete();
-
-        return redirect()->route('global-charges.index')->with('success', 'Díj törölve!');
-    }
 }

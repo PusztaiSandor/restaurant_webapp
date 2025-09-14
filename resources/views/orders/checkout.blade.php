@@ -4,7 +4,6 @@
   <div class="container">
     <h2 class="mb-4 text-center">Rendelés véglegesítése</h2>
 
-    {{-- Visszajelzések --}}
 
     @guest
       <div class="alert alert-warning">
@@ -15,20 +14,16 @@
 
     <div class="d-flex justify-content-between mb-4">
       <a href="{{ route('cart.index') }}" class="btn btn-outline-secondary">
-        ⬅️Vissza a kosárhoz
+        Vissza a kosárhoz
       </a>
       <a href="{{ route('menu') }}" class="btn btn-outline-primary">
-        ⬅️Vissza az étlapra
+        Vissza az étlapra
       </a>
     </div>
-
 
     <form method="POST" action="{{ route('order.submit') }}">
       @csrf
 
-
-
-      {{-- Átvételi mód --}}
       <div class="mb-3">
         <label for="delivery_method" class="form-label">Átvételi mód</label>
         <select name="delivery_method" id="delivery_method" class="form-select" required>
@@ -82,13 +77,13 @@
             @php
               $apply = false;
 
-              // Szállítási mód egyezés
+              //Szállítási mód egyezés
               if ($charge['delivery_method'] === $deliveryMethod) {
                   // Ha nem választható, automatikusan alkalmazandó
                   if (!$charge['is_optional']) {
                       $apply = true;
                   }
-                  // Ha választható, csak akkor alkalmazzuk, ha a felhasználó kérte
+                  //Ha választható, csak akkor alkalmazzuk, ha a felhasználó kérte
                   elseif ($charge['charge_type'] === 'cutlery' && $cutleryRequested) {
                       $apply = true;
                   }
@@ -119,7 +114,6 @@
         <span id="final-total">{{ number_format($totalWithCharges, 0, ',', ' ') }} Ft</span>
       </div>
 
-      {{-- Megrendelés gomb --}}
       <div class="text-end">
         @auth
           <button type="submit" class="btn btn-success">Megrendelés elküldése</button>
@@ -149,7 +143,7 @@
         charges.forEach(charge => {
           let apply = false;
 
-          // Szállítási mód egyezés
+          //Szállítási mód egyezés
           if (charge.delivery_method === method) {
             if (!charge.is_optional) {
               apply = true;
@@ -163,7 +157,7 @@
               Math.round(baseTotal * (charge.value / 100)) :
               charge.value;
 
-            // Kedvezmény levonása
+            //Kedvezmény levonása
             if (charge.charge_type.toLowerCase().includes('discount')) {
               total -= amount;
             } else {
@@ -186,7 +180,7 @@
       deliverySelect.addEventListener('change', updateCharges);
       cutleryCheckbox.addEventListener('change', updateCharges);
 
-      updateCharges(); // első betöltéskor
+      updateCharges(); //első betöltéskor
     });
   </script>
 @endsection

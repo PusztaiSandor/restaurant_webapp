@@ -9,10 +9,10 @@ class Table extends Model
 {
     use HasFactory;
 
-    // Elsődleges kulcs megadása
+
     protected $primaryKey = 'tables_id';
 
-    // Tömegesen kitölthető mezők
+
     protected $fillable = [
         'table_code',
         'location',
@@ -22,7 +22,7 @@ class Table extends Model
         'notes',
     ];
 
-    // Típuskonverziók: automatikusan átalakítja a mezőket
+    
     protected $casts = [
         'is_reservable' => 'boolean',
         'capacity' => 'integer',

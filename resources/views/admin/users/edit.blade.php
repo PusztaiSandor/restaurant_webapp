@@ -4,7 +4,6 @@
   <div class="container">
     <h2>Felhasználó szerkesztése</h2>
 
-    {{-- Validációs hibák megjelenítése --}}
     @if ($errors->any())
       <div class="alert alert-danger">
         <ul class="mb-0">
@@ -15,16 +14,6 @@
       </div>
     @endif
 
-    {{-- Flash üzenetek: sikeres mentés vagy jelszó generálás --}}
-    {{-- @foreach (['success', 'success_password'] as $type)
-        @if (session($type))
-            <div class="alert alert-{{ $type === 'success' ? 'success' : 'info' }}">
-                <i class="fa-solid fa-{{ $type === 'success' ? 'check-circle' : 'key' }} me-1"></i>
-                {{ session($type) }}
-            </div>
-        @endif
-    @endforeach --}}
-
     @if (session('success_password'))
       <div class="alert alert-info">
         <i class="fa-solid fa-key me-1"></i>
@@ -32,7 +21,6 @@
       </div>
     @endif
 
-    {{-- Felhasználó szerkesztő űrlap --}}
     <form method="POST" action="{{ route('admin.users.update', $user->users_id) }}">
       @csrf
       @method('PUT')
@@ -42,7 +30,6 @@
         $hasTemporaryAccess = Str::endsWith($user->email, '@esszencia.local') && $user->must_change_password;
       @endphp
 
-      {{-- Név mező --}}
       <div class="mb-3">
         <label for="name">Név</label>
         <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name) }}"
@@ -89,9 +76,8 @@
         <label for="active" class="form-check-label">Aktív állapot</label>
       </div>
 
-      {{-- Mentés és vissza gombok --}}
-      <button type="submit" class="btn btn-primary">💾 Mentés</button>
-      <a href="{{ route('admin.users.index') }}" class="btn btn-secondary ms-2">⬅️ Vissza</a>
+      <button type="submit" class="btn btn-primary">Mentés</button>
+      <a href="{{ route('admin.users.index') }}" class="btn btn-secondary ms-2">Vissza a felhasználókhoz</a>
     </form>
 
     {{-- Ideiglenes hozzáférés esetén jelszó és email újragenerálása --}}

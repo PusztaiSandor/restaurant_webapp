@@ -9,7 +9,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    // Elsődleges kulcs megadása
+
     protected $primaryKey = 'orders_id';
 
     protected $fillable = [
@@ -32,7 +32,7 @@ class Order extends Model
         'rating_comment',
     ];
 
-    // Típuskonverziók: automatikusan átalakítja a mezőket
+
     protected $casts = [
         'is_paid' => 'boolean',
         'payment_time' => 'datetime',
@@ -47,25 +47,25 @@ class Order extends Model
         'rating_star' => 'integer',
     ];
 
-    // Kapcsolat a felhasználóval
+
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id');
     }
 
-    // Kapcsolat a futárral
+
     public function courier()
     {
         return $this->belongsTo(User::class, 'courier_id');
     }
 
-    // Kapcsolat a rendeléshez tartozó tételekkel
+
     public function items()
     {
         return $this->hasMany(OrderItem::class, 'orders_id');
     }
 
-    // Kapcsolat az asztalfoglalással
+
     public function booking()
     {
         return $this->hasOne(Booking::class, 'orders_id');
@@ -93,7 +93,7 @@ class Order extends Model
             'kiszallitva' => 'Kiszállítva',
             'lezarva' => 'Lezárva',
             'torolve' => 'Törölve',
-            default => ucfirst($this->status), // Első karakter nagy betűs lesz
+            default => ucfirst($this->status),
         };
     }
 

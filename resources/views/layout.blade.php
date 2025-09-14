@@ -2,11 +2,10 @@
 <html lang="hu">
 
 <head>
-  {{-- Karakterkódolás és reszponzív nézet --}}
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  {{-- Oldal címe --}}
   <title>Esszencia Étterem</title>
 
   <!-- Favicon -->
@@ -15,7 +14,6 @@
   {{-- Bootstrap témaváltáshoz --}}
   <link id="theme-css" rel="stylesheet" href="{{ asset('assets/css/theme-darkly.css') }}">
 
-  {{-- Saját stíluslap --}}
   <link rel="stylesheet" href="{{ asset('assets/css/mystyle.css') }}">
 
   {{-- Font Awesome ikonok (helyi fájlokból) --}}
@@ -26,9 +24,8 @@
 </head>
 
 <body class="bg-light">
-  {{-- Navigációs fejléc --}}
   <header class="container-fluid bg-dark sticky-top">
-    <nav class="navbar navbar-expand-md navbar-dark container">
+    <nav class="navbar navbar-expand-xl navbar-dark container">
       {{-- Logó és kezdőlap hivatkozás --}}
       <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
         <img src="{{ asset('assets/images/components/logo.png') }}" alt="Esszencia logó" height="40" class="me-2">
@@ -41,10 +38,8 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarLinks">
-        <ul class="navbar-nav me-auto">
-          {{-- Étlap link --}}
+        <ul class="navbar-nav me-auto align-items-center">
           @if (!auth()->check() || auth()->user()->role === 'user')
-            {{-- 🍽️ Étlap link – csak vendég és user szerepkör számára --}}
             <li class="nav-item">
               <a class="nav-link" href="{{ route('menu') }}">
                 <i class="fa-solid fa-utensils me-1"></i> Étlap
@@ -52,7 +47,6 @@
             </li>
           @endif
 
-          {{-- Kapcsolat link --}}
           <li class="nav-item">
             <a class="nav-link" href="{{ route('contact') }}">
               <i class="fa-solid fa-phone me-1"></i> Kapcsolat
@@ -62,7 +56,6 @@
 
         {{-- Téma választó + Felhasználói menü --}}
         <ul class="navbar-nav ms-auto align-items-center">
-          {{-- Téma választó --}}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               <i class="fa-solid fa-brush me-1"></i> Témák
@@ -90,7 +83,6 @@
             </ul>
           </li>
 
-          {{-- Vendég felhasználók számára: Belépés és Regisztráció --}}
           @guest
             <li class="nav-item">
               <a class="nav-link" href="{{ route('login') }}">
@@ -104,7 +96,6 @@
             </li>
           @endguest
 
-          {{-- Kosár – vendégek és user szerepkörű felhasználók számára --}}
           @php
             $cart = session()->get('cart', []);
             $cartCount = array_sum(array_column($cart, 'quantity'));
@@ -125,13 +116,10 @@
 
           {{-- Bejelentkezett felhasználók számára: Üdvözlés + Kilépés --}}
           @auth
-            {{-- Üdvözlés névvel --}}
             <li class="nav-item nav-link text-white d-flex align-items-center">
               <i class="fa-solid fa-user me-2"></i> Üdv, {{ Auth::user()->name }}!
             </li>
 
-
-            {{-- "Profilom" minden szerepkör számára --}}
             @if (in_array(Auth::user()->role, ['admin', 'user', 'courier']))
               <li class="nav-item">
                 <a class="nav-link" href="{{ route('profile') }}">
@@ -207,7 +195,7 @@
               </li>
             @endif
 
-            {{-- Kilépés gomb (POST metódus) --}}
+            {{-- Kilépés gomb --}}
             <li class="nav-item d-flex align-items-center">
               <form method="POST" action="{{ route('logout') }}" class="d-inline">
                 @csrf
@@ -225,7 +213,7 @@
     <small><i class="fa-solid fa-clock me-2"></i> Nyitvatartás: 7/24 Minden nap 00:00 - 24:00</small>
   </div>
 
-  {{-- Tartalom helye --}}
+
   <main class="container py-4">
 
     {{-- Flash üzenetek --}}
@@ -244,7 +232,6 @@
     @yield('content')
   </main>
 
-  {{-- Lábléc --}}
   <footer class="bg-dark text-light py-4 mt-5">
     <div class="container text-center">
       <p class="mb-1">&copy; {{ date('Y') }} Esszencia Étterem. Minden jog fenntartva.</p>

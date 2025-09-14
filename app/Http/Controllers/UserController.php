@@ -8,29 +8,22 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // Megjeleníti a profil főoldalt, ahol a felhasználó
-    // szerkesztheti az adatait és módosíthatja a jelszavát.
-    // A nézet: 'profile.mypage_edit'
+    // Saját profil megjelenítése, szerkesztése
 
     public function show()
     {
-        $user = Auth::user(); // Bejelentkezett felhasználó lekérése
+        $user = Auth::user();
 
         return view('profile.mypage', compact('user'));
     }
 
-    // Profil szerkesztő nézet megjelenítése.
-    // A felhasználó itt módosíthatja az alapadatait
     public function editMypage()
     {
-        $user = Auth::user(); // Bejelentkezett felhasználó lekérése
+        $user = Auth::user();
 
         return view('profile.mypage_edit', compact('user'));
     }
 
-    // Megjeleníti az e-mail és jelszó frissítő nézetet.
-    // Ez egy különálló szerkesztő oldal.
-    // A nézet: 'profile.edit'
 
     public function edit()
     {
@@ -39,9 +32,6 @@ class UserController extends Controller
         return view('profile.edit', compact('user'));
     }
 
-    // Profiladatok frissítése (név, email, cím stb.).
-    // Validálja a bemenetet, majd menti az új adatokat.
-    // Visszairányít a fő szerkesztő oldalra.
 
     public function update(Request $request)
     {
@@ -110,22 +100,20 @@ class UserController extends Controller
             'street_name.required' => 'A közterület név megadása kötelező.',
             'street_name.regex' => 'A közterület neve csak betűket, számokat, szóközt, pontot és kötőjelet tartalmazhat. Példa: 10. kerület vagy 27. utca',
             'street_number.required' => 'A házszám megadása kötelező.',
-            'street_number.regex' => 'A házszám csak számokat, betűket, kötőjelet és perjelet tartalmazhat. Példa: 15/A vagy 13–15',
+            'street_number.regex' => 'A házszám csak számokat, betűket, kötőjelet és perjelet tartalmazhat. Példa: 15/A vagy 13-15',
         ]);
 
-        // Felhasználó adatainak frissítése
+
         $user = Auth::user();
         $user->update($validated);
 
-        // Visszairányítás a profil főoldalra, sikeres üzenettel
         return redirect()->route('profile')->with('success', 'Profilod frissítve!');
     }
 
-    // Jelszómódosítás feldolgozása – titkosítással
+    // Jelszómódosítás feldolgozása, titkosítással.
 
     public function updatePassword(Request $request)
     {
-        // Jelszó validálása:
         $request->validate([
             'password' => [
                 'required',
@@ -159,7 +147,7 @@ class UserController extends Controller
 
         $user->save();
 
-        // Visszairányítás sikeres üzenettel
+
         return back()->with('success_password', 'Jelszavad sikeresen módosítva!');
     }
 
@@ -198,14 +186,13 @@ class UserController extends Controller
             'password.regex' => 'A jelszónak tartalmaznia kell betűt és számot, és csak betűket és számokat tartalmazhat.',
             'password.confirmed' => 'A jelszó megerősítése nem egyezik.',
         ]);
-        // Felhasználó adatainak frissítése
+
         $user = Auth::user();
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         $user->must_change_password = false;
         $user->save();
 
-        // Visszairányítás a főoldalra
         return redirect()->route('home');
     }
 }

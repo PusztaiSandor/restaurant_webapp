@@ -17,22 +17,19 @@ class CartController extends Controller
     }
 
     // Gyors hozzáadás a kosárhoz.
-    // Egy adott ételt (dish) adunk hozzá a kosárhoz, méret és mennyiség alapján.
+
     public function quickAdd(Request $request, $dishId)
     {
-        // Étel lekérése adatbázisból id alapján.
+
         $dish = Dish::findOrFail($dishId);
 
-        // Méret lekérése (alapértelmezett: 'Normál')
         $size = $request->input('size', 'Normál');
         $sizeOptions = $dish->size_options ?? [];
 
-        // Ha nincs ilyen méret, használjuk az első elérhetőt
         if (! isset($sizeOptions[$size])) {
             $size = isset($sizeOptions['Normál']) ? 'Normál' : array_key_first($sizeOptions);
         }
 
-        // Mennyiség lekérése, minimum 1 db
         $quantity = max(1, (int) $request->input('quantity', 1));
 
         // Ár kiszámítása a kiválasztott méret alapján
@@ -62,7 +59,6 @@ class CartController extends Controller
         // Kosár visszamentése a session-be
         session()->put('cart', $cart);
 
-        // Visszairányítás sikerüzenettel
         return redirect()->route('menu')->with('success', 'A termék sikeresen a kosárba került!');
     }
     // Mennyiség növelése egy adott kosár tételnél.
@@ -117,15 +113,15 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'A kosár sikeresen kiürítve.');
     }
 
-    // Kosár véglegesítése – fizetés előtti összesítés.
-    // Összesítjük a kosárban lévő tételek árát, és megjelenítjük a fizetési nézetet.
+    // Kosár véglegesítése, megrendelés előtti összesítés.
+
     public function checkout()
     {
         // Kosár lekérése a session-ből. Ha nincs, üres tömböt adunk vissza.
         $cart = session()->get('cart', []);
         $total = 0;
 
-        // Végösszeg kiszámítása: minden tétel ára × mennyiség
+        // Végösszeg kiszámítása: minden tétel ára * mennyiség
 
         foreach ($cart as $item) {
             $total += $item['price'] * $item['quantity'];
@@ -135,7 +131,7 @@ class CartController extends Controller
         return view('orders.checkout', compact('cart', 'total'));
     }
 
-    // Termék hozzáadása a kosárhoz – részletes beállításokkal.
+    // Termék hozzáadása a kosárhoz, részletes beállításokkal.
     // Méret, extrák, kizárások, mennyiség és ár alapján történik a hozzáadás.
 
     public function add(Request $request, $dishId)
@@ -157,13 +153,12 @@ class CartController extends Controller
         // Mennyiség lekérése és minimum érték biztosítása
         $quantity = max(1, (int) $request->input('quantity', 1));
 
-        // Mennyiség validálása
         // Nem lehet nulla vagy negatív
         if ($quantity < 1) {
             return back()->with('error', 'A mennyiség nem lehet nulla vagy negatív.');
         }
 
-        // Nem haladhatja meg a készletet
+        // Nem lehet több, mint a készletet
         if ($quantity > $dish->stock) {
             return back()->with('error', 'A rendelni kívánt mennyiség meghaladja a készletet.');
         }
@@ -192,7 +187,7 @@ class CartController extends Controller
         $finalPrice = ($basePrice + $extraTotal + $excludedTotal);
 
         // Egyedi kulcs generálása a tételhez (étel ID + méret + extrák + kizárások)
-        // Ez biztosítja, hogy különböző kombinációk külön tételként kerüljenek a kosárba
+
         $keyData = [
             'dishes_id' => $dish->dishes_id,
             'size' => $size,
@@ -226,7 +221,6 @@ class CartController extends Controller
         // Kosár visszamentése a session-be
         session()->put('cart', $cart);
 
-        // Visszairányítás az étlapra, sikeres üzenettel
         return redirect()->route('menu')->with('success', 'A termék sikeresen a kosárba került!');
     }
 }

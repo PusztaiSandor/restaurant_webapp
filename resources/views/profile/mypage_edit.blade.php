@@ -2,19 +2,12 @@
 
 @section('content')
   <div class="container py-4">
-    {{-- Oldalcím --}}
+
     <h2>Profil szerkesztése</h2>
 
-    {{-- Sikeres frissítés visszajelzése --}}
-    {{-- @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif --}}
 
-    {{-- Profiladatok frissítése --}}
     <form method="POST" action="{{ route('profile.update') }}" novalidate>
-      @csrf {{-- CSRF token --}}
-
-      {{-- Név mező --}}
+      @csrf
       <div class="mb-3">
         <label for="name">Név</label>
         <input type="text" name="name" value="{{ old('name', $user->name) }}" class="form-control" required
@@ -24,7 +17,7 @@
         </small>
       </div>
 
-      {{-- Email mező --}}
+
       <div class="mb-3">
         <label for="email">Email</label>
         <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-control" required
@@ -34,7 +27,7 @@
         </small>
       </div>
 
-      {{-- Telefonszám mező --}}
+
       <div class="mb-3">
         <label for="phone">Telefonszám</label>
         <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control"
@@ -44,11 +37,10 @@
         </small>
       </div>
 
-      {{-- Szállítási cím szekció --}}
+
       <hr>
       <h5 class="mt-4">Szállítási cím</h5>
 
-      {{-- Irányítószám --}}
       <div class="mb-3">
         <label for="postal_code">Irányítószám</label>
         <input type="text" name="postal_code" value="{{ old('postal_code', $user->postal_code) }}" class="form-control"
@@ -58,7 +50,6 @@
         </small>
       </div>
 
-      {{-- Település --}}
       <div class="mb-3">
         <label for="city">Település</label>
         <input type="text" name="city" value="{{ old('city', $user->city) }}" class="form-control" required maxlength="50"
@@ -68,7 +59,6 @@
         </small>
       </div>
 
-      {{-- Közterület neve --}}
       <div class="mb-3">
         <label for="street_name">Közterület neve</label>
         <input type="text" name="street_name" value="{{ old('street_name', $user->street_name) }}" class="form-control"
@@ -78,25 +68,21 @@
         </small>
       </div>
 
-      {{-- Házszám --}}
       <div class="mb-3">
         <label for="street_number">Házszám</label>
         <input type="text" name="street_number" value="{{ old('street_number', $user->street_number) }}"
           class="form-control" required maxlength="10" pattern="^[0-9A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű\/\-]{1,10}$">
         <small class="form-text text-muted">
-          Számok, betűk, perjel és kötőjel. Példa: 15/A vagy 13–15
+          Számok, betűk, perjel és kötőjel. Példa: 15/A vagy 13-15
         </small>
       </div>
 
-      {{-- Mentés gomb --}}
       <button type="submit" class="btn btn-primary">Mentés</button>
     </form>
 
-    {{-- Jelszómódosítás szekció --}}
     <hr class="my-4">
     <h4>Jelszómódosítás</h4>
 
-    {{-- Sikeres jelszófrissítés visszajelzése --}}
     @if (session('success_password'))
       <div class="alert alert-success">{{ session('success_password') }}</div>
     @endif
@@ -111,11 +97,9 @@
       </div>
     @endif
 
-    {{-- Jelszó frissítő űrlap --}}
     <form method="POST" action="{{ route('profile.password') }}">
       @csrf
 
-      {{-- Új jelszó --}}
       <div class="mb-3">
         <label for="password">Új jelszó</label>
         <input type="password" name="password" class="form-control" required minlength="8" maxlength="36"
@@ -125,7 +109,6 @@
         </small>
       </div>
 
-      {{-- Jelszó megerősítése --}}
       <div class="mb-3">
         <label for="password_confirmation">Új jelszó megerősítése</label>
         <input type="password" name="password_confirmation" class="form-control" required>
@@ -134,9 +117,8 @@
         </small>
       </div>
 
-      {{-- Jelszó frissítése gomb --}}
       <div class="mt-3">
-        <button type="submit" class="btn btn-warning">Jelszó frissítése</button>
+        <button type="submit" class="btn btn-warning">Jelszó módosítása</button>
       </div>
     </form>
   @endsection

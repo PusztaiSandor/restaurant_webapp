@@ -2,21 +2,20 @@
 
 @section('content')
   <div class="container py-4">
-    {{-- Oldalcím --}}
+
     <h2 class="text-center mb-4">Elfelejtetted a jelszót?</h2>
 
-    {{-- Hibás e-mail esetén megjelenő hibaüzenet --}}
+
     @if ($errors->has('email'))
       <div class="alert alert-danger text-center">
         {{ $errors->first('email') }}
       </div>
     @endif
 
-    {{-- Jelszóemlékeztető kérő űrlap --}}
-    <form method="POST" action="{{ route('forgot-password.post') }}">
-      @csrf {{-- Laravel CSRF token a biztonságos POST kéréshez --}}
 
-      {{-- E-mail mező --}}
+    <form method="POST" action="{{ route('forgot-password.post') }}">
+      @csrf
+
       <div class="mb-3">
         <label for="email" class="form-label">E-mail cím</label>
         <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror"
@@ -30,7 +29,6 @@
         @enderror
       </div>
 
-      {{-- Küldés gomb --}}
       <button type="submit" class="btn btn-primary w-100">Jelszó módosítása</button>
     </form>
   </div>

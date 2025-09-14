@@ -9,10 +9,9 @@ class Booking extends Model
 {
     use HasFactory;
 
-    // Elsődleges kulcs megadása
+
     protected $primaryKey = 'bookings_id';
 
-    // Tömegesen kitölthető mezők
     protected $fillable = [
         'users_id',
         'orders_id',
@@ -22,19 +21,17 @@ class Booking extends Model
         'status',
     ];
 
-    // Típuskonverziók: automatikusan átalakítja a mezőket
+
     protected $casts = [
         'seats' => 'integer',
         'booking_time' => 'datetime',
     ];
 
-    // Felhasználó kapcsolata
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id');
     }
 
-    // Rendelés kapcsolata
     public function order()
     {
         return $this->belongsTo(Order::class, 'orders_id');

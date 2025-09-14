@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 class AdminUserController extends Controller
 {
     // Felhasználók listázása
+
     public function index()
     {
         // Csak admin jogosultsággal elérhető
@@ -18,15 +19,15 @@ class AdminUserController extends Controller
             abort(403, 'Nincs jogosultságod az admin felülethez.');
         }
 
-        // Felhasználók név szerint rendezve
         $users = User::orderBy('name')->get();
 
         return view('admin.users.index', compact('users'));
 
     }
 
-    // Új felhasználó létrehozása – az űrlap megjelenítése.
-    // Csak admin jogosultsággal érhető el.
+
+    // Új felhasználó létrehozása:
+
     public function create()
     {
         if (Auth::user()->role !== 'admin') {
@@ -36,15 +37,12 @@ class AdminUserController extends Controller
         return view('admin.users.create');
     }
 
-    // Új felhasználó mentése az adatbázisba.
-    // Validáljuk az adatokat, generálunk emailt és jelszót, majd létrehozzuk a felhasználót.
     public function store(Request $request)
     {
         if (Auth::user()->role !== 'admin') {
             abort(403);
         }
 
-        // Beküldött adatok ellenőrzése.
         $validated = $request->validate([
             'name' => [
                 'required',
@@ -61,17 +59,16 @@ class AdminUserController extends Controller
             'name.regex' => 'A név csak betűket, szóközt, pontot és kötőjelet tartalmazhat. Példa: Kiss-Kovács János',
         ]);
 
-        // Email generálása a névből + véletlenszerű szám.
+        // Ideiglenes e-mail generálása a névből + véletlenszerű szám.
         $baseEmail = Str::slug($validated['name'], '.');
         $suffix = rand(1000, 9999);
         $email = "{$baseEmail}.{$suffix}@esszencia.local";
 
-        // Jelszó generálása és titkosítása.
+        // Ideiglene jelszó generálása és titkosítása.
         $rawPassword = 'Esszencia2025'.$suffix;
         $hashedPassword = Hash::make($rawPassword);
-        $hintHash = Hash::make($rawPassword); // opcionális jelszóemlékeztető
+        $hintHash = Hash::make($rawPassword);
 
-        // Új felhasználó létrehozása az adatbázisban.
         $user = User::create([
             'name' => $validated['name'],
             'email' => $email,
@@ -82,7 +79,6 @@ class AdminUserController extends Controller
             'active' => $request->has('active'),
         ]);
 
-        // Visszairányítás a felhasználólistához, sikeres üzenettel.
         return redirect()->route('admin.users.index')
             ->with('success', "Felhasználó létrehozva • email: {$email} • jelszó: {$rawPassword}");
     }
@@ -100,7 +96,7 @@ class AdminUserController extends Controller
                 ->with('error', 'Ez a felhasználó már nem rendelkezik ideiglenes hozzáféréssel.');
         }
 
-        // Új jelszó és email generálása
+        // Új ideiglenes jelszó és email generálása
         $suffix = rand(1000, 9999);
         $rawPassword = 'Esszencia2025'.$suffix;
         $hashed = Hash::make($rawPassword);
@@ -109,7 +105,6 @@ class AdminUserController extends Controller
         $baseEmail = Str::slug($user->name, '.');
         $newEmail = "{$baseEmail}.{$suffix}@esszencia.local";
 
-        // Felhasználó adatainak frissítése.
 
         $user->update([
             'email' => $newEmail,
@@ -118,14 +113,13 @@ class AdminUserController extends Controller
             'must_change_password' => true,
         ]);
 
-        // Visszairányítás a szerkesztő oldalra, új jelszóval.
 
         return redirect()->route('admin.users.edit', $user->users_id)
             ->with('success_password', "Új ideiglenes jelszó generálva: {$newEmail} • jelszó: {$rawPassword}");
     }
 
-    // Felhasználó szerkesztése – az űrlap megjelenítése.
-    // Csak admin jogosultsággal érhető el.
+    // Felhasználói adatok módosítása
+
     public function edit(User $user)
     {
         if (Auth::user()->role !== 'admin') {
@@ -135,8 +129,7 @@ class AdminUserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    // Felhasználó adatainak frissítése.
-    // Validáljuk az emailt és szerepkört, majd mentjük a módosításokat.
+
     public function update(Request $request, User $user)
     {
         if (Auth::user()->role !== 'admin') {
@@ -166,14 +159,13 @@ class AdminUserController extends Controller
             'email.regex' => 'Az e-mail cím csak betűket, számokat, pontot, kötőjelet, aláhúzást és @ karaktert tartalmazhat. Példa: kiss_auto@example.hu',
         ]);
 
-        // Felhasználó adatainak frissítése.
+
         $user->update([
             'email' => $validated['email'],
             'role' => $validated['role'],
             'active' => $request->has('active'),
         ]);
 
-        // Visszairányítás a felhasználólistához, sikeres üzenettel.
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Felhasználó adatai sikeresen módosítva.');

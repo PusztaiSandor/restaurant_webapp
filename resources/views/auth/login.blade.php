@@ -2,15 +2,12 @@
 
 @section('content')
   <div class="container py-4">
-    {{-- 🧾 Oldalcím --}}
+
     <h2 class="text-center mb-4">Belépés</h2>
 
-
-    {{-- Bejelentkezési űrlap --}}
     <form method="POST" action="{{ route('login.submit') }}" novalidate>
-      @csrf {{-- 🛡️ Laravel CSRF token a biztonságos POST kéréshez --}}
+      @csrf
 
-      {{-- 📧 E-mail mező --}}
       <div class="mb-3">
         <label for="email" class="form-label">E-mail cím</label>
         <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror"
@@ -24,7 +21,6 @@
         @enderror
       </div>
 
-      {{-- Jelszó mező --}}
       <div class="mb-3">
         <label for="password" class="form-label">Jelszó</label>
         <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror"
@@ -41,13 +37,11 @@
         </div>
       </div>
 
-      {{-- „Emlékezzen rám” opció --}}
       <div class="form-check mb-3">
         <input type="checkbox" name="remember" id="remember" class="form-check-input">
         <label for="remember" class="form-check-label">Emlékezzen rám</label>
       </div>
 
-      {{-- Belépés gomb --}}
       <button type="submit" class="btn btn-primary w-100">Belépés</button>
     </form>
   </div>

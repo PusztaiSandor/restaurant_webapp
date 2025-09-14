@@ -15,12 +15,9 @@
       </div>
     @endif
 
-
-    {{-- Felhasználó létrehozása űrlap --}}
     <form method="POST" action="{{ route('admin.users.store') }}">
-      @csrf {{-- Laravel CSRF token a biztonságos POST kéréshez --}}
+      @csrf
 
-      {{-- Név mező --}}
       <div class="mb-3">
         <label for="name" class="form-label">Név</label>
         <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name"
@@ -50,9 +47,8 @@
         <label for="active" class="form-check-label">Aktív állapot</label>
       </div>
 
-      {{-- Műveleti gombok: mentés és vissza --}}
-      <button type="submit" class="btn btn-success">✅ Felhasználó létrehozása</button>
-      <a href="{{ route('admin.users.index') }}" class="btn btn-secondary ms-2">⬅️ Vissza</a>
+      <button type="submit" class="btn btn-success">Felhasználó létrehozása</button>
+      <a href="{{ route('admin.users.index') }}" class="btn btn-secondary ms-2">Vissza a felhasználókhoz</a>
     </form>
   </div>
 @endsection

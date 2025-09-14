@@ -54,5 +54,10 @@
 
       <button type="submit" class="btn btn-success">Mentés</button>
     </form>
+    <div class="mt-4">
+      <a href="{{ route('admin.tables.index') }}" class="btn btn-outline-secondary">
+        Vissza az asztalokhoz
+      </a>
+    </div>
   </div>
 @endsection

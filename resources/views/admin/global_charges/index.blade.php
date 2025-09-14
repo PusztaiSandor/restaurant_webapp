@@ -34,16 +34,9 @@
               <td>{{ $charge->description }}</td>
               <td class="d-flex gap-2">
                 <a href="{{ route('global-charges.edit', $charge->global_charges_id) }}" class="btn btn-sm btn-warning">
-                  <i class="fa-solid fa-pen-to-square"></i>
+                  Szerkesztés
                 </a>
-                <form action="{{ route('global-charges.destroy', $charge->global_charges_id) }}" method="POST"
-                  onsubmit="return confirm('Biztosan törölni szeretnéd?')">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="btn btn-sm btn-danger">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </form>
+
               </td>
             </tr>
           @empty

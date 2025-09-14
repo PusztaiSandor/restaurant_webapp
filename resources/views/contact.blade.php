@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('content')
-  <!-- Bevezető szakasz -->
+
   <section class="container mx-auto px-4 py-16 text-center pt-3">
     <h1 class="text-4xl font-semibold text-gray-800 text-uppercase">Kapcsolat</h1>
     <p class="fs-5 text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mt-3">
@@ -13,7 +13,7 @@
     </p>
   </section>
 
-  <!-- Elérhetőség és térkép -->
+
   <section class="container mx-auto px-4 py-8 text-center pt-4">
     <h2 class="text-2xl font-semibold text-gray-800 text-uppercase pb-4">Elérhetőség</h2>
     <p class="fs-5 text-lg text-gray-700">Budapesti Műszaki Szakképzési Centrum Verebély László Technikum</p>
@@ -24,7 +24,7 @@
     </div>
   </section>
 
-  <!-- Készítők bemutatása -->
+
   <section class="container mx-auto px-4 py-8">
     <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6 mt-5 text-uppercase">A készítők</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 m-5">
@@ -39,7 +39,7 @@
     </div>
   </section>
 
-  <!-- Tanári köszönet -->
+
   <section class="container mx-auto px-4 py-12 pt-2">
     <h2 class="text-2xl font-semibold text-gray-800 text-center mt-4 text-uppercase">Köszönet az oktatóknak</h2>
     <p class="fs-5 text-center text-gray-700 max-w-3xl mx-auto pt-5 text-uppercase">
@@ -87,7 +87,7 @@
       <h2 class="text-2xl font-semibold text-gray-800 text-center mt-5 text-uppercase">Értékelés és visszajelzés</h2>
 
       @if (auth()->check() && auth()->user()->role === 'user')
-        {{-- Értékelési űrlap --}}
+
         <form method="POST" action="{{ route('contact.send') }}" class="mx-auto pt-5 fs-5" style="max-width:600px;">
 
           @if ($errors->any())
@@ -114,7 +114,6 @@
             </small>
           </div>
 
-          {{-- Csillagos értékelés – csak ha type = rating --}}
           <div class="mb-3" id="rating-block" style="display:none;">
             <label for="rating" class="form-label">Értékelés (1-5 csillag)</label>
             <select name="rating" id="rating" class="form-select">
@@ -128,7 +127,6 @@
             </small>
           </div>
 
-          {{-- Tárgy --}}
           <div class="mb-3">
             <label for="subject" class="form-label">Tárgy</label>
             <input type="text" id="subject" name="subject" class="form-control"
@@ -138,7 +136,6 @@
             </small>
           </div>
 
-          {{-- Tartalom --}}
           <div class="mb-3">
             <label for="content" class="form-label">Üzenet / Vélemény</label>
             <textarea id="content" name="content" class="form-control" rows="5"
@@ -168,7 +165,6 @@
       @endif
     </section>
   @endif
-
 
   </section>
 

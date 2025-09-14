@@ -9,10 +9,10 @@ class Feedback extends Model
 {
     use HasFactory;
 
-    // Elsődleges kulcs megadása
+
     protected $primaryKey = 'feedback_id';
 
-    // Tömegesen kitölthető mezők
+
     protected $fillable = [
         'users_id',
         'type',
@@ -21,12 +21,12 @@ class Feedback extends Model
         'content',
     ];
 
-    // Típuskonverziók: automatikusan átalakítja a mezőket
+
     protected $casts = [
         'rating' => 'integer', // A 'rating' mező mindig egész szám legyen
     ];
 
-    // Kapcsolat a felhasználóval
+    
     public function user()
     {
         return $this->belongsTo(User::class, 'users_id');

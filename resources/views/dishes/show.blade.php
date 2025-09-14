@@ -121,12 +121,10 @@
             @endif
           </div>
 
-          {{-- Kosárba helyezés --}}
           <button type="submit" class="btn btn-success w-100 mb-2">Kosárba helyezés</button>
 
-          {{-- Vissza az étlapra --}}
           <div class="text-center">
-            <a href="{{ route('menu') }}" class="btn btn-outline-secondary">⬅️Vissza az étlapra</a>
+            <a href="{{ route('menu') }}" class="btn btn-outline-secondary">Vissza az étlapra</a>
           </div>
         </div>
       </div>

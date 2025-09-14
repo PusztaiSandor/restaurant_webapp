@@ -66,8 +66,8 @@
         <textarea name="description" id="description" class="form-control" rows="3"></textarea>
       </div>
 
-      <button type="submit" class="btn btn-success">💾 Mentés</button>
-      <a href="{{ route('global-charges.index') }}" class="btn btn-secondary">⬅️ Vissza</a>
+      <button type="submit" class="btn btn-success">Mentés</button>
+      <a href="{{ route('global-charges.index') }}" class="btn btn-secondary">Vissza a globális díjakhoz</a>
     </form>
   </div>
 @endsection

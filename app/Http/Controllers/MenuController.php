@@ -13,7 +13,7 @@ class MenuController extends Controller
 
     public function downloadPdf()
     {
-        // Aktív ételek lekérése az adatbázisból
+
         $dishes = Dish::where('active', true)->get()->groupBy([
             'category',
             function ($dish) {
@@ -22,7 +22,7 @@ class MenuController extends Controller
         ]);
 
         // PDF generálása a 'pdf.menu' nézet alapján
-        // A nézet megkapja a csoportosított ételeket, étterem nevét, szlogent és láblécet
+        
         $pdf = Pdf::loadView('pdf.menu', [
             'dishesGrouped' => $dishes,
             'restaurantName' => 'Esszencia Étterem',

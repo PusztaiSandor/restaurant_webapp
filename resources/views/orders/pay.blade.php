@@ -2,13 +2,10 @@
 
 @section('content')
   <div class="container">
-    <h2 class="mb-4">Rendelés fizetése – Rendelés #{{ $order->orders_id }}</h2>
+    <h2 class="mb-4">Rendelés fizetése - Rendelés #{{ $order->orders_id }}</h2>
 
     <p><strong>Fizetendő összeg:</strong> {{ number_format($order->total_price, 0, ',', ' ') }} Ft</p>
 
-    {{-- @if (session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif --}}
 
     <form method="POST" action="{{ route('order.pay.submit', $order->orders_id) }}">
       @csrf
@@ -66,7 +63,7 @@
 
       {{-- Szimulált fizetés gomb --}}
       <div class="text-end mt-4">
-        <a href="{{ route('orders.myorders') }}" class="btn btn-secondary">⬅️Vissza a Rendeléseimhez</a>
+        <a href="{{ route('orders.myorders') }}" class="btn btn-secondary">Vissza a Rendeléseimhez</a>
         <button type="submit" class="btn btn-success">Fizetés indítása</button>
       </div>
     </form>

@@ -4,7 +4,6 @@
   <div class="container">
     <h2 class="mb-4 text-center">Kosár tartalma</h2>
 
-    {{-- Visszajelzések --}}
 
     <div class="text-center mb-3">
       <a href="{{ route('menu') }}" class="btn btn-secondary">
@@ -12,18 +11,13 @@
       </a>
     </div>
 
-    {{-- @if (count($cart) === 0)
-      <p class="text-center">A kosár üres.</p>
-    @else --}}
-
-    @if (count($cart) === 0)
-        <div class="text-center">
-            <img src="{{ asset('assets/images/components/empty_cart.png') }}" class="cart-img">
-        </div>
-    @else
-
-
-
+@if (count($cart) === 0)
+  <div class="d-flex justify-content-center py-4">
+  <img src="{{ asset('assets/images/components/empty_cart.png') }}"
+       class="img-fluid rounded"
+       style="max-width: 100%; width: 100%; max-width: 600px;">
+</div>
+@else
 
       <ul class="list-group mb-4">
         @foreach ($cart as $key => $item)
