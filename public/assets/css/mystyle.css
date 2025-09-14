@@ -1,0 +1,31 @@
+.navbar-brand img {
+    margin-right: 1rem;
+    max-height: 40px;
+    object-fit: contain;
+}
+
+.creator-image {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.opening-hours {
+    background-color: #6c757d; /* Bootstrap bg-secondary szín */
+    color: white;
+    text-align: center;
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.navbar-nav {
+    flex-wrap: wrap;
+}
+
+
+
+
+
+
