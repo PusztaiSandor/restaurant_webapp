@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class OrderController extends Controller
 {
     // Rendelés előkészítése és véglegesítése.
-    // Ez a metódus előkészíti a megrendelési oldalt: kiszámítja az árakat, alkalmazza a díjakat,
-    // és megjeleníti az összesítést a felhasználónak.
+    // Előkészítjük a megrendelési oldalt: kiszámítjuk az árakat, alkalmazzuk a díjakat,
 
     public function checkout()
     {

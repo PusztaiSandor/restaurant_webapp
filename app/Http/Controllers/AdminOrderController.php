@@ -12,7 +12,11 @@ class AdminOrderController extends Controller
 
     public function index(Request $request)
     {
-        $couriers = \App\Models\User::where('role', 'courier')->get();
+        // $couriers = \App\Models\User::where('role', 'courier')->get();
+
+        $couriers = \App\Models\User::where('role', 'courier')
+                            ->where('active', true)
+                            ->get();
 
         $query = Order::with(['user', 'items.dish', 'booking']);
 

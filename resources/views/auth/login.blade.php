@@ -5,6 +5,17 @@
 
     <h2 class="text-center mb-4">Belépés</h2>
 
+    @if ($errors->any())
+      <div class="alert alert-danger">
+        <ul class="mb-0">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
+
     <form method="POST" action="{{ route('login.submit') }}" novalidate>
       @csrf
 
