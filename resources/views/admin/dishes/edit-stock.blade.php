@@ -3,7 +3,7 @@
 @section('content')
   <div class="container py-4">
 
-    <h2 class="mb-4 text-center">📦 Készlet módosítása</h2>
+    <h2 class="mb-4 text-center">Készlet módosítása</h2>
 
 
     @if ($errors->any())
