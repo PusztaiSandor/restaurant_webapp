@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 class CourierOrderController extends Controller
 {
     // Futárhoz rendelt kiszállítási rendelések listázása.
-    // Csak a futárhoz tartozó rendelések jelennek meg.
 
 
     public function index(Request $request)
@@ -53,10 +52,11 @@ class CourierOrderController extends Controller
         if ($order->courier_id !== Auth::id()) {
             return back()->with('error', 'Ez a rendelés nem hozzád tartozik.');
         }
-        // Csak akkor módosítható, ha a rendelés státusza 'atvetelre_kesz'
-        if ($order->status !== 'atvetelre_kesz') {
-            return back()->with('error', 'Csak kiszállításra kész rendelést lehet lezárni.');
-        }
+
+        // Csak akkor módosítható, ha a rendelés státusza 'atvetelre_kesz' és ki van fizetve
+    if ($order->status !== 'atvetelre_kesz' || !$order->is_paid) {
+        return back()->with('error', 'Csak fizetett, kiszállításra kész rendelést lehet lezárni.');
+    }
 
         $order->status = 'kiszallitva';
         $order->save();
